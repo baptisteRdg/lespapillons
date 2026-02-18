@@ -98,6 +98,17 @@ copy backend\prisma\dev.db backend\prisma\dev.db.backup
 
 ## Problèmes courants
 
+### Toujours "Welcome to nginx" au lieu de l'app
+
+**Cause :** Le site par défaut de Nginx est encore actif et prend la priorité.
+
+**Solution :** Supprimer le site par défaut puis recharger Nginx :
+```bash
+sudo rm -f /etc/nginx/sites-enabled/default
+sudo nginx -t && sudo systemctl reload nginx
+```
+Ou relancer le script de config : `sudo bash reverse-proxy/setup-nginx.sh`
+
 ### "Failed to fetch" dans la console
 
 **Problème** : Le frontend ne peut pas contacter le backend

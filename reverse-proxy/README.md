@@ -20,23 +20,30 @@ En local, le frontend reste sur 8080 et le backend sur 3000 ; seul Nginx écoute
 
 ## Installation (Linux)
 
-1. Installer Nginx :
-   ```bash
-   # Debian/Ubuntu
-   sudo apt update && sudo apt install nginx -y
-   ```
-2. Copier la config (adapter le chemin si besoin) :
+**Méthode simple (recommandée) – une seule commande :**
+
+```bash
+# Depuis la racine du projet (après avoir installé Nginx : sudo apt install nginx -y)
+sudo bash reverse-proxy/setup-nginx.sh
+```
+
+Le script copie la config, active le site **et supprime le site par défaut** (sinon tu restes sur "Welcome to nginx").
+
+---
+
+**Méthode manuelle :**
+
+1. Installer Nginx : `sudo apt update && sudo apt install nginx -y`
+2. Copier et activer la config :
    ```bash
    sudo cp reverse-proxy/nginx.conf /etc/nginx/sites-available/lespapillons
-   sudo ln -s /etc/nginx/sites-available/lespapillons /etc/nginx/sites-enabled/
-   # Désactiver le site par défaut si présent
-   # sudo rm /etc/nginx/sites-enabled/default
+   sudo ln -sf /etc/nginx/sites-available/lespapillons /etc/nginx/sites-enabled/lespapillons
    ```
-3. Remplacer `server_name localhost;` par ton nom de domaine dans `/etc/nginx/sites-available/lespapillons`.
-4. Tester et recharger :
+3. **Indispensable** – supprimer le site par défaut (sinon Nginx affiche toujours "Welcome to nginx") :
    ```bash
-   sudo nginx -t && sudo systemctl reload nginx
+   sudo rm -f /etc/nginx/sites-enabled/default
    ```
+4. Tester et recharger : `sudo nginx -t && sudo systemctl reload nginx`
 5. Tout démarrer en une commande **depuis la racine du projet** :
    ```bash
    npm run start:all
