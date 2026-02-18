@@ -886,9 +886,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (searchInput) {
         let searchTimeout;
         searchInput.addEventListener('input', (e) => {
+            const val = e.target.value;
             clearTimeout(searchTimeout);
+            // Recherche déclenchée seulement à partir de 4 caractères (ou vide pour réinitialiser)
+            if (val.length > 0 && val.trim().length < 4) return;
             searchTimeout = setTimeout(() => {
-                searchActivities(e.target.value);
+                searchActivities(val);
             }, 300);
         });
         
