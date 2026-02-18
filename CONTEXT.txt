@@ -27,7 +27,7 @@ LesPapillons/
 │   ├── index.html                  HTML principal
 │   ├── styles/main.css             Styles custom + TailwindCSS overrides
 │   ├── scripts/
-│   │   ├── api.js                  Appels API backend
+│   │   ├── api.js                  Appels API backend (local: :3000, prod: /api)
 │   │   └── map.js                  Logique Leaflet, UI, favoris, recherche
 │   └── assets/icon/                Icônes SVG locales (film, golf, musee, music, pool, tree)
 ├── backend/
@@ -40,6 +40,9 @@ LesPapillons/
 │   ├── helpers/geojson.js          Conversion GeoJSON ↔ Activity
 │   ├── scripts/import.js           Import GeoJSON + backup auto
 │   └── swagger.json                Spec OpenAPI
+├── reverse-proxy/
+│   ├── nginx.conf                  Config Nginx (port 80 → frontend 8080 + /api → 3000)
+│   └── README.md                   Installation et utilisation
 ├── data/
 │   ├── geojson/                    Fichiers GeoJSON à importer (*.geojson)
 │   └── backup/                     Backups auto de dev.db (format: dev_YYYY-MM-DD_HHhMM.db)

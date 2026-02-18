@@ -16,29 +16,31 @@ Cela lance automatiquement :
 
 ### Production sur Serveur
 
-**1. Backend**
+**Avec reverse proxy (recommandé – un seul port public 80)**
+
+Le dossier `reverse-proxy/` contient une config Nginx. Le public accède uniquement au port 80 ; Nginx envoie `/` vers le frontend (8080) et `/api` vers le backend (3000). Voir `reverse-proxy/README.md` pour l’installation.
+
+**Sans reverse proxy**
+
+1. Backend :
 ```bash
 cd backend
 npm start
 ```
 
-**2. Frontend** 
-
-Option A - Serveur HTTP simple :
+2. Frontend :
 ```bash
 cd frontend
 npx http-server -p 8080
 ```
 
-Option B - Via Nginx/Apache (voir plus bas)
-
 ---
 
 ## Vérifications
 
-Ouverture des ports :
-- 3000
-- 8080
+**Avec reverse proxy** : ouvrir uniquement le port **80** (Nginx). Les ports 3000 et 8080 restent en localhost.
+
+**Sans reverse proxy** : ouvrir les ports 3000 et 8080.
 
 ---
 
@@ -63,8 +65,8 @@ curl http://VOTRE_IP:3000/api/activities
 ```
 
 Ou ouvrir dans le navigateur :
-- Frontend : `http://VOTRE_IP:8080`
-- Swagger : `http://VOTRE_IP:3000/api-docs`
+- Avec reverse proxy : `http://VOTRE_IP` ou `http://VOTRE_DOMAINE` (tout passe par le port 80 ; Swagger : `/api-docs`)
+- Sans reverse proxy : Frontend `http://VOTRE_IP:8080`, Swagger `http://VOTRE_IP:3000/api-docs`
 
 
 
