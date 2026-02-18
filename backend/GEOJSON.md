@@ -1,4 +1,4 @@
-# 📦 Format GeoJSON
+# Format GeoJSON
 
 Ce document explique le format GeoJSON attendu et comment les données sont converties.
 
@@ -33,7 +33,7 @@ Le script d'import attend un format **FeatureCollection** :
 }
 ```
 
-## 🔄 Mapping Automatique
+## Mapping Automatique
 
 ### Champs Obligatoires
 
@@ -55,7 +55,7 @@ Le script d'import attend un format **FeatureCollection** :
 | `opening_hours` | `openingHours` | Horaires |
 | *autres* | `properties` | Stockés en JSON |
 
-## 🏷️ Mapping des Types
+## Mapping des Types
 
 Le script convertit automatiquement les tags OSM en types :
 
@@ -106,7 +106,7 @@ clothes      → vêtements
 
 Voir le mapping complet dans `backend/scripts/import.js`.
 
-## 📋 Exemple Complet
+## Exemple Complet
 
 ```json
 {
@@ -157,7 +157,7 @@ Voir le mapping complet dans `backend/scripts/import.js`.
 }
 ```
 
-## 🔍 Propriétés Flexibles
+## Propriétés Flexibles
 
 Toutes les propriétés qui ne correspondent pas aux champs connus sont stockées dans le champ `properties` (JSON string) de la base de données.
 
@@ -168,45 +168,10 @@ Exemple :
 
 Ces propriétés sont préservées et peuvent être récupérées via l'API.
 
-## ⚠️ Points d'Attention
+## Points d'Attention
 
 1. **Coordonnées** : Toujours `[longitude, latitude]` (GeoJSON standard)
 2. **Type** : Si `amenity`, `tourism`, `leisure`, ou `shop` est absent, vous pouvez ajouter `"type": "votre_type"`
 3. **Nom** : Au moins un des champs `name`, `name:fr`, `name:en` doit être présent
 4. **Features invalides** : Les features sans coordonnées ou sans nom sont ignorées (avec message d'erreur)
 
-## 🚀 Import
-
-```bash
-# 1. Placez vos .geojson dans data/
-cp mes-donnees.geojson data/
-
-# 2. Lancez l'import
-npm run import
-
-# 3. Vérifiez les résultats
-cd backend && npm run db:studio
-```
-
-## 📊 Sources de Données
-
-### OpenStreetMap (Overpass API)
-
-Vous pouvez exporter des données depuis :
-- [Overpass Turbo](https://overpass-turbo.eu/) : Interface visuelle
-- [HOT Export Tool](https://export.hotosm.org/) : Export par région
-- [GeoJSON.io](http://geojson.io/) : Créer/éditer manuellement
-
-### Export Overpass Turbo
-
-```
-[out:json];
-(
-  node["amenity"="nightclub"]({{bbox}});
-  way["amenity"="nightclub"]({{bbox}});
-  relation["amenity"="nightclub"]({{bbox}});
-);
-out center;
-```
-
-Puis "Export" → "données" → "GeoJSON"

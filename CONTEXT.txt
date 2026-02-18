@@ -13,6 +13,7 @@ LANCEMENT
 ---------
 Depuis la racine du projet :
   npm start          → lance frontend (port 8080) + backend (port 3000) en parallèle
+  npm run start:all  → lance Nginx puis l'app (Linux + Windows, tout-en-un)
   npm run import     → importe les GeoJSON de data/geojson/ dans la DB (avec backup auto)
 
 Frontend : http://localhost:8080
@@ -43,6 +44,8 @@ LesPapillons/
 ├── reverse-proxy/
 │   ├── nginx.conf                  Config Nginx (port 80 → frontend 8080 + /api → 3000)
 │   └── README.md                   Installation et utilisation
+├── scripts/
+│   └── start-all.js               Démarrage Nginx + app (npm run start:all)
 ├── data/
 │   ├── geojson/                    Fichiers GeoJSON à importer (*.geojson)
 │   └── backup/                     Backups auto de dev.db (format: dev_YYYY-MM-DD_HHhMM.db)
