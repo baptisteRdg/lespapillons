@@ -553,7 +553,21 @@ function setupPopupEventListeners(activity) {
     // Bouton favoris
     const favoriteBtn = document.querySelector('[data-action="favorite"]');
     if (favoriteBtn) {
-        favoriteBtn.addEventListener('click', () => toggleFavorite(activity.id));
+        favoriteBtn.addEventListener('click', () => {
+            toggleFavorite(activity.id, {
+                id: activity.id,
+                name: activity.title,
+                lat: activity.lat,
+                lng: activity.lng,
+                type: activity.category
+            });
+            // Mettre à jour le bouton sans recharger toute la fiche
+            const isFav = isActivityFavorite(activity.id);
+            favoriteBtn.classList.toggle('active', isFav);
+            favoriteBtn.querySelector('i').className = `${isFav ? 'fa-solid' : 'fa-regular'} fa-heart`;
+            const label = favoriteBtn.querySelector('span');
+            if (label) label.textContent = isFav ? 'Favori' : 'Ajouter';
+        });
     }
     
     // Bouton itinéraire
@@ -577,26 +591,28 @@ function setupPopupEventListeners(activity) {
  * Ajoute ou retire une activité des favoris
  * @param {number} activityId - ID de l'activité
  */
-function toggleFavorite(activityId) {
+function toggleFavorite(activityId, activityData = null) {
     const favorites = getFavorites();
     const existingIndex = favorites.findIndex(f => f.id === activityId);
     
     if (existingIndex > -1) {
-        // Retirer des favoris
         favorites.splice(existingIndex, 1);
         showToast('Retiré des favoris', 'info');
     } else {
-        // Ajouter aux favoris - récupérer les infos minimales depuis les activités chargées
-        const activity = activities.find(a => a.id === activityId);
-        if (activity) {
+        // Priorité : données passées directement, sinon chercher dans activities[]
+        const source = activityData || activities.find(a => a.id === activityId);
+        if (source) {
             favorites.push({
-                id: activity.id,
-                name: activity.title,
-                lat: activity.lat,
-                lng: activity.lng,
-                type: activity.category
+                id: source.id,
+                name: source.name || source.title,
+                lat: source.lat,
+                lng: source.lng,
+                type: source.type || source.category
             });
             showToast('Ajouté aux favoris !', 'success');
+        } else {
+            console.warn(`⚠️ Impossible d'ajouter le favori #${activityId} : données introuvables`);
+            return;
         }
     }
     
