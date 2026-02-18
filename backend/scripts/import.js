@@ -281,6 +281,47 @@ async function importGeoJSONFile(filePath) {
 }
 
 /**
+ * Crée une sauvegarde de la base de données avec horodatage
+ */
+function backupDatabase() {
+    const dbPath = path.join(__dirname, '..', 'prisma', 'dev.db');
+    const backupDir = path.join(__dirname, '..', '..', 'data', 'backup');
+    
+    // Vérifier si la base de données existe
+    if (!fs.existsSync(dbPath)) {
+        console.log('⚠️  Aucune base de données à sauvegarder\n');
+        return;
+    }
+    
+    // Créer le dossier backup s'il n'existe pas
+    if (!fs.existsSync(backupDir)) {
+        fs.mkdirSync(backupDir, { recursive: true });
+        console.log('📁 Dossier backup créé\n');
+    }
+    
+    // Créer le nom du fichier avec la date et l'heure
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    
+    const backupFileName = `dev_${year}-${month}-${day}_${hours}h${minutes}.db`;
+    const backupPath = path.join(backupDir, backupFileName);
+    
+    // Copier le fichier
+    try {
+        fs.copyFileSync(dbPath, backupPath);
+        const stats = fs.statSync(backupPath);
+        const sizeMB = (stats.size / (1024 * 1024)).toFixed(2);
+        console.log(`💾 Sauvegarde créée : ${backupFileName} (${sizeMB} MB)\n`);
+    } catch (error) {
+        console.error(`❌ Erreur lors de la sauvegarde : ${error.message}\n`);
+    }
+}
+
+/**
  * Import tous les fichiers GeoJSON du dossier data/geojson/
  */
 async function importAllGeoJSON() {
@@ -294,6 +335,9 @@ async function importAllGeoJSON() {
 ║                                                   ║
 ╚═══════════════════════════════════════════════════╝
     `);
+    
+    // Sauvegarder la base de données avant l'import
+    backupDatabase();
     
     // Vérifier que le dossier existe
     if (!fs.existsSync(geojsonDir)) {

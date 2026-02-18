@@ -1,0 +1,2 @@
+# Gardez ce fichier pour que Git conserve le dossier backup
+# Les fichiers .db sont ignorés par .gitignore
