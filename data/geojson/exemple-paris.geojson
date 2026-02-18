@@ -1,0 +1,46 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [2.3376, 48.8606]
+      },
+      "properties": {
+        "name": "Musée du Louvre",
+        "amenity": "museum",
+        "addr:housenumber": "99",
+        "addr:street": "Rue de Rivoli",
+        "addr:postcode": "75001",
+        "addr:city": "Paris",
+        "phone": "+33 1 40 20 50 50",
+        "website": "https://www.louvre.fr",
+        "description": "Le plus grand musée d'art au monde",
+        "opening_hours": "Mo-Su 09:00-18:00; We,Fr 09:00-21:45",
+        "wheelchair": "yes",
+        "wikidata": "Q19675"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [2.3922, 48.8784]
+      },
+      "properties": {
+        "name": "Parc des Buttes-Chaumont",
+        "leisure": "park",
+        "addr:housenumber": "1",
+        "addr:street": "Rue Botzaris",
+        "addr:postcode": "75019",
+        "addr:city": "Paris",
+        "website": "https://www.paris.fr/equipements/parc-des-buttes-chaumont-18536",
+        "description": "Un parc pittoresque avec des falaises et un lac",
+        "opening_hours": "Mo-Su 07:00-22:00",
+        "surface": "grass",
+        "lit": "yes"
+      }
+    }
+  ]
+}

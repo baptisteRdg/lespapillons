@@ -1,0 +1,5 @@
+# Ignorer tous les fichiers GeoJSON dans Git
+*.geojson
+
+# Exception : Garder les fichiers d'exemple
+!exemple-*.geojson

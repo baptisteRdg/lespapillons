@@ -1,0 +1,23 @@
+{
+  "name": "les-papillons",
+  "version": "1.0.0",
+  "description": "Application cartographique pour découvrir des activités locales",
+  "scripts": {
+    "start": "concurrently \"npm run start:backend\" \"npm run start:frontend\"",
+    "start:backend": "cd backend && npm start",
+    "start:frontend": "cd frontend && npm start",
+    "import": "cd backend && npm run import",
+    "install:all": "npm install && cd backend && npm install"
+  },
+  "keywords": [
+    "carte",
+    "activités",
+    "leaflet",
+    "express"
+  ],
+  "author": "Baptiste Rodrigues",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

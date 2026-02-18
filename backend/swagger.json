@@ -1,0 +1,466 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Les Papillons API",
+    "description": "API REST pour la gestion des activités et favoris",
+    "version": "1.0.0",
+    "contact": {
+      "name": "Baptiste Rodrigues"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Serveur de développement"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Activities",
+      "description": "Gestion des activités"
+    },
+    {
+      "name": "Favorites",
+      "description": "Gestion des favoris"
+    }
+  ],
+  "paths": {
+    "/api/activities": {
+      "get": {
+        "tags": ["Activities"],
+        "summary": "Récupérer toutes les activités",
+        "description": "Retourne la liste de toutes les activités avec filtres optionnels",
+        "parameters": [
+          {
+            "name": "type",
+            "in": "query",
+            "description": "Filtrer par type d'activité",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "lat",
+            "in": "query",
+            "description": "Latitude du centre de recherche",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "lng",
+            "in": "query",
+            "description": "Longitude du centre de recherche",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "radius",
+            "in": "query",
+            "description": "Rayon de recherche en mètres",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Liste des activités",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "count": { "type": "integer" },
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/Activity" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Activities"],
+        "summary": "Créer une nouvelle activité",
+        "description": "Ajoute une nouvelle activité dans la base de données",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ActivityInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Activité créée avec succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "data": { "$ref": "#/components/schemas/Activity" }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Données invalides"
+          }
+        }
+      }
+    },
+    "/api/activities/{id}": {
+      "get": {
+        "tags": ["Activities"],
+        "summary": "Récupérer une activité par ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Détails de l'activité",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "data": { "$ref": "#/components/schemas/Activity" }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Activité non trouvée"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Activities"],
+        "summary": "Mettre à jour une activité",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ActivityInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Activité mise à jour",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "data": { "$ref": "#/components/schemas/Activity" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Activities"],
+        "summary": "Supprimer une activité",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Activité supprimée"
+          },
+          "404": {
+            "description": "Activité non trouvée"
+          }
+        }
+      }
+    },
+    "/api/favorites": {
+      "get": {
+        "tags": ["Favorites"],
+        "summary": "Récupérer les favoris",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "query",
+            "description": "ID de l'utilisateur",
+            "schema": {
+              "type": "string",
+              "default": "default-user"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Liste des favoris avec détails des activités",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "count": { "type": "integer" },
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/Favorite" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Favorites"],
+        "summary": "Ajouter un favori",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["activityId"],
+                "properties": {
+                  "activityId": {
+                    "type": "integer",
+                    "description": "ID de l'activité à ajouter en favori"
+                  },
+                  "userId": {
+                    "type": "string",
+                    "default": "default-user"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Favori ajouté",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "message": { "type": "string" },
+                    "data": { "$ref": "#/components/schemas/Favorite" }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Favori déjà existant"
+          }
+        }
+      }
+    },
+    "/api/favorites/{activityId}": {
+      "delete": {
+        "tags": ["Favorites"],
+        "summary": "Retirer un favori",
+        "parameters": [
+          {
+            "name": "activityId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "userId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": "default-user"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Favori supprimé"
+          },
+          "404": {
+            "description": "Favori non trouvé"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Activity": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "ID unique"
+          },
+          "name": {
+            "type": "string",
+            "description": "Nom de l'activité (OBLIGATOIRE)"
+          },
+          "type": {
+            "type": "string",
+            "description": "Type d'activité (OBLIGATOIRE)",
+            "example": "musée"
+          },
+          "latitude": {
+            "type": "number",
+            "format": "float",
+            "description": "Latitude (OBLIGATOIRE)"
+          },
+          "longitude": {
+            "type": "number",
+            "format": "float",
+            "description": "Longitude (OBLIGATOIRE)"
+          },
+          "address": {
+            "type": "string",
+            "description": "Adresse complète (OPTIONNEL)",
+            "nullable": true
+          },
+          "phone": {
+            "type": "string",
+            "description": "Numéro de téléphone (OPTIONNEL)",
+            "nullable": true
+          },
+          "website": {
+            "type": "string",
+            "description": "Site web (OPTIONNEL)",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "description": "Description (OPTIONNEL)",
+            "nullable": true
+          },
+          "openingHours": {
+            "type": "string",
+            "description": "Horaires d'ouverture (OPTIONNEL)",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ActivityInput": {
+        "type": "object",
+        "required": ["name", "type", "latitude", "longitude"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Nom de l'activité (OBLIGATOIRE)"
+          },
+          "type": {
+            "type": "string",
+            "description": "Type d'activité (OBLIGATOIRE)",
+            "example": "musée"
+          },
+          "latitude": {
+            "type": "number",
+            "format": "float",
+            "description": "Latitude (OBLIGATOIRE)"
+          },
+          "longitude": {
+            "type": "number",
+            "format": "float",
+            "description": "Longitude (OBLIGATOIRE)"
+          },
+          "address": {
+            "type": "string",
+            "description": "Adresse complète (OPTIONNEL)"
+          },
+          "phone": {
+            "type": "string",
+            "description": "Numéro de téléphone (OPTIONNEL)"
+          },
+          "website": {
+            "type": "string",
+            "description": "Site web (OPTIONNEL)"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description (OPTIONNEL)"
+          },
+          "openingHours": {
+            "type": "string",
+            "description": "Horaires d'ouverture (OPTIONNEL)"
+          }
+        }
+      },
+      "Favorite": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "userId": {
+            "type": "string"
+          },
+          "activityId": {
+            "type": "integer"
+          },
+          "activity": {
+            "$ref": "#/components/schemas/Activity"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    }
+  }
+}

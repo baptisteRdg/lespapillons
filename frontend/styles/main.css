@@ -1,0 +1,482 @@
+/* Styles personnalisés pour Les Papillons */
+
+/* Ombres subtiles pour donner du volume */
+.header-shadow {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+/* Effet Glass Morphism moderne pour le header */
+header {
+    background: rgba(255, 255, 255, 0.7) !important;
+    backdrop-filter: blur(12px) saturate(180%);
+    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Support pour les navigateurs qui ne supportent pas backdrop-filter */
+@supports not (backdrop-filter: blur(12px)) {
+    header {
+        background: rgba(255, 255, 255, 0.95) !important;
+    }
+}
+
+.sidebar-shadow {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+/* Effet Glass Morphism pour la sidebar */
+#favoritesSidebar {
+    background: rgba(255, 255, 255, 0.75) !important;
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+@supports not (backdrop-filter: blur(20px)) {
+    #favoritesSidebar {
+        background: rgba(255, 255, 255, 0.98) !important;
+    }
+}
+
+/* Effet glass sur le header de la sidebar */
+#favoritesSidebar > div:first-child {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.85) 0%, rgba(96, 165, 250, 0.85) 100%) !important;
+    backdrop-filter: blur(12px) saturate(150%);
+    -webkit-backdrop-filter: blur(12px) saturate(150%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Effet glass sur le contenu des favoris */
+#favoritesContent {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+#favoritesContent > div {
+    background: rgba(249, 250, 251, 0.5) !important;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+#favoritesContent > div:hover {
+    background: rgba(243, 244, 246, 0.6) !important;
+}
+
+.button-shadow {
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+.search-input {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    background: rgba(255, 255, 255, 0.6) !important;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.4) !important;
+}
+
+.search-input:focus {
+    background: rgba(255, 255, 255, 0.8) !important;
+}
+
+/* Effet glass sur le bouton favoris */
+#favoritesBtn {
+    background: rgba(239, 246, 255, 0.6) !important;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+#favoritesBtn:hover {
+    background: rgba(219, 234, 254, 0.7) !important;
+}
+
+/* Cacher l'attribution Leaflet et les contrôles de zoom */
+.leaflet-control-attribution,
+.leaflet-control-zoom {
+    display: none !important;
+}
+
+/* Style pour le cercle de rayon utilisateur */
+.user-radius-circle {
+    fill: rgba(59, 130, 246, 0.08);
+    stroke: rgba(59, 130, 246, 0.4);
+    stroke-width: 2;
+    cursor: default;
+}
+
+/* Infobulle pour le rayon */
+.radius-tooltip {
+    background: rgba(59, 130, 246, 0.95) !important;
+    border: none !important;
+    color: white !important;
+    font-weight: 600;
+    font-size: 14px;
+    padding: 6px 12px !important;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.radius-tooltip::before {
+    border-top-color: rgba(59, 130, 246, 0.95) !important;
+}
+
+/* Style pour le marqueur utilisateur */
+.user-marker {
+    width: 20px;
+    height: 20px;
+    background: white;
+    border: 3px solid #3b82f6;
+    border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3), 0 0 0 rgba(59, 130, 246, 0.4);
+    cursor: move;
+    position: relative;
+    z-index: 1000;
+}
+
+.user-marker::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 8px;
+    height: 8px;
+    background: #3b82f6;
+    border-radius: 50%;
+}
+
+/* Animation pour le marker actif */
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+.marker-active {
+    animation: pulse 2s infinite;
+}
+
+/* Style pour les popups Leaflet avec effet Glass Morphism */
+.leaflet-popup-content-wrapper {
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+    background: rgba(255, 255, 255, 0.75) !important;
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.leaflet-popup-tip {
+    background: rgba(255, 255, 255, 0.75) !important;
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+}
+
+@supports not (backdrop-filter: blur(20px)) {
+    .leaflet-popup-content-wrapper {
+        background: rgba(255, 255, 255, 1) !important;
+    }
+    .leaflet-popup-tip {
+        background: rgba(255, 255, 255, 1) !important;
+    }
+}
+
+.leaflet-popup-content {
+    margin: 0;
+    padding: 0;
+    min-width: 280px;
+}
+
+/* Style personnalisé pour le contenu du popup */
+.popup-header {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.95) 0%, rgba(96, 165, 250, 0.95) 100%);
+    color: white;
+    padding: 1rem;
+    border-radius: 12px 12px 0 0;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.popup-body {
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.popup-footer {
+    padding: 0 1rem 1rem 1rem;
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+/* Boutons du popup */
+.popup-btn {
+    flex: 1;
+    min-width: 120px;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.2s;
+    cursor: pointer;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.popup-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn-favorite {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+
+.btn-favorite:hover {
+    background-color: #fde68a;
+}
+
+.btn-favorite.active {
+    background-color: #fbbf24;
+    color: white;
+}
+
+.btn-itinerary {
+    background-color: #dbeafe;
+    color: #1e40af;
+}
+
+.btn-itinerary:hover {
+    background-color: #bfdbfe;
+}
+
+.btn-similar {
+    background-color: #e9d5ff;
+    color: #6b21a8;
+}
+
+.btn-similar:hover {
+    background-color: #d8b4fe;
+}
+
+/* Badge catégorie */
+.category-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: capitalize;
+    background-color: #e5e7eb;
+    color: #374151;
+}
+
+.category-musee,
+.category-musée {
+    background-color: #dbeafe;
+    color: #1e40af;
+}
+
+.category-parc {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+.category-cinema,
+.category-cinéma {
+    background-color: #e0e7ff;
+    color: #4338ca;
+}
+
+.category-vie-nocturne,
+.category-nightclub {
+    background-color: #f3e8ff;
+    color: #6b21a8;
+}
+
+.category-restaurant {
+    background-color: #fed7aa;
+    color: #9a3412;
+}
+
+.category-golf {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+/* Scrollbar personnalisée pour la sidebar */
+#favoritesContent::-webkit-scrollbar {
+    width: 6px;
+}
+
+#favoritesContent::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+#favoritesContent::-webkit-scrollbar-thumb {
+    background: #3b82f6;
+    border-radius: 3px;
+}
+
+#favoritesContent::-webkit-scrollbar-thumb:hover {
+    background: #2563eb;
+}
+
+/* Responsive Mobile */
+@media (max-width: 640px) {
+    /* Header mobile */
+    header .container {
+        flex-direction: column;
+        gap: 0.75rem;
+        padding: 0.75rem 1rem;
+    }
+    
+    header .flex-1 {
+        width: 100%;
+    }
+    
+    #searchInput {
+        font-size: 14px;
+        padding: 0.5rem 0.75rem 0.5rem 2rem;
+    }
+    
+    #favoritesBtn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    /* Sidebar mobile */
+    #favoritesSidebar {
+        width: calc(100% - 2rem);
+        right: 1rem;
+        left: 1rem;
+        max-height: 70vh;
+    }
+    
+    /* Popup mobile */
+    .leaflet-popup-content-wrapper {
+        max-width: calc(100vw - 4rem) !important;
+    }
+    
+    .popup-content {
+        max-width: 280px;
+    }
+    
+    .popup-header h3 {
+        font-size: 1.125rem;
+    }
+    
+    .popup-footer {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .popup-btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    /* Handle de redimensionnement mobile */
+    .resize-handle {
+        width: 40px;
+        height: 26px;
+    }
+    
+    .resize-handle-inner {
+        width: 36px;
+        height: 22px;
+    }
+    
+    .resize-handle-inner::before {
+        font-size: 14px;
+    }
+    
+    /* User marker plus visible sur mobile */
+    .user-marker {
+        width: 18px;
+        height: 18px;
+    }
+}
+
+/* Animation d'entrée pour les éléments */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in-up {
+    animation: fadeInUp 0.5s ease-out;
+}
+
+/* Handle de redimensionnement du rayon */
+.resize-handle-container {
+    cursor: ew-resize !important;
+    z-index: 3000;
+}
+
+.resize-handle {
+    width: 50px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.resize-handle-inner {
+    width: 44px;
+    height: 26px;
+    background: #9ca3af;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+/* Flèche double sens à l'intérieur */
+.resize-handle-inner::before {
+    content: '⇔';
+    font-size: 18px;
+    color: #374151;
+    font-weight: bold;
+    line-height: 1;
+}
+
+.resize-handle:hover .resize-handle-inner {
+    background: #6b7280;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+}
+
+.resize-handle:hover .resize-handle-inner::before {
+    color: #1f2937;
+}
+
+.resize-handle:active .resize-handle-inner {
+    background: #4b5563;
+}
+
+.resize-handle:active .resize-handle-inner::before {
+    color: #111827;
+}

@@ -1,0 +1,17 @@
+{
+  "name": "les-papillons-frontend",
+  "version": "1.0.0",
+  "description": "Frontend pour l'application Les Papillons - Découverte d'activités",
+  "scripts": {
+    "start": "npx http-server -p 8080 -c-1 --proxy http://localhost:8080? -o",
+    "dev": "npx http-server -p 8080 -c-1 --cors -o"
+  },
+  "keywords": [
+    "frontend",
+    "carte",
+    "activités",
+    "leaflet"
+  ],
+  "author": "Baptiste Rodrigues",
+  "license": "ISC"
+}

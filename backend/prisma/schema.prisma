@@ -1,0 +1,60 @@
+// This is your Prisma schema file
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+// Modèle Activité
+model Activity {
+  id          Int        @id @default(autoincrement())
+  
+  // Champs OBLIGATOIRES
+  name        String
+  type        String
+  latitude    Float
+  longitude   Float
+  
+  // Champs OPTIONNELS (bonus)
+  address     String?
+  phone       String?
+  website     String?
+  description String?
+  openingHours String?
+  
+  // Propriétés FLEXIBLES (pour toutes les autres données GeoJSON)
+  // Stocké en String (JSON sérialisé) car SQLite ne supporte pas Json
+  properties  String?
+  
+  // Métadonnées
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  
+  // Relations
+  favorites   Favorite[]
+  
+  @@map("activities")
+}
+
+// Modèle Favori
+model Favorite {
+  id         Int      @id @default(autoincrement())
+  
+  // Association utilisateur (pour l'instant userId en string, plus tard ce sera une vraie relation)
+  userId     String   @default("default-user")
+  
+  // Relation avec l'activité
+  activityId Int
+  activity   Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  
+  // Métadonnées
+  createdAt  DateTime @default(now())
+  
+  // Un utilisateur ne peut pas avoir 2x le même favori
+  @@unique([userId, activityId])
+  @@map("favorites")
+}
