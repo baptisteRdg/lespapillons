@@ -626,29 +626,9 @@ function toggleFavorite(activityId, activityData = null) {
  * @param {number} destLng - Longitude de destination
  */
 function openItinerary(destLat, destLng) {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-                const userLat = position.coords.latitude;
-                const userLng = position.coords.longitude;
-                const url = `https://www.google.com/maps/dir/?api=1&origin=${userLat},${userLng}&destination=${destLat},${destLng}&travelmode=driving`;
-                window.open(url, '_blank');
-            },
-            (error) => {
-                console.warn('Géolocalisation refusée ou indisponible:', error);
-                const url = `https://www.google.com/maps/dir/?api=1&origin=48.8584,2.2945&destination=${destLat},${destLng}&travelmode=driving`;
-                window.open(url, '_blank');
-            },
-            {
-                enableHighAccuracy: true,
-                timeout: 5000,
-                maximumAge: 0
-            }
-        );
-    } else {
-        const url = `https://www.google.com/maps/dir/?api=1&destination=${destLat},${destLng}&travelmode=driving`;
-        window.open(url, '_blank');
-    }
+    const pos = userMarker.getLatLng();
+    const url = `https://www.google.com/maps/dir/?api=1&origin=${pos.lat},${pos.lng}&destination=${destLat},${destLng}&travelmode=driving`;
+    window.open(url, '_blank');
 }
 
 /**
