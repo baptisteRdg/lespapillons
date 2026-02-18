@@ -6,7 +6,7 @@
 const MAP_CONFIG = {
     center: [48.8566, 2.3522], // Paris
     zoom: 12,
-    minZoom: 11,
+    minZoom: 3,
     maxZoom: 18,
     defaultRadiusMeters: 5000, // Rayon par défaut de 5km
     minRadiusMeters: 500, // Rayon minimum de 500m
@@ -773,28 +773,68 @@ function showToast(message, type = 'success') {
  * Filtre les activités selon le terme de recherche
  * @param {string} searchTerm - Terme de recherche
  */
-function searchActivities(searchTerm) {
+async function searchActivities(searchTerm) {
     if (!searchTerm || searchTerm.trim() === '') {
-        displayActivities(activities);
+        // Recherche vide : recharger les activités normales
+        await loadActivitiesInRadius();
         return;
     }
     
-    const term = searchTerm.toLowerCase().trim();
+    const term = searchTerm.trim();
+    let results = [];
     
-    // Filtrer les activités par nom, type ou ville
-    const filtered = activities.filter(activity => {
-        const title = activity.title.toLowerCase();
-        const category = activity.category.toLowerCase();
+    if (circleEnabled) {
+        // Avec rayon actif : filtrage côté client sur les activités déjà chargées
+        results = activities.filter(activity => {
+            const title = activity.title.toLowerCase();
+            const category = activity.category.toLowerCase();
+            return title.includes(term.toLowerCase()) || category.includes(term.toLowerCase());
+        });
+    } else {
+        // Sans rayon : recherche dans toute la base côté serveur
+        console.log(`🔍 Recherche globale côté serveur pour "${term}"`);
+        const userPos = userMarker.getLatLng();
+        results = await searchActivitiesGlobal(term, userPos.lat, userPos.lng);
+    }
+    
+    displayActivities(results);
+    
+    if (results.length === 0) {
+        showToast(`Aucune activité trouvée pour "${term}"`, 'info');
+    } else {
+        showToast(`${results.length} activité(s) trouvée(s)`, 'success');
+        await centerOnSearchResults(results);
+    }
+}
+
+/**
+ * Centre la carte sur les résultats de recherche
+ * - 1 résultat : centrage avec offset et ouverture du popup
+ * - Plusieurs résultats : fitBounds pour englober tous les markers visibles
+ * @param {Array} results - Liste des activités trouvées
+ */
+async function centerOnSearchResults(results) {
+    if (results.length === 1) {
+        const activity = results[0];
+        const zoom = Math.max(map.getZoom(), 15);
+        const markerPoint = map.project([activity.lat, activity.lng], zoom);
+        const offsetLatLng = map.unproject(markerPoint.subtract([0, 150]), zoom);
+        map.setView(offsetLatLng, zoom);
         
-        return title.includes(term) || category.includes(term);
-    });
-    
-    displayActivities(filtered);
-    
-    if (filtered.length === 0) {
-        showToast(`Aucune activité trouvée pour "${searchTerm}"`, 'info');
-    } else if (filtered.length < activities.length) {
-        showToast(`${filtered.length} activité(s) trouvée(s)`, 'success');
+        const marker = markers.find(m =>
+            Math.abs(m.getLatLng().lat - activity.lat) < 0.0001 &&
+            Math.abs(m.getLatLng().lng - activity.lng) < 0.0001
+        );
+        if (marker) {
+            await loadAndShowActivityDetails(activity.id, marker);
+        }
+    } else {
+        // Construire les bounds pour englober tous les résultats
+        const bounds = L.latLngBounds(results.map(a => [a.lat, a.lng]));
+        map.fitBounds(bounds, {
+            padding: [60, 60],  // Marge autour des markers
+            maxZoom: 14         // Ne pas zoomer trop près si les points sont proches
+        });
     }
 }
 

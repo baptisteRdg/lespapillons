@@ -147,6 +147,44 @@ async function getActivityDetails(activityId) {
 }
 
 /**
+ * Recherche des activités dans toute la base (sans limite de 100)
+ * Utilisé quand le rayon de recherche est désactivé
+ * @param {string} searchTerm - Terme de recherche
+ * @param {number} centerLat - Latitude du centre (pour tri par proximité)
+ * @param {number} centerLng - Longitude du centre
+ * @returns {Promise<Array>} Liste des activités correspondantes
+ */
+async function searchActivitiesGlobal(searchTerm, centerLat, centerLng) {
+    try {
+        const params = new URLSearchParams({ search: searchTerm });
+        if (centerLat && centerLng) {
+            params.append('lat', centerLat);
+            params.append('lng', centerLng);
+        }
+        const url = `${API_BASE_URL}/activities?${params.toString()}`;
+        console.log('🔍 API: Recherche globale', { url });
+
+        const response = await fetch(url);
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+        const result = await response.json();
+        const data = result.data || result;
+        console.log(`✅ API: ${data.length} résultat(s) pour "${searchTerm}"`);
+
+        return data.map(activity => ({
+            id: activity.id,
+            title: activity.name,
+            lat: activity.latitude,
+            lng: activity.longitude,
+            category: activity.type
+        }));
+    } catch (error) {
+        console.error('❌ API: Erreur recherche globale', error);
+        return [];
+    }
+}
+
+/**
  * Ajoute une activité aux favoris
  * @param {number} activityId - ID de l'activité
  * @returns {Promise<Object>} Résultat de l'opération
