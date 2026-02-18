@@ -76,7 +76,7 @@ app.get('/', (req, res) => {
  */
 app.get('/api/activities', async (req, res) => {
     try {
-        const { type, lat, lng, radius } = req.query;
+        const { type, lat, lng, radius, search } = req.query;
         
         // Récupérer uniquement les champs nécessaires pour l'affichage sur la carte
         let activities = await prisma.activity.findMany({
@@ -94,6 +94,15 @@ app.get('/api/activities', async (req, res) => {
         if (type) {
             activities = activities.filter(a => 
                 a.type.toLowerCase() === type.toLowerCase()
+            );
+        }
+        
+        // Filtrer par terme de recherche (nom ou type) si spécifié
+        if (search) {
+            const term = search.toLowerCase().trim();
+            activities = activities.filter(a =>
+                a.name.toLowerCase().includes(term) ||
+                a.type.toLowerCase().includes(term)
             );
         }
         
@@ -120,8 +129,8 @@ app.get('/api/activities', async (req, res) => {
             // Trier par distance (plus proche en premier)
             activities.sort((a, b) => a.distance - b.distance);
             
-            // Si pas de rayon (recherche sans limite), limiter à 100 résultats
-            if (!radius) {
+            // Si pas de rayon ET pas de recherche texte, limiter à 100 résultats
+            if (!radius && !search) {
                 activities = activities.slice(0, 100);
             }
             
