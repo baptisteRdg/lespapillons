@@ -147,53 +147,22 @@ async function getActivityDetails(activityId) {
 }
 
 /**
- * Ajoute une activité aux favoris
+ * Ajoute une activité aux favoris (localStorage uniquement)
  * @param {number} activityId - ID de l'activité
  * @returns {Promise<Object>} Résultat de l'opération
  */
 async function addToFavoritesAPI(activityId) {
-    try {
-        console.log(`⭐ API: Ajout favori #${activityId}`);
-        
-        const response = await fetch(`${API_BASE_URL}/favorites`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ 
-                userId: "default-user", // Utilisateur par défaut pour le PoC (String requis)
-                activityId: activityId 
-            })
-        });
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const result = await response.json();
-        console.log(`✅ API: Favori #${activityId} ajouté`);
-        
-        return { 
-            success: result.success !== false, 
-            message: result.message || "Ajouté aux favoris !" 
-        };
-        
-    } catch (error) {
-        console.error(`❌ API: Erreur ajout favori #${activityId}`, error);
-        return { success: false, message: "Erreur lors de l'ajout" };
-    }
+    // Fonction conservée pour compatibilité mais ne fait rien
+    // Les favoris sont gérés uniquement dans localStorage
+    return { success: true, message: "Favori géré localement" };
 }
 
 /**
- * Récupère une activité légère par son ID (pour les favoris)
+ * Récupère une activité légère par son ID (DEPRECATED - ne plus utiliser)
  * @param {number} activityId - ID de l'activité
  * @returns {Object|null} L'activité trouvée ou null
  */
 function getActivityLightById(activityId) {
-    const light = TEST_ACTIVITIES_LIGHT.find(activity => activity.id === activityId);
-    if (!light) return null;
-    
-    // Retourner une version avec les détails si disponibles en cache
-    const details = TEST_ACTIVITIES_DETAILS[activityId];
-    return details ? details : light;
+    // Chercher dans les activités chargées actuellement
+    return activities.find(a => a.id === activityId) || null;
 }
