@@ -1,8 +1,10 @@
 # 📁 Dossier GeoJSON
 
 Placez vos fichiers `.geojson` ici pour les importer dans la base de données.
+Les fichiers présent sont pris en compte dans le dépôt git.
 
-## 📝 Format Attendu
+
+## Format Attendu
 
 Le format **FeatureCollection** avec des `Point` :
 
@@ -29,23 +31,17 @@ Le format **FeatureCollection** avec des `Point` :
 }
 ```
 
-## 🚀 Import
+## Génération de la base de données 
 
 Depuis la **racine du projet** :
 
 ```bash
 npm run import
 ```
+Tous les fichiers `.geojson` de ce dossier seront importés automatiquement dans une seule base de données, celle-ci sera présente dans le dossier **backend/prisma**
+avec comme nom **dev.db**
 
-✅ Tous les fichiers `.geojson` de ce dossier seront importés automatiquement.
+## Backup
 
-## 📖 Documentation Complète
-
-Pour plus de détails sur le format et le mapping automatique :
-- Voir `backend/GEOJSON.md` pour la documentation complète
-- Les propriétés OSM (`amenity`, `tourism`, `leisure`, `shop`) sont mappées automatiquement
-
-## 📦 Exemples
-
-- `nightclubs.geojson` : 2620 activités importées ✅
-- `exemple-paris.geojson` : 2 activités de test ✅
+Une backup de la base de données est réalisé à chaque nouvelle génération, chaque fichier possède dans le nom du fichier la date et l'heure.
+les fichiers de backup sont présent dans le dossier **data/backup**, les fichiers ne sont pas pris en compte par git.
