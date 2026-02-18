@@ -6,8 +6,26 @@
  * - Détails d'activité : toutes les données (chargement différé au clic)
  */
 
-// URL de l'API
-const API_BASE_URL = 'http://localhost:3000/api';
+// Configuration de l'URL de l'API selon l'environnement
+function getApiBaseUrl() {
+    // Si on est en développement local (localhost ou 127.0.0.1)
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        return 'http://localhost:3000/api';
+    }
+    
+    // En production, utiliser l'URL relative (même domaine) ou construire l'URL
+    // Option 1 : URL relative (si frontend et backend sur même domaine/port)
+    // return '/api';
+    
+    // Option 2 : Utiliser le hostname actuel avec le port du backend
+    return `${window.location.protocol}//${window.location.hostname}:3000/api`;
+    
+    // Option 3 : URL absolue si backend sur domaine/port différent
+    // return 'https://votre-domaine.com/api';
+}
+
+const API_BASE_URL = getApiBaseUrl();
+console.log('🌐 API URL:', API_BASE_URL);
 
 /**
  * Calcule la distance entre deux points géographiques (formule de Haversine)
