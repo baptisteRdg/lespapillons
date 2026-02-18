@@ -2,6 +2,21 @@
  * Module Carte - Gestion de la carte Leaflet et des interactions
  */
 
+// Version du localStorage — à incrémenter lors d'un changement de DB ou de format de données
+const STORAGE_VERSION = '1';
+
+/**
+ * Vérifie la version du localStorage et purge les données si obsolètes
+ */
+function checkStorageVersion() {
+    const stored = localStorage.getItem('storage_version');
+    if (stored !== STORAGE_VERSION) {
+        console.warn(`🗑️ LocalStorage obsolète (v${stored} → v${STORAGE_VERSION}), purge...`);
+        localStorage.removeItem('favorites');
+        localStorage.setItem('storage_version', STORAGE_VERSION);
+    }
+}
+
 // Configuration de la carte
 const MAP_CONFIG = {
     center: [48.8566, 2.3522], // Paris
@@ -862,23 +877,30 @@ async function centerOnSearchResults(results) {
  * Initialisation de l'application au chargement de la page
  */
 document.addEventListener('DOMContentLoaded', () => {
+    checkStorageVersion();
     initMap();
     
+    // Timestamp pour éviter la fermeture immédiate sur mobile (stopPropagation peu fiable sur iOS)
+    let sidebarOpenedAt = 0;
+
     // Configuration des événements
     const favoritesBtn = document.getElementById('favoritesBtn');
     if (favoritesBtn) {
-        favoritesBtn.addEventListener('click', (e) => {
-            e.stopPropagation(); // Empêcher la propagation vers le document
+        favoritesBtn.addEventListener('click', () => {
             showFavoritesSidebar();
+            sidebarOpenedAt = Date.now();
         });
     }
     
     const closeSidebar = document.getElementById('closeSidebar');
     if (closeSidebar) {
-        closeSidebar.addEventListener('click', (e) => {
-            e.stopPropagation();
-            hideFavoritesSidebar();
-        });
+        closeSidebar.addEventListener('click', () => hideFavoritesSidebar());
+    }
+
+    // Empêcher les clics à l'intérieur de la sidebar de la fermer
+    const sidebar = document.getElementById('favoritesSidebar');
+    if (sidebar) {
+        sidebar.addEventListener('click', (e) => e.stopPropagation());
     }
     
     // Configuration de la barre de recherche
@@ -903,13 +925,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-    // Fermer la sidebar en cliquant en dehors
+    // Fermer la sidebar en cliquant/touchant en dehors
+    // Le délai de 50ms protège contre l'ouverture+fermeture immédiate sur mobile
     document.addEventListener('click', (e) => {
-        const sidebar = document.getElementById('favoritesSidebar');
-        const favBtn = document.getElementById('favoritesBtn');
-        const isOpen = sidebar.dataset.open === 'true';
-        if (isOpen && !sidebar.contains(e.target) && !favBtn.contains(e.target)) {
-            hideFavoritesSidebar();
-        }
+        if (Date.now() - sidebarOpenedAt < 50) return;
+        const sidebarEl = document.getElementById('favoritesSidebar');
+        const isOpen = sidebarEl.dataset.open === 'true';
+        if (isOpen) hideFavoritesSidebar();
     });
 });
