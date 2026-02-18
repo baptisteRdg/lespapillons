@@ -1,0 +1,118 @@
+========================================================
+PROJET : Les Papillons - Outil cartographique interactif
+========================================================
+
+DESCRIPTION
+-----------
+Application web de découverte d'activités locales (musées, parcs, cinémas, golf, etc.)
+inspirée de Google Maps. Frontend Leaflet.js + TailwindCSS + Vanilla JS.
+Backend Node.js + Express + Prisma + SQLite.
+
+
+LANCEMENT
+---------
+Depuis la racine du projet :
+  npm start          → lance frontend (port 8080) + backend (port 3000) en parallèle
+  npm run import     → importe les GeoJSON de data/geojson/ dans la DB (avec backup auto)
+
+Frontend : http://localhost:8080
+Backend  : http://localhost:3000
+Swagger  : http://localhost:3000/api-docs
+
+
+STRUCTURE DU PROJET
+-------------------
+LesPapillons/
+├── frontend/
+│   ├── index.html                  HTML principal
+│   ├── styles/main.css             Styles custom + TailwindCSS overrides
+│   ├── scripts/
+│   │   ├── api.js                  Appels API backend
+│   │   └── map.js                  Logique Leaflet, UI, favoris, recherche
+│   └── assets/icon/                Icônes SVG locales (film, golf, musee, music, pool, tree)
+├── backend/
+│   ├── app.js                      Serveur Express + routes API
+│   ├── start.js                    Script de démarrage (kill port 3000 si occupé)
+│   ├── prisma/
+│   │   ├── schema.prisma           Schéma DB (Activity, Favorite)
+│   │   ├── dev.db                  Base SQLite
+│   │   └── seed.js                 Données de test
+│   ├── helpers/geojson.js          Conversion GeoJSON ↔ Activity
+│   ├── scripts/import.js           Import GeoJSON + backup auto
+│   └── swagger.json                Spec OpenAPI
+├── data/
+│   ├── geojson/                    Fichiers GeoJSON à importer (*.geojson)
+│   └── backup/                     Backups auto de dev.db (format: dev_YYYY-MM-DD_HHhMM.db)
+├── package.json                    Scripts racine (start, import)
+└── DEPLOYMENT.md                   Guide déploiement Linux/Windows
+
+
+FONCTIONNALITÉS IMPLÉMENTÉES
+-----------------------------
+Carte :
+- Fond de carte Carto Light (pas de CDN tile supplémentaire)
+- Marqueur utilisateur draggable (point de départ pour l'itinéraire)
+- Cercle de rayon de recherche activable/désactivable avec handle de redimensionnement
+- Sans rayon : 100 résultats les plus proches
+- Avec rayon : activités dans le rayon
+
+Recherche :
+- Barre de recherche (déclenchement à partir de 4 caractères, debounce 300ms)
+- Avec rayon actif : filtrage côté client
+- Sans rayon : recherche côté serveur dans toute la DB (sans limite de 100)
+- 1 résultat → centrage + ouverture automatique de la fiche
+- Plusieurs résultats → fitBounds pour englober tous les marqueurs
+- Barre vidée → rechargement des activités normales
+
+Fiche activité (popup) :
+- Chargement à la demande au clic sur un marqueur
+- Masque les champs vides (adresse, description, site, téléphone)
+- Bouton Favoris (mise à jour visuelle immédiate)
+- Bouton Itinéraire → Google Maps avec point de départ = marqueur utilisateur
+- Bouton Similaires (placeholder)
+
+Favoris :
+- Stockage localStorage uniquement (id, name, lat, lng, type)
+- Sidebar avec liste des favoris
+- Clic sur un favori → centrage carte + ouverture fiche
+- Si le marqueur n'est pas dans les résultats actuels → marqueur temporaire créé et ajouté
+- Versioning localStorage (constante STORAGE_VERSION dans map.js) : incrémenter si changement DB
+
+Icônes :
+- SVG locaux pour : musée, cinéma, parc/jardin, golf, piscine, vie nocturne/nightclub
+- Font Awesome CDN pour les autres icônes d'activités et tous les icônes UI
+
+Mobile :
+- Header : logo ligne 1, barre de recherche + bouton favoris ligne 2
+- Sidebar favoris pleine largeur
+- Popup responsive
+- Fix ouverture sidebar (timestamp anti-fermeture immédiate sur iOS/Android)
+
+
+ÉTAT DE LA BASE DE DONNÉES
+---------------------------
+Modèle Activity :
+  id, name (requis), type (requis), latitude (requis), longitude (requis)
+  address?, phone?, website?, description?, openingHours?, properties? (JSON string)
+
+Import GeoJSON :
+- Placer les fichiers .geojson dans data/geojson/
+- Lancer : npm run import
+- Backup automatique créé dans data/backup/ avant chaque import
+- Les polygones/multipolygones ne sont PAS encore gérés (bug en attente de fix)
+  → erreur Prisma si les coordonnées ne sont pas un Point
+
+
+POINTS EN ATTENTE / BUGS CONNUS
+---------------------------------
+1. GeoJSON Polygon/MultiPolygon : le script d'import plante si la géométrie n'est pas un Point.
+   Fix à faire : calculer le centroïde et l'utiliser comme lat/lng.
+
+2. Bouton "Similaires" dans la fiche : placeholder, non implémenté.
+
+
+VARIABLES IMPORTANTES DANS map.js
+-----------------------------------
+- STORAGE_VERSION = '1'   → incrémenter si changement de format des données localStorage
+- MAP_CONFIG.defaultRadiusMeters = 5000   → rayon par défaut (5km)
+- MAP_CONFIG.minZoom = 3                  → permet de voir toute l'Europe
