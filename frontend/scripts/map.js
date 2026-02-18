@@ -705,18 +705,36 @@ async function showFavoritesSidebar() {
                 const lng = parseFloat(element.dataset.lng);
                 const id = parseInt(element.dataset.id);
                 
-                map.setView([lat, lng], 15);
+                hideFavoritesSidebar();
                 
-                // Trouver le marker et charger les détails
-                const marker = markers.find(m => 
+                // Centrer la carte en décalant vers le bas pour que le popup soit centré
+                const zoom = Math.max(map.getZoom(), 15);
+                // Le popup s'affiche ~150px au-dessus du marker → on décale le centre vers le nord
+                const markerPoint = map.project([lat, lng], zoom);
+                const offsetLatLng = map.unproject(markerPoint.subtract([0, 150]), zoom);
+                map.setView(offsetLatLng, zoom);
+                
+                // Chercher le marker dans ceux affichés
+                let marker = markers.find(m => 
                     Math.abs(m.getLatLng().lat - lat) < 0.0001 && 
                     Math.abs(m.getLatLng().lng - lng) < 0.0001
                 );
-                if (marker) {
-                    await loadAndShowActivityDetails(id, marker);
+                
+                if (!marker) {
+                    // Marker non visible (hors rayon ou filtre) → créer un marker temporaire
+                    console.log(`📍 Marker #${id} absent de la carte, création d'un marker temporaire`);
+                    const fav = getFavorites().find(f => f.id === id);
+                    marker = createMarker({
+                        id: id,
+                        lat: lat,
+                        lng: lng,
+                        category: fav ? fav.type : 'autre'
+                    });
+                    // Ajouter au tableau markers pour qu'il persiste sur la carte
+                    markers.push(marker);
                 }
                 
-                hideFavoritesSidebar();
+                await loadAndShowActivityDetails(id, marker);
             });
         });
         
