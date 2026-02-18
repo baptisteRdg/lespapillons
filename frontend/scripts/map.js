@@ -573,17 +573,31 @@ function setupPopupEventListeners(activity) {
  * Ajoute ou retire une activité des favoris
  * @param {number} activityId - ID de l'activité
  */
+/**
+ * Ajoute ou retire une activité des favoris
+ * @param {number} activityId - ID de l'activité
+ */
 function toggleFavorite(activityId) {
     const favorites = getFavorites();
-    const index = favorites.indexOf(activityId);
+    const existingIndex = favorites.findIndex(f => f.id === activityId);
     
-    if (index > -1) {
-        favorites.splice(index, 1);
+    if (existingIndex > -1) {
+        // Retirer des favoris
+        favorites.splice(existingIndex, 1);
         showToast('Retiré des favoris', 'info');
     } else {
-        favorites.push(activityId);
-        showToast('Ajouté aux favoris !', 'success');
-        addToFavoritesAPI(activityId);
+        // Ajouter aux favoris - récupérer les infos minimales depuis les activités chargées
+        const activity = activities.find(a => a.id === activityId);
+        if (activity) {
+            favorites.push({
+                id: activity.id,
+                name: activity.title,
+                lat: activity.lat,
+                lng: activity.lng,
+                type: activity.category
+            });
+            showToast('Ajouté aux favoris !', 'success');
+        }
     }
     
     localStorage.setItem('favorites', JSON.stringify(favorites));
@@ -631,7 +645,7 @@ function showSimilarActivities(category) {
 
 /**
  * Récupère les favoris depuis localStorage
- * @returns {Array<number>} Liste des IDs des favoris
+ * @returns {Array<Object>} Liste des favoris avec {id, name, lat, lng, type}
  */
 function getFavorites() {
     const favoritesStr = localStorage.getItem('favorites');
@@ -644,7 +658,7 @@ function getFavorites() {
  * @returns {boolean} true si l'activité est favorite
  */
 function isActivityFavorite(activityId) {
-    return getFavorites().includes(activityId);
+    return getFavorites().some(f => f.id === activityId);
 }
 
 /**
@@ -670,25 +684,15 @@ async function showFavoritesSidebar() {
     if (favorites.length === 0) {
         content.innerHTML = '<p class="text-gray-500 text-center py-8">Aucun favori pour le moment</p>';
     } else {
-        // Charger les infos légères des favoris
-        const favoriteActivities = favorites
-            .map(id => getActivityLightById(id))
-            .filter(activity => activity !== null);
-        
-        content.innerHTML = favoriteActivities.map(activity => `
-            <div class="mb-4 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition cursor-pointer" data-lat="${activity.lat}" data-lng="${activity.lng}" data-id="${activity.id}">
+        content.innerHTML = favorites.map(fav => `
+            <div class="mb-4 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition cursor-pointer" data-lat="${fav.lat}" data-lng="${fav.lng}" data-id="${fav.id}">
                 <div class="flex justify-between items-start mb-2">
-                    <h3 class="font-bold text-gray-800">${activity.title}</h3>
-                    <button class="text-red-500 hover:text-red-700 remove-favorite" data-id="${activity.id}">
+                    <h3 class="font-bold text-gray-800">${fav.name}</h3>
+                    <button class="text-red-500 hover:text-red-700 remove-favorite" data-id="${fav.id}">
                         <i class="fas fa-heart"></i>
                     </button>
                 </div>
-                ${activity.address ? `
-                    <p class="text-sm text-gray-600 mb-2">
-                        <i class="fas fa-map-marker-alt text-blue-600 mr-1"></i>${activity.address}
-                    </p>
-                ` : ''}
-                <span class="category-badge category-${activity.category}">${activity.category}</span>
+                <span class="category-badge category-${fav.type.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, '-')}">${fav.type}</span>
             </div>
         `).join('');
         
@@ -727,6 +731,7 @@ async function showFavoritesSidebar() {
         });
     }
     
+    sidebar.dataset.open = 'true';
     sidebar.style.transform = 'translateX(0)';
 }
 
@@ -735,6 +740,7 @@ async function showFavoritesSidebar() {
  */
 function hideFavoritesSidebar() {
     const sidebar = document.getElementById('favoritesSidebar');
+    sidebar.dataset.open = 'false';
     sidebar.style.transform = 'translateX(400px)';
 }
 
@@ -807,12 +813,18 @@ document.addEventListener('DOMContentLoaded', () => {
     // Configuration des événements
     const favoritesBtn = document.getElementById('favoritesBtn');
     if (favoritesBtn) {
-        favoritesBtn.addEventListener('click', showFavoritesSidebar);
+        favoritesBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // Empêcher la propagation vers le document
+            showFavoritesSidebar();
+        });
     }
     
     const closeSidebar = document.getElementById('closeSidebar');
     if (closeSidebar) {
-        closeSidebar.addEventListener('click', hideFavoritesSidebar);
+        closeSidebar.addEventListener('click', (e) => {
+            e.stopPropagation();
+            hideFavoritesSidebar();
+        });
     }
     
     // Configuration de la barre de recherche
@@ -838,10 +850,9 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('click', (e) => {
         const sidebar = document.getElementById('favoritesSidebar');
         const favBtn = document.getElementById('favoritesBtn');
-        if (!sidebar.contains(e.target) && !favBtn.contains(e.target)) {
-            if (sidebar.style.transform === 'translateX(0px)') {
-                hideFavoritesSidebar();
-            }
+        const isOpen = sidebar.dataset.open === 'true';
+        if (isOpen && !sidebar.contains(e.target) && !favBtn.contains(e.target)) {
+            hideFavoritesSidebar();
         }
     });
 });
