@@ -350,9 +350,13 @@ function createMarker(activity) {
     // Icône personnalisée selon la catégorie
     const iconConfig = getIconConfig(activity.category);
     
+    const iconHtml = iconConfig.svg
+        ? `<img src="${iconConfig.svg}" alt="" style="width:20px;height:20px;filter:invert(1);">`
+        : `<i class="fas fa-${iconConfig.icon}"></i>`;
+
     const customIcon = L.divIcon({
         html: `<div class="flex items-center justify-center w-10 h-10 bg-${iconConfig.color}-500 rounded-full shadow-lg text-white text-xl border-4 border-white">
-                <i class="fas fa-${iconConfig.icon}"></i>
+                ${iconHtml}
                </div>`,
         className: 'custom-marker',
         iconSize: [40, 40],
@@ -451,36 +455,41 @@ async function loadAndShowActivityDetails(activityId, marker) {
 function getIconConfig(category) {
     const configs = {
         // Culture
-        'musée': { icon: 'landmark', color: 'blue' },
-        'cinéma': { icon: 'film', color: 'indigo' },
-        'théâtre': { icon: 'masks-theater', color: 'purple' },
-        'galerie': { icon: 'palette', color: 'pink' },
+        'musée':        { svg: 'assets/icon/musee.svg', color: 'blue' },
+        'cinéma':       { svg: 'assets/icon/film.svg', color: 'indigo' },
+        'théâtre':      { icon: 'masks-theater', color: 'purple' },
+        'galerie':      { icon: 'palette', color: 'pink' },
         'bibliothèque': { icon: 'book', color: 'blue' },
-        
+
         // Nature & Loisirs
-        'parc': { icon: 'tree', color: 'green' },
-        'jardin': { icon: 'leaf', color: 'green' },
-        'zoo': { icon: 'paw', color: 'green' },
-        
+        'parc':         { svg: 'assets/icon/tree.svg', color: 'green' },
+        'jardin':       { svg: 'assets/icon/tree.svg', color: 'green' },
+        'zoo':          { icon: 'paw', color: 'green' },
+
         // Sport
-        'karting': { icon: 'flag-checkered', color: 'orange' },
-        'golf': { icon: 'golf-ball-tee', color: 'green' },
-        'piscine': { icon: 'person-swimming', color: 'blue' },
+        'karting':        { icon: 'flag-checkered', color: 'orange' },
+        'golf':           { svg: 'assets/icon/golf.svg', color: 'green' },
+        'piscine':        { svg: 'assets/icon/pool.svg', color: 'blue' },
         'centre sportif': { icon: 'dumbbell', color: 'red' },
-        'stade': { icon: 'futbol', color: 'orange' },
-        
+        'stade':          { icon: 'futbol', color: 'orange' },
+
         // Vie nocturne & Restaurants
-        'vie nocturne': { icon: 'music', color: 'purple' },
-        'nightclub': { icon: 'music', color: 'purple' },
-        'restaurant': { icon: 'utensils', color: 'orange' },
-        'café': { icon: 'mug-hot', color: 'brown' },
-        'bar': { icon: 'martini-glass', color: 'purple' },
-        
+        'vie nocturne': { svg: 'assets/icon/music.svg', color: 'purple' },
+        'nightclub':    { svg: 'assets/icon/music.svg', color: 'purple' },
+        'restaurant':   { icon: 'utensils', color: 'orange' },
+        'café':         { icon: 'mug-hot', color: 'brown' },
+        'bar':          { icon: 'martini-glass', color: 'purple' },
+
         // Autres
         'attraction': { icon: 'star', color: 'yellow' },
-        'autre': { icon: 'map-marker-alt', color: 'gray' }
+        'autre':      { icon: 'map-marker-alt', color: 'gray' }
     };
-    return configs[category?.toLowerCase()] || { icon: 'map-marker-alt', color: 'blue' };
+
+    const key = category?.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    const normalized = Object.entries(configs).find(([k]) =>
+        k.normalize('NFD').replace(/[\u0300-\u036f]/g, '') === key
+    );
+    return normalized ? normalized[1] : { icon: 'map-marker-alt', color: 'blue' };
 }
 
 /**
