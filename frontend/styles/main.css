@@ -338,25 +338,35 @@ header {
 
 /* Responsive Mobile */
 @media (max-width: 640px) {
-    /* Header mobile */
+    /* Header mobile : logo seul ligne 1, recherche + favoris ligne 2 */
     header .container {
-        flex-direction: column;
-        gap: 0.75rem;
-        padding: 0.75rem 1rem;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        padding: 0.6rem 1rem;
     }
-    
+
+    /* Logo prend toute la largeur → force un retour à la ligne */
+    header .container > div:first-child {
+        flex: 0 0 100%;
+    }
+
+    /* Barre de recherche prend l'espace restant */
     header .flex-1 {
-        width: 100%;
+        flex: 1;
+        min-width: 0;
+        max-width: none;
     }
-    
+
     #searchInput {
         font-size: 14px;
         padding: 0.5rem 0.75rem 0.5rem 2rem;
     }
-    
+
+    /* Bouton favoris compact (icône + compteur) */
     #favoritesBtn {
-        width: 100%;
-        justify-content: center;
+        width: auto;
+        flex-shrink: 0;
+        padding: 0.5rem 0.65rem;
     }
     
     /* Sidebar mobile */
