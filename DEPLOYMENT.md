@@ -14,31 +14,36 @@ Cela lance automatiquement :
 - Frontend sur `http://localhost:8080`
 - Backend sur `http://localhost:3000`
 
-### Production sur Serveur
+### Production sur Serveur (Linux)
 
-**1. Backend**
+**1. Sur la machine serveur**
+
 ```bash
-cd backend
-npm start
+# Installer Nginx (une fois)
+sudo apt update && sudo apt install nginx -y
+
+# Cloner/copier le projet, puis à la racine du projet :
+npm run install:all          # une fois : dépendances
+npm run import               # optionnel : importer des GeoJSON
+
+# Lancer tout (config Nginx + frontend + backend)
+npm run start:all
 ```
 
-**2. Frontend** 
+À la première exécution, `start:all` te demandera ton mot de passe sudo (pour copier la config Nginx et supprimer le site par défaut). Ensuite frontend (8080) et backend (3000) tournent ; Nginx écoute sur le port 80 et redirige le trafic.
 
-Option A - Serveur HTTP simple :
-```bash
-cd frontend
-npx http-server -p 8080
-```
+**2. Box / routeur**
 
-Option B - Via Nginx/Apache (voir plus bas)
+Rediriger le **port 80** (externe) vers l’**IP du serveur**, port **80**. Ne pas ouvrir 8080 ni 3000.
+
+**Sans reverse proxy**  
+`cd backend && npm start` puis `cd frontend && npx http-server -p 8080`. Ouvrir les ports 3000 et 8080.
 
 ---
 
 ## Vérifications
 
-Ouverture des ports :
-- 3000
-- 8080
+Avec reverse proxy : port **80** uniquement. Sans : 3000 et 8080.
 
 ---
 
@@ -62,9 +67,7 @@ http://localhost:3000/api-docs
 curl http://VOTRE_IP:3000/api/activities
 ```
 
-Ou ouvrir dans le navigateur :
-- Frontend : `http://VOTRE_IP:8080`
-- Swagger : `http://VOTRE_IP:3000/api-docs`
+Navigateur : avec reverse proxy → `http://VOTRE_IP` (Swagger : `/api-docs`). Sans → `http://VOTRE_IP:8080` et `:3000/api-docs`.
 
 
 
@@ -96,14 +99,20 @@ copy backend\prisma\dev.db backend\prisma\dev.db.backup
 
 ## Problèmes courants
 
+### Erreur 500
+
+**Où ça plante ?**
+- **Sur la page d’accueil (/) :** Nginx. Vérifier que la config a bien le bon chemin vers le frontend (pas `__FRONTEND_PATH__` en dur). Sur le serveur : `cat /etc/nginx/sites-available/lespapillons` → la ligne `root` doit être un chemin réel (ex. `/home/user/lespapillons/frontend`). Relancer : `sudo bash reverse-proxy/setup-nginx.sh`. Voir aussi : `sudo tail -20 /var/log/nginx/error.log`
+- **Sur une URL /api/... :** Backend. Regarder la **console** où tourne `npm run start:all` (ou le backend) : le message d’erreur s’affiche (ex. base de données introuvable, Prisma, module manquant). Vérifier que `backend/prisma/dev.db` existe et que tu as fait `npm run install:all` puis éventuellement `npm run import` ou `npm run db:seed`.
+
+### Toujours "Welcome to nginx"
+Relancer la config : `sudo bash reverse-proxy/setup-nginx.sh` (supprime le site default).
+
 ### "Failed to fetch" dans la console
 
 **Problème** : Le frontend ne peut pas contacter le backend
 
-**Solutions** :
-1. Vérifier que le backend est démarré : `http://VOTRE_IP:3000/api-docs`
-2. Vérifier que le port 3000 est ouvert dans le firewall
-3. Regarder dans la console : `🌐 API URL: ...`
+**Solutions** : Backend démarré ? Avec reverse proxy : `http://VOTRE_IP/api-docs`. Sinon : port 3000 ouvert et `http://VOTRE_IP:3000/api-docs`. Console : `🌐 API URL`.
 
 ### Erreur EADDRINUSE (port déjà utilisé)
 

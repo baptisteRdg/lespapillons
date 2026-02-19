@@ -10,8 +10,12 @@
   },
   "servers": [
     {
+      "url": "",
+      "description": "Même origine (reverse proxy / production)"
+    },
+    {
       "url": "http://localhost:3000",
-      "description": "Serveur de développement"
+      "description": "Développement local"
     }
   ],
   "tags": [

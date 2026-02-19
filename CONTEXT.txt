@@ -13,6 +13,7 @@ LANCEMENT
 ---------
 Depuis la racine du projet :
   npm start          → lance frontend (port 8080) + backend (port 3000) en parallèle
+  npm run start:all  → configure Nginx (supprime default) + démarre Nginx + backend seul (frontend servi par Nginx, plus de 8080)
   npm run import     → importe les GeoJSON de data/geojson/ dans la DB (avec backup auto)
 
 Frontend : http://localhost:8080
@@ -27,7 +28,7 @@ LesPapillons/
 │   ├── index.html                  HTML principal
 │   ├── styles/main.css             Styles custom + TailwindCSS overrides
 │   ├── scripts/
-│   │   ├── api.js                  Appels API backend
+│   │   ├── api.js                  Appels API backend (local: :3000, prod: /api)
 │   │   └── map.js                  Logique Leaflet, UI, favoris, recherche
 │   └── assets/icon/                Icônes SVG locales (film, golf, musee, music, pool, tree)
 ├── backend/
@@ -40,6 +41,12 @@ LesPapillons/
 │   ├── helpers/geojson.js          Conversion GeoJSON ↔ Activity
 │   ├── scripts/import.js           Import GeoJSON + backup auto
 │   └── swagger.json                Spec OpenAPI
+├── reverse-proxy/
+│   ├── nginx.conf                  Proxy 80 → 8080 (frontend) + 3000 (backend)
+│   ├── setup-nginx.sh              Copie config, supprime default, start Nginx
+│   └── README.md
+├── scripts/
+│   └── start-all.js                npm run start:all (setup Nginx + npm start)
 ├── data/
 │   ├── geojson/                    Fichiers GeoJSON à importer (*.geojson)
 │   └── backup/                     Backups auto de dev.db (format: dev_YYYY-MM-DD_HHhMM.db)

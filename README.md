@@ -16,14 +16,12 @@ npm run install:all
 npm run import
 ```
 
-### 3. Lancer l'Application
+### 3. Lancer l'application
 ```bash
-# Les deux serveurs (frontend + backend)
-npm start
-# → Frontend: http://localhost:8080
-# → Backend:  http://localhost:3000
-# → Swagger:  http://localhost:3000/api-docs
+npm start          # Dev local : frontend 8080 + backend 3000
+npm run start:all  # Production (Linux) : Nginx + backend, port 80
 ```
+Local : Frontend http://localhost:8080, Backend http://localhost:3000, Swagger http://localhost:3000/api-docs
 
 ## 🛠️ Stack
 
@@ -71,6 +69,8 @@ LesPapillons/
 │   │   ├── seed.js           # Données de test
 │   │   └── dev.db            # Base SQLite
 │   └── package.json
+├── reverse-proxy/            # Nginx (config + setup-nginx.sh)
+├── scripts/                  # start-all.js
 └── package.json              # Scripts globaux
 ```
 

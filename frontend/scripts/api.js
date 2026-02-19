@@ -12,16 +12,8 @@ function getApiBaseUrl() {
     if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
         return 'http://localhost:3000/api';
     }
-    
-    // En production, utiliser l'URL relative (même domaine) ou construire l'URL
-    // Option 1 : URL relative (si frontend et backend sur même domaine/port)
-    // return '/api';
-    
-    // Option 2 : Utiliser le hostname actuel avec le port du backend
-    return `${window.location.protocol}//${window.location.hostname}:3000/api`;
-    
-    // Option 3 : URL absolue si backend sur domaine/port différent
-    // return 'https://votre-domaine.com/api';
+    // En production derrière le reverse proxy : même domaine, chemin /api
+    return '/api';
 }
 
 const API_BASE_URL = getApiBaseUrl();
