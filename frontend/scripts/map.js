@@ -99,18 +99,18 @@ function createUserMarker() {
         createResizeHandle();
     }
     
-    // Création du marqueur utilisateur draggable
+    // Création du marqueur utilisateur draggable (you.svg, jaune, au-dessus des autres points)
     const userIcon = L.divIcon({
-        html: '<div class="user-marker"></div>',
+        html: '<div class="user-marker"><img src="assets/icon/you.svg" alt="" class="user-marker-icon"></div>',
         className: 'user-marker-container',
-        iconSize: [20, 20],
-        iconAnchor: [10, 10]
+        iconSize: [36, 36],
+        iconAnchor: [18, 18]
     });
     
     userMarker = L.marker(userPosition, {
         icon: userIcon,
         draggable: true,
-        zIndexOffset: 2000
+        zIndexOffset: 1000
     }).addTo(map);
     
     // Événement de déplacement du marqueur

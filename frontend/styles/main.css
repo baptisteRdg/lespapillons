@@ -1,4 +1,40 @@
-/* Styles personnalisés pour Les Papillons */
+/* Styles personnalisés pour BeOut */
+
+/* Polices Google Fonts : DM Serif Text partout (fiches, header, sidebar, etc.) */
+html,
+body {
+    font-family: "DM Serif Text", serif !important;
+    font-weight: 400;
+}
+/* Fiches (popups Leaflet) et tout contenu injecté */
+.leaflet-popup-content-wrapper,
+.leaflet-popup-content,
+.popup-content,
+.popup-header,
+.popup-body,
+.popup-footer,
+#favoritesSidebar,
+#favoritesContent {
+    font-family: "DM Serif Text", serif !important;
+}
+.dm-serif {
+    font-family: "DM Serif Text", serif;
+}
+.idiqlat-extralight {
+    font-family: "Idiqlat", serif;
+    font-weight: 200;
+    font-style: normal;
+}
+.idiqlat-light {
+    font-family: "Idiqlat", serif;
+    font-weight: 300;
+    font-style: normal;
+}
+.idiqlat-regular {
+    font-family: "Idiqlat", serif;
+    font-weight: 400;
+    font-style: normal;
+}
 
 /* Ombres subtiles pour donner du volume */
 .header-shadow {
@@ -122,29 +158,26 @@ header {
     border-top-color: rgba(59, 130, 246, 0.95) !important;
 }
 
-/* Style pour le marqueur utilisateur */
-.user-marker {
-    width: 20px;
-    height: 20px;
-    background: white;
-    border: 3px solid #3b82f6;
-    border-radius: 50%;
-    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3), 0 0 0 rgba(59, 130, 246, 0.4);
-    cursor: move;
-    position: relative;
+/* Style pour le marqueur utilisateur (you.svg, jaune, au premier plan des points) */
+.user-marker-container {
     z-index: 1000;
 }
-
-.user-marker::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 8px;
-    height: 8px;
-    background: #3b82f6;
+.user-marker {
+    width: 36px;
+    height: 36px;
+    background: #FACC15;
+    border: 3px solid #EAB308;
     border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    cursor: move;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.user-marker-icon {
+    width: 22px;
+    height: 22px;
+    object-fit: contain;
 }
 
 /* Animation pour le marker actif */
@@ -415,10 +448,14 @@ header {
         font-size: 14px;
     }
     
-    /* User marker plus visible sur mobile */
+    /* User marker sur mobile */
     .user-marker {
-        width: 18px;
-        height: 18px;
+        width: 32px;
+        height: 32px;
+    }
+    .user-marker-icon {
+        width: 20px;
+        height: 20px;
     }
 }
 
