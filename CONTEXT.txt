@@ -42,11 +42,11 @@ LesPapillons/
 │   ├── scripts/import.js           Import GeoJSON + backup auto
 │   └── swagger.json                Spec OpenAPI
 ├── reverse-proxy/
-│   ├── nginx.conf                  Template Nginx (root = frontend, /api → 3000)
-│   ├── setup-nginx.sh              Config + suppression default + start Nginx
-│   └── README.md                   Utilisation
+│   ├── nginx.conf                  Proxy 80 → 8080 (frontend) + 3000 (backend)
+│   ├── setup-nginx.sh              Copie config, supprime default, start Nginx
+│   └── README.md
 ├── scripts/
-│   └── start-all.js                npm run start:all (setup Nginx + backend)
+│   └── start-all.js                npm run start:all (setup Nginx + npm start)
 ├── data/
 │   ├── geojson/                    Fichiers GeoJSON à importer (*.geojson)
 │   └── backup/                     Backups auto de dev.db (format: dev_YYYY-MM-DD_HHhMM.db)

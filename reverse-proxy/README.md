@@ -1,5 +1,5 @@
 # Reverse proxy
 
-**Production (Linux)** : `npm run start:all` depuis la racine. Configure Nginx (supprime le site default), démarre Nginx, lance le backend. Nginx sert les fichiers du dossier `frontend/` et proxy `/api` vers le backend. Port 80 uniquement sur la box.
+Nginx = **proxy uniquement** (pas de service de fichiers). Le frontend reste **http-server** (8080), le backend Express (3000). Un seul port public : 80.
 
-**Dev local** : `npm start` (frontend 8080 + backend 3000). Prérequis : `sudo apt install nginx -y` avant le premier `start:all`.
+**Prod (Linux)** : `npm run start:all` → config Nginx + `npm start` (frontend + backend). Prérequis : `sudo apt install nginx -y`.

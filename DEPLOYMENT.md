@@ -14,11 +14,27 @@ Cela lance automatiquement :
 - Frontend sur `http://localhost:8080`
 - Backend sur `http://localhost:3000`
 
-### Production sur Serveur
+### Production sur Serveur (Linux)
 
-**Avec reverse proxy (recommandé)**
+**1. Sur la machine serveur**
 
-Une commande : `npm run start:all`. Port 80 uniquement. Nginx sert le frontend (fichiers) et proxy `/api` vers le backend.
+```bash
+# Installer Nginx (une fois)
+sudo apt update && sudo apt install nginx -y
+
+# Cloner/copier le projet, puis à la racine du projet :
+npm run install:all          # une fois : dépendances
+npm run import               # optionnel : importer des GeoJSON
+
+# Lancer tout (config Nginx + frontend + backend)
+npm run start:all
+```
+
+À la première exécution, `start:all` te demandera ton mot de passe sudo (pour copier la config Nginx et supprimer le site par défaut). Ensuite frontend (8080) et backend (3000) tournent ; Nginx écoute sur le port 80 et redirige le trafic.
+
+**2. Box / routeur**
+
+Rediriger le **port 80** (externe) vers l’**IP du serveur**, port **80**. Ne pas ouvrir 8080 ni 3000.
 
 **Sans reverse proxy**  
 `cd backend && npm start` puis `cd frontend && npx http-server -p 8080`. Ouvrir les ports 3000 et 8080.

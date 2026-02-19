@@ -1,9 +1,7 @@
 #!/usr/bin/env node
 /**
- * Une seule commande : configure Nginx (supprime le default, injecte le chemin frontend),
- * démarre Nginx, puis lance le backend. Nginx sert le frontend (fichiers statiques), plus de serveur sur 8080.
- * Linux : sudo setup-nginx.sh puis npm run start:backend
- * Windows : net start nginx (si service) puis npm start (frontend + backend, pas de config Nginx auto)
+ * Une commande : configure Nginx (supprime default), démarre Nginx, puis lance frontend (8080) + backend (3000).
+ * Nginx reste un simple proxy vers le serveur frontend existant (http-server), pas de changement de techno.
  */
 
 const { spawn } = require('child_process');
@@ -28,35 +26,31 @@ function run(cmd, args, opts = {}) {
 }
 
 async function main() {
-  console.log('🦋 Les Papillons - démarrage complet (Nginx + backend)\n');
+  console.log('🦋 Les Papillons - Nginx (proxy) + frontend + backend\n');
 
   if (isWindows) {
     try {
       await run('net', ['start', 'nginx']);
-      console.log('✅ Nginx démarré (service Windows)\n');
+      console.log('✅ Nginx démarré\n');
     } catch {
-      console.log('ℹ️  Nginx non démarré par ce script. Démarrez-le manuellement si vous l’utilisez.\n');
+      console.log('ℹ️  Nginx : démarrez-le manuellement si besoin.\n');
     }
-    console.log('🚀 Lancement frontend + backend...\n');
     await run('npm', ['start']);
     return;
   }
 
-  // Linux : config Nginx (supprime default, injecte chemin) + start nginx, puis backend uniquement
-  if (!fs.existsSync(setupScript)) {
-    console.error('❌ Fichier manquant: reverse-proxy/setup-nginx.sh');
-    process.exit(1);
-  }
-  try {
-    console.log('1. Configuration Nginx (suppression site par défaut + chemin frontend)...');
-    await run('sudo', ['bash', setupScript]);
-    console.log('✅ Nginx configuré et démarré\n');
-  } catch (e) {
-    console.log('⚠️  Nginx non configuré/démarré (sudo ?). Lancez: sudo bash reverse-proxy/setup-nginx.sh\n');
+  if (fs.existsSync(setupScript)) {
+    try {
+      console.log('1. Config Nginx (suppression site default)...');
+      await run('sudo', ['bash', setupScript]);
+      console.log('✅ Nginx OK\n');
+    } catch {
+      console.log('⚠️  Nginx : sudo bash reverse-proxy/setup-nginx.sh\n');
+    }
   }
 
-  console.log('2. Lancement du backend (port 3000). Le frontend est servi par Nginx sur le port 80.\n');
-  await run('npm', ['run', 'start:backend']);
+  console.log('2. Lancement frontend (8080) + backend (3000)...\n');
+  await run('npm', ['start']);
 }
 
 main().catch((err) => {
