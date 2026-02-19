@@ -144,7 +144,7 @@ app.get('/api/activities', async (req, res) => {
             data: activities
         });
     } catch (error) {
-        console.error('Erreur GET /api/activities:', error);
+        console.error('Erreur GET /api/activities:', error.message || error);
         res.status(500).json({
             success: false,
             message: "Erreur serveur lors de la récupération des activités"
@@ -584,7 +584,8 @@ app.use((req, res) => {
  * Gestionnaire d'erreurs global
  */
 app.use((err, req, res, next) => {
-    console.error('Erreur serveur:', err.stack);
+    console.error('Erreur serveur:', err.message || err);
+    console.error(err.stack);
     res.status(500).json({
         success: false,
         message: "Une erreur est survenue sur le serveur"

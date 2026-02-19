@@ -83,6 +83,12 @@ copy backend\prisma\dev.db backend\prisma\dev.db.backup
 
 ## Problèmes courants
 
+### Erreur 500
+
+**Où ça plante ?**
+- **Sur la page d’accueil (/) :** Nginx. Vérifier que la config a bien le bon chemin vers le frontend (pas `__FRONTEND_PATH__` en dur). Sur le serveur : `cat /etc/nginx/sites-available/lespapillons` → la ligne `root` doit être un chemin réel (ex. `/home/user/lespapillons/frontend`). Relancer : `sudo bash reverse-proxy/setup-nginx.sh`. Voir aussi : `sudo tail -20 /var/log/nginx/error.log`
+- **Sur une URL /api/... :** Backend. Regarder la **console** où tourne `npm run start:all` (ou le backend) : le message d’erreur s’affiche (ex. base de données introuvable, Prisma, module manquant). Vérifier que `backend/prisma/dev.db` existe et que tu as fait `npm run install:all` puis éventuellement `npm run import` ou `npm run db:seed`.
+
 ### Toujours "Welcome to nginx"
 Relancer la config : `sudo bash reverse-proxy/setup-nginx.sh` (supprime le site default).
 
