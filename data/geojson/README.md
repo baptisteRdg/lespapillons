@@ -31,6 +31,10 @@ Le format **FeatureCollection** avec des `Point` :
 }
 ```
 
+## Type d'activité = nom du fichier
+
+À l'import, **le type de toutes les activités d'un fichier** est dérivé du **nom du fichier** (pas des tags OSM). Ex. : `laser-game.geojson` → type `"laser game"`, `cinema.geojson` → type `"cinema"`. Les tirets et underscores sont convertis en espaces. Tu peux ensuite mapper ces types aux icônes dans `frontend/scripts/map.js` (objet `getIconConfig`).
+
 ## Génération de la base de données 
 
 Depuis la **racine du projet** :

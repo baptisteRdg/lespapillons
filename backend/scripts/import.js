@@ -168,9 +168,20 @@ function extractAddress(properties) {
 }
 
 /**
- * Convertit un Feature GeoJSON en données pour la base
+ * Dérive le type d'activité depuis le nom du fichier (ex. laser-game.geojson → "laser game")
+ * Utilisé pour que tout un fichier ait le même type et que tu puisses mapper les icônes par fichier.
  */
-function convertFeatureToActivity(feature) {
+function typeFromFilename(filePath) {
+    const base = path.basename(filePath, '.geojson');
+    return base.replace(/[-_]/g, ' ').trim().toLowerCase();
+}
+
+/**
+ * Convertit un Feature GeoJSON en données pour la base
+ * @param {Object} feature - Feature GeoJSON
+ * @param {string} [typeOverride] - Si fourni (ex. dérivé du nom du fichier), utilisé comme type au lieu des tags OSM
+ */
+function convertFeatureToActivity(feature, typeOverride) {
     const props = feature.properties || {};
     const coords = feature.geometry?.coordinates;
     
@@ -178,9 +189,9 @@ function convertFeatureToActivity(feature) {
         throw new Error('Coordonnées manquantes');
     }
     
-    // Champs obligatoires
+    // Champs obligatoires : type = nom du fichier à l'import, sinon détection OSM
     const name = props.name || props['name:fr'] || props['name:en'] || 'Sans nom';
-    const type = extractType(props);
+    const type = typeOverride != null ? typeOverride : extractType(props);
     const longitude = coords[0];
     const latitude = coords[1];
     
@@ -240,11 +251,13 @@ async function importGeoJSONFile(filePath) {
         let successCount = 0;
         let errorCount = 0;
         const errors = [];
+        const fileType = typeFromFilename(filePath);
+        console.log(`   Type d'activité : "${fileType}" (dérivé du nom du fichier)`);
         
-        // Importer chaque feature
+        // Importer chaque feature avec le type = nom du fichier
         for (const feature of geojson.features) {
             try {
-                const activityData = convertFeatureToActivity(feature);
+                const activityData = convertFeatureToActivity(feature, fileType);
                 
                 // Créer l'activité
                 await prisma.activity.create({

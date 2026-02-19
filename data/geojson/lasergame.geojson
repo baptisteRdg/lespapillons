@@ -1,0 +1,2582 @@
+{
+  "type": "FeatureCollection",
+  "generator": "overpass-turbo",
+  "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL.",
+  "timestamp": "2026-02-19T09:58:21Z",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "relation/2147275",
+        "bar": "yes",
+        "brand": "Laser Game Evolution",
+        "brand:wikidata": "Q130214296",
+        "leisure": "amusement_arcade",
+        "level": "2",
+        "name": "Laser Game Evolution",
+        "opening_hours": "Mo-Sa 14:00-24:00; Su 14:00-20:00",
+        "sport": "laser_tag",
+        "type": "multipolygon",
+        "website": "https://creteil-soleil.lasergame-evolution.fr/",
+        "wheelchair": "yes",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.4557376,
+          48.7817007
+        ]
+      },
+      "id": "relation/2147275"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/34573503",
+        "addr:city": "Grenoble",
+        "addr:country": "FR",
+        "addr:housenumber": "12;14",
+        "addr:postcode": "39000",
+        "addr:street": "Rue Colonel Dumont",
+        "building": "yes",
+        "contact:phone": "+33476170850",
+        "contact:website": "https://www.lasergame-evolution.com/fr/6/Grenoble/",
+        "diff:ref:FR:RNB": "multiple",
+        "leisure": "sports_centre",
+        "name": "Laser Game Evolution",
+        "ref:FR:RNB": "1XRDGV8ZBB9B;8QFH74QKMEYD",
+        "roof:colour": "#be8988",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2009",
+        "sport": "laser_tag",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.7210419,
+          45.181546
+        ]
+      },
+      "id": "way/34573503"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/42533733",
+        "building": "yes",
+        "leisure": "sports_centre",
+        "name": "Starship Lazer",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre;mise à jour : 2008",
+        "sport": "laser_tag",
+        "website": "https://starshiplaser.com/",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0620853,
+          50.6330902
+        ]
+      },
+      "id": "way/42533733"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/42698349",
+        "addr:city": "Lille",
+        "addr:housenumber": "9",
+        "addr:postcode": "59000",
+        "addr:street": "Rue des Primeurs",
+        "building": "commercial",
+        "charge": "9 EUR",
+        "contact:phone": "+33 3 20 13 70 63",
+        "fee": "yes",
+        "leisure": "amusement_arcade",
+        "name": "Laser Game",
+        "opening_hours": "We 14:00-22:00; Th 17:00-22:00; Fr 17:00-23:00; Sa 10:00-23:00; Su 10:00-20:00",
+        "ref:FR:SIRET": "44203900400027",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre;mise à jour : 2008",
+        "sport": "laser_tag",
+        "website": "https://lille.lasergame-evolution.fr/",
+        "wheelchair": "yes",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0533782,
+          50.6325339
+        ]
+      },
+      "id": "way/42698349"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/50637100",
+        "leisure": "sports_centre",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2010",
+        "sport": "laser_tag",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          7.3731336,
+          48.0929491
+        ]
+      },
+      "id": "way/50637100"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/61390192",
+        "addr:city": "Saint-Martin-d'Hères",
+        "addr:country": "FR",
+        "addr:housenumber": "29",
+        "addr:postcode": "38400",
+        "addr:street": "Rue du Champ Roman",
+        "bar": "yes",
+        "brand": "Laser Game Evolution",
+        "brand:wikidata": "Q130214296",
+        "building": "retail",
+        "leisure": "amusement_arcade",
+        "name": "Laser Game Evolution",
+        "opening_hours": "Tu 18:00-23:00; We 14:00-23:00; Th 18:00-23:00; Fr 17:00-23:00; Sa 10:00-24:00; Su 10:00-20:00",
+        "phone": "+33 4 76 17 08 50",
+        "ref:FR:RNB": "EJZD3Q1VKR7X",
+        "ref:FR:SIRET": "49351292500022",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2010",
+        "sport": "laser_tag",
+        "website": "https://saint-martin-d-heres.lasergame-evolution.fr/",
+        "wheelchair": "yes",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.7741726,
+          45.1846103
+        ]
+      },
+      "id": "way/61390192"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/62629872",
+        "building": "yes",
+        "leisure": "sports_centre",
+        "name": "Laser Games Megazone",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2010",
+        "sport": "laser_tag",
+        "website": "https://lasergames-auxerre.fr/",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.5776625,
+          47.813811
+        ]
+      },
+      "id": "way/62629872"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/62837205",
+        "addr:city": "Aubière",
+        "addr:housenumber": "5",
+        "addr:postcode": "63150",
+        "addr:street": "Rue de l'Industrie",
+        "building": "yes",
+        "leisure": "sports_centre",
+        "name": "Laser Game Évolution Clermont-Ferrand",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2010",
+        "sport": "laser_tag",
+        "website": "https://www.lasergame-evolution.com/fr/clermont-ferrand/",
+        "wheelchair": "yes",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.1370186,
+          45.7546741
+        ]
+      },
+      "id": "way/62837205"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/64410886",
+        "building": "commercial",
+        "leisure": "sports_centre",
+        "name": "Laser Quest Blagnac",
+        "opening_hours": "24/7",
+        "sport": "laser_tag",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          1.3706693,
+          43.6419964
+        ]
+      },
+      "id": "way/64410886"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/65260906",
+        "building": "yes",
+        "leisure": "sports_centre",
+        "name": "Dark Laser Game",
+        "source": "cadastre-dgi-fr source : Direction Générale des Finances Publiques - Cadastre. Mise à jour : 2015",
+        "source:name": "http://www.openstreetmap.org/note/537971",
+        "sport": "laser_tag",
+        "website": "https://www.facebook.com/Dark-laser-game-1078476962185247/",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.692852,
+          45.2570522
+        ]
+      },
+      "id": "way/65260906"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/71059555",
+        "leisure": "sports_centre",
+        "name": "Laser Blade",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2010",
+        "sport": "laser_tag",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.3537853,
+          47.7754339
+        ]
+      },
+      "id": "way/71059555"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/71639800",
+        "addr:city": "Riorges",
+        "addr:housenumber": "704",
+        "addr:postcode": "42153",
+        "addr:street": "Avenue Charles de Gaulle",
+        "building": "yes",
+        "leisure": "sports_centre",
+        "name": "Laser & Beers",
+        "phone": "+33 9 71 41 66 56",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2010",
+        "sport": "laser_tag",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.0642095,
+          46.0567667
+        ]
+      },
+      "id": "way/71639800"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/80993395",
+        "addr:city": "Échirolles",
+        "addr:housenumber": "14",
+        "addr:postcode": "38130",
+        "addr:street": "Rue Fernand Pelloutier",
+        "building": "yes",
+        "contact:facebook": "https://www.facebook.com/people/Dock-14/100086922404571/",
+        "fee": "yes",
+        "leisure": "sports_centre",
+        "name": "Dock14",
+        "opening_hours": "We 14:00-20:00; Th,Fr 17:00-23:59; Sa 10:00-23:59; Su 10:00-20:00",
+        "opening_hours:url": "https://dock14.fr/horaires/",
+        "payment:cash": "yes",
+        "payment:debit_cards": "yes",
+        "phone": "+33476212520",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2010;survey",
+        "sport": "laser_tag",
+        "website": "https://dock14.fr/",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.7149552,
+          45.1524553
+        ]
+      },
+      "id": "way/80993395"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/86599889",
+        "addr:city": "Tinqueux",
+        "addr:housenumber": "157",
+        "addr:postcode": "51430",
+        "addr:street": "Avenue du Champ Paveau",
+        "building": "yes",
+        "email": "contact@megazone-reims.com",
+        "leisure": "sports_centre",
+        "name": "Megazone Laser Games",
+        "phone": "+33 3 26 88 25 50",
+        "source": "extraction vectorielle v1 cadastre-dgi-fr source : Direction Générale des Impôts - Cadas. Mise à jour : 2010",
+        "sport": "laser_tag",
+        "website": "https://megazone-reims.com/",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.978681,
+          49.2498028
+        ]
+      },
+      "id": "way/86599889"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/132167312",
+        "building": "yes",
+        "leisure": "sports_centre",
+        "name": "Laser Quest",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2011",
+        "sport": "laser_tag",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          1.5995553,
+          50.4004581
+        ]
+      },
+      "id": "way/132167312"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/135099727",
+        "addr:city": "Saint-Herblain",
+        "addr:housenumber": "11",
+        "addr:postcode": "44800",
+        "addr:street": "Rue du Moulin de la Rousselière",
+        "building": "yes",
+        "leisure": "sports_centre",
+        "name": "Zone laser Atlantis",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2011",
+        "sport": "laser_tag",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -1.6388535,
+          47.2312235
+        ]
+      },
+      "id": "way/135099727"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/155688428",
+        "addr:city": "Caen",
+        "addr:housenumber": "59",
+        "addr:postcode": "14000",
+        "addr:street": "Avenue de Tourville",
+        "building": "commercial",
+        "contact:email": "lasergames.caen@gmail.com",
+        "fee": "yes",
+        "leisure": "sports_centre",
+        "name": "LaserGames Caen",
+        "phone": "+33 2 31 34 33 33",
+        "ref:FR:SIRET": "48241388700035",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2012",
+        "sport": "laser_tag",
+        "website": "https://www.lasergames-caen.com/",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -0.348686,
+          49.1850167
+        ]
+      },
+      "id": "way/155688428"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/158629691",
+        "addr:city": "Thionville",
+        "addr:housenumber": "88",
+        "addr:postcode": "57100",
+        "addr:street": "Route du Buchel",
+        "building": "retail",
+        "leisure": "sports_centre",
+        "name": "Laser five",
+        "phone": "+33 3 82 55 30 30",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2012",
+        "sport": "laser_tag",
+        "website": "https://www.laserfive.fr/",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.1097207,
+          49.3605244
+        ]
+      },
+      "id": "way/158629691"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/168646271",
+        "addr:city": "Les Pennes-Mirabeau",
+        "addr:country": "FR",
+        "addr:housenumber": "60",
+        "addr:place": "Zone Commerciale Plan de Campagne",
+        "addr:postcode": "13170",
+        "addr:street": "Chemin des Pennes aux Pins",
+        "building": "retail",
+        "email": "marseille1@lasergame-evolution.com",
+        "leisure": "sports_centre",
+        "name": "DeltaGame",
+        "opening_hours": "Su-Th 10:00-24:00; Fr 10:00-01:00; Sa 10:00-02:00",
+        "phone": "+33 4 82 29 42 36",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2011",
+        "sport": "laser_tag",
+        "website": "https://www.lasergame-pennes-mirabeau.fr/",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.3526012,
+          43.4140668
+        ]
+      },
+      "id": "way/168646271"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/303641831",
+        "building": "yes",
+        "leisure": "sports_centre",
+        "source": "cadastre-dgi-fr source : Direction Générale des Finances Publiques - Cadastre. Mise à jour : 2014",
+        "sport": "laser_tag",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          1.6268355,
+          43.0961855
+        ]
+      },
+      "id": "way/303641831"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/347716581",
+        "leisure": "pitch",
+        "name": "Laser Tag",
+        "sport": "laser_tag",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.1347844,
+          50.1207003
+        ]
+      },
+      "id": "way/347716581"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/390282538",
+        "indoor": "room",
+        "leisure": "sports_centre",
+        "level": "1",
+        "name": "Laser Game Evolution",
+        "room": "sport",
+        "sport": "laser_tag",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          0.6763262,
+          47.3663194
+        ]
+      },
+      "id": "way/390282538"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/409212413",
+        "check_date": "2019-08-23",
+        "contact:housenumber": "14",
+        "contact:street": "Avenue Paul Langevin",
+        "leisure": "sports_centre",
+        "name": "Lasermaxx",
+        "ref:FR:SIRET": "44825855800023",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2009",
+        "sport": "laser_tag"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.1981705,
+          49.1351184
+        ]
+      },
+      "id": "node/409212413"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/429184186",
+        "addr:city": "Verdun",
+        "addr:place": "Actipole Verdun Sud",
+        "addr:postcode": "55100",
+        "building": "yes",
+        "leisure": "bowling_alley",
+        "name": "Etoile Loisirs Bowling Verdun",
+        "source": "Direction Générale des Finances Publiques - Cadastre. Mise à jour : 2016",
+        "sport": "laser_tag",
+        "website": "http://www.citybowl.fr/",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.4102266,
+          49.149014
+        ]
+      },
+      "id": "way/429184186"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/434376124",
+        "building": "yes",
+        "contact:phone": "+33 3 27 41 80 27",
+        "leisure": "sports_centre",
+        "name": "Laser Game",
+        "opening_hours": "We 14:00-22:00; Th 17:00-22:00; Fr 17:00-23:00; Sa 10:00-24:00; Su 10:00-20:00",
+        "ref:FR:SIRET": "47990460900027",
+        "sport": "laser_tag",
+        "website": "https://valenciennes.lasergame-evolution.fr/",
+        "wheelchair": "yes",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.5159237,
+          50.3415532
+        ]
+      },
+      "id": "way/434376124"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/581052153",
+        "leisure": "sports_centre",
+        "name": "Laser Game Evolution",
+        "sport": "laser_tag"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3778436,
+          43.8253412
+        ]
+      },
+      "id": "node/581052153"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/656594312",
+        "building": "yes",
+        "leisure": "amusement_arcade",
+        "name": "Laser Game",
+        "opening_hours": "We 14:00-22:00; Th 18:00-22:00; Fr 18:00-24:00; Sa 10:00-24:00; Su 10:00-20:00",
+        "ref:FR:SIRET": "44761079100058",
+        "sport": "laser_tag",
+        "website": "https://vert-saint-denis.lasergame-evolution.fr/",
+        "wheelchair": "yes",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.635197,
+          48.5625761
+        ]
+      },
+      "id": "way/656594312"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/734682621",
+        "building": "yes",
+        "building:material": "hard",
+        "leisure": "sports_centre",
+        "name": "Fenua Game",
+        "operational_status": "operational",
+        "source:geometry": "Aerial photogrammetry",
+        "source:geometry:date": "2013",
+        "sport": "laser_tag",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -149.5547657,
+          -17.5400049
+        ]
+      },
+      "id": "way/734682621"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/958790908",
+        "contact:facebook": "https://www.facebook.com/Complexedeloisirsgoupil/",
+        "contact:website": "https://www.complexe-de-loisirs-de-la-foret-de-goupil.fr/",
+        "leisure": "miniature_golf;trampoline_park;sports_centre",
+        "name": "La Forêt de Goupil",
+        "phone": "+33 3 83 24 29 91",
+        "source": "survey;Ortho HR",
+        "sport": "laser_tag",
+        "tourism": "theme_park",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.072678,
+          48.7007621
+        ]
+      },
+      "id": "way/958790908"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1036976175",
+        "leisure": "pitch",
+        "sport": "laser_tag",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -0.1380822,
+          43.2569551
+        ]
+      },
+      "id": "way/1036976175"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1080486944",
+        "indoor": "room",
+        "leisure": "pitch",
+        "level": "2",
+        "room": "sport",
+        "sport": "laser_tag",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          7.1632722,
+          47.7957491
+        ]
+      },
+      "id": "way/1080486944"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/2548536013",
+        "addr:housenumber": "12",
+        "addr:postcode": "35000",
+        "addr:street": "Rue Jules Vallès",
+        "contact:facebook": "SpaceLaserRennes",
+        "contact:phone": "+33 2 99 35 20 40",
+        "leisure": "sports_centre",
+        "name": "Space Laser",
+        "opening_hours": "We 13:00-18:00; Th 18:00-23:00; Fr 18:00-00:00; Sa 10:00-00:00; Su 10:00-18:00",
+        "ref:FR:NAF": "93.29Z",
+        "ref:FR:SIREN": "431351832",
+        "ref:FR:SIRET": "43135183200024",
+        "source": "INSEE - 2025-07",
+        "sport": "laser_tag",
+        "website": "https://www.space-laser.com"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -1.7059387,
+          48.1055451
+        ]
+      },
+      "id": "node/2548536013"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/2792882932",
+        "addr:street": "Allée d'Ulysse",
+        "leisure": "sports_centre",
+        "name": "Lazer Game",
+        "phone": "+33 4 67 06 90 01",
+        "sport": "laser_tag",
+        "toilets:wheelchair": "yes",
+        "website": "https://www.lasergame-evolution.com/fr/11/Montpellier",
+        "wheelchair": "yes",
+        "wheelchair:description": "piste spéciale PMR, Toilettes pas très accessibles, Poubelles pas au bon endroit, fermeture difficile de la porte"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.9169812,
+          43.6035694
+        ]
+      },
+      "id": "node/2792882932"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3075285946",
+        "fee": "yes",
+        "leisure": "sports_centre",
+        "name": "Laser Maxx",
+        "source": "survey",
+        "sport": "laser_tag"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.1873077,
+          48.6439092
+        ]
+      },
+      "id": "node/3075285946"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3139833299",
+        "addr:city": "Lyon",
+        "addr:housenumber": "104",
+        "addr:postcode": "69006",
+        "addr:street": "Rue de Sèze",
+        "email": "info@megazonelyon.com",
+        "leisure": "sports_centre",
+        "name": "Megazone Laser Games Lyon 6",
+        "opening_hours": "Mo-Su 15:00-22:00",
+        "phone": "+33 4 72 74 26 86",
+        "sport": "laser_tag",
+        "website": "https://megazonelyon.com/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.8541388,
+          45.768757
+        ]
+      },
+      "id": "node/3139833299"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3149359061",
+        "addr:city": "Lomme",
+        "addr:postcode": "59160",
+        "addr:street": "Rue du Château d'Isenghien",
+        "leisure": "sports_centre",
+        "name": "Starship Laser",
+        "opening_hours": "Mo off; Tu 18:00-23:00; We 14:00-23:00; Th, Fr 18:00-00:00; Sa 10:00-01:00; Su 10:00-19:00; SH Mo-We 14:00-23:00; SH Th, Fr 14:00-00:00; SH Sa 10:00-01:00",
+        "phone": "+33 3 20 00 68 87",
+        "sport": "laser_tag",
+        "website": "https://starshiplaser.com/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.9888094,
+          50.6525074
+        ]
+      },
+      "id": "node/3149359061"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3309380128",
+        "addr:city": "Massy",
+        "addr:country": "FR",
+        "addr:housenumber": "8",
+        "addr:postcode": "91300",
+        "addr:street": "Rue du Buisson aux Fraises",
+        "contact:facebook": "http://www.facebook.com/LQMassy",
+        "contact:phone": "+33 1 69 85 42 90",
+        "contact:website": "http://www.laserquest91.fr",
+        "leisure": "sports_centre",
+        "name": "Laser Quest – Massy",
+        "opening_hours": "We, Sa 14:00-00:00; Th, Fr 19:00-00:00; Su 14:00-19:00",
+        "sport": "laser_tag"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.2837385,
+          48.7232883
+        ]
+      },
+      "id": "node/3309380128"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3389389993",
+        "addr:city": "Maurepas",
+        "addr:housenumber": "3",
+        "addr:postcode": "78310",
+        "addr:street": "Avenue Louis Pasteur",
+        "leisure": "sports_centre",
+        "name": "Laser Quest Maurepas",
+        "phone": "+33 9 53 35 14 69",
+        "sport": "laser_tag",
+        "website": "https://www.laserquest78.fr/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          1.9137775,
+          48.7611889
+        ]
+      },
+      "id": "node/3389389993"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3396488974",
+        "addr:city": "Limoges",
+        "addr:housenumber": "8",
+        "addr:postcode": "87000",
+        "addr:street": "Impasse de la Pélisserie",
+        "contact:facebook": "target.experience",
+        "contact:instagram": "target_exp_limoges",
+        "description": "Ax_throwing;laser_gaming;video_game",
+        "email": "contact@target-experience.fr",
+        "leisure": "sports_centre",
+        "name": "Target Experience",
+        "phone": "+33 5 55 58 65 68",
+        "sport": "laser_tag",
+        "website": "https://target-experience.fr"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          1.2588875,
+          45.8086497
+        ]
+      },
+      "id": "node/3396488974"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3554937465",
+        "leisure": "sports_centre",
+        "name": "Laser Game Évolution",
+        "sport": "laser_tag"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.403169,
+          45.4150179
+        ]
+      },
+      "id": "node/3554937465"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3656455744",
+        "contact:city": "Arcueil",
+        "contact:housenumber": "1",
+        "contact:phone": "+33 1 55 60 92 20",
+        "contact:postcode": "94110",
+        "contact:street": "Place de la Vache Noire",
+        "fee": "yes",
+        "leisure": "amusement_arcade",
+        "level": "2",
+        "name": "Laser World",
+        "official_name": "Laser World Arcueil",
+        "opening_hours": "Mo-Tu 15:00-22:00; We 13:00-22:00; Th-Fr 15:00-23:00; Sa 11:00-23:59; Su 11:00-18:00",
+        "ref:FR:SIRET": "82382930400034",
+        "sport": "laser_tag",
+        "website": "https://www.laser-world-arcueil.fr/",
+        "wheelchair": "yes"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.328366,
+          48.8108823
+        ]
+      },
+      "id": "node/3656455744"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4255809191",
+        "addr:city": "Baillargues",
+        "addr:housenumber": "140",
+        "addr:postcode": "34670",
+        "addr:street": "Rue Charles Gide",
+        "leisure": "sports_centre",
+        "name": "Lasermaxx",
+        "opening_hours": "We 14:00-19:00; Fr 17:00-21:00; Sa,Su 10:00-19:00",
+        "phone": "+33 6 87 49 62 74",
+        "sport": "laser_tag",
+        "website": "https://lasermaxxmontpellier.fr/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.9976739,
+          43.6549169
+        ]
+      },
+      "id": "node/4255809191"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4353783853",
+        "addr:city": "Charenton-le-Pont",
+        "addr:housenumber": "56 bis",
+        "addr:postcode": "94220",
+        "addr:street": "Quai des Carrières",
+        "bar": "yes",
+        "brand": "Laser Game Evolution",
+        "brand:wikidata": "Q130214296",
+        "contact:phone": "+33143536568",
+        "leisure": "amusement_arcade",
+        "name": "Laser Game Evolution",
+        "opening_hours": "Mo-Sa 14:00-24:00; Su 14:00-20:00",
+        "ref:FR:SIRET": "50448873500011",
+        "sport": "laser_tag",
+        "website": "https://charenton.lasergame-evolution.fr/",
+        "wheelchair": "yes"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.4065022,
+          48.8196162
+        ]
+      },
+      "id": "node/4353783853"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4561725463",
+        "addr:city": "Sillingy",
+        "addr:housenumber": "524",
+        "addr:postcode": "74330",
+        "addr:street": "Route des Pres Rollier",
+        "leisure": "sports_centre",
+        "name": "LazerMaxx 74",
+        "sport": "laser_tag",
+        "website": "https://www.lasermaxx74.fr/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.0731326,
+          45.9427385
+        ]
+      },
+      "id": "node/4561725463"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4567157877",
+        "addr:city": "Saint-Apollinaire",
+        "addr:housenumber": "28",
+        "addr:postcode": "21850",
+        "addr:street": "Rue de Cracovie",
+        "fee": "yes",
+        "leisure": "sports_centre",
+        "name": "Laser Game Evolution",
+        "opening_hours": "Mo-Tu off; We 14:00-00:00; Tu 17:00-00:00; Fr 17:00-01:00; Sa 10:00-01:00; Su 10:00-20:00",
+        "payment:cash": "yes",
+        "payment:coins": "yes",
+        "payment:credit_cards": "yes",
+        "phone": "+33 3 80  23 55 73",
+        "sport": "laser_tag",
+        "website": "https://dijon.lasergame-evolution.fr/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.0734984,
+          47.3405405
+        ]
+      },
+      "id": "node/4567157877"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5319019807",
+        "leisure": "sports_centre",
+        "name": "Starship Laser",
+        "sport": "laser_tag",
+        "website": "https://starshiplaser.com"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.143467,
+          50.7440579
+        ]
+      },
+      "id": "node/5319019807"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5387139285",
+        "addr:city": "Thiais",
+        "addr:country": "FR",
+        "addr:housenumber": "3",
+        "addr:postcode": "94320",
+        "addr:street": "Allée des Alouettes",
+        "charge": "9 EUR, 5 EUR en tarif réduit, 18 EUR en illimité",
+        "contact:phone": "+33 1 46 86 66 67",
+        "contact:website": "http://cosmiclaser.fr",
+        "fee": "yes",
+        "leisure": "sports_centre",
+        "name": "Cosmic Laser Thiais",
+        "opening_hours": "Tu 19:00-23:00; We 14:00-19:00; Th 14:00-00:00; Fr 14:00-01:00; Sa 13:00-02:00; Su 14:00-24:00; SH Mo-We 14:00-00:00; SH Th 14:00-24:00",
+        "sport": "laser_tag"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.3736963,
+          48.7522987
+        ]
+      },
+      "id": "node/5387139285"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5621824488",
+        "leisure": "sports_centre",
+        "name": "Laserball",
+        "phone": "+33 5 58 47 56 16",
+        "sport": "laser_tag"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -1.0381011,
+          43.7283729
+        ]
+      },
+      "id": "node/5621824488"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5636785861",
+        "bar": "yes",
+        "brand": "Laser Game Evolution",
+        "brand:wikidata": "Q130214296",
+        "leisure": "amusement_arcade",
+        "name": "Laser Game Evolution",
+        "opening_hours": "We 14:00-22:00; Th 18:00-22:00; Fr 18:00-24:00; Sa 10:00-24:00; Su 10:00-20:00",
+        "sport": "laser_tag",
+        "survey:date": "2022-11-03",
+        "website": "https://bretigny-sur-orge.lasergame-evolution.fr/",
+        "wheelchair": "yes"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.303199,
+          48.5888071
+        ]
+      },
+      "id": "node/5636785861"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5847382509",
+        "addr:housenumber": "24",
+        "addr:street": "Rue de la Faïencerie",
+        "description": "Parking : 24 Rue de la Faïencerie (200 mètres à droite apr_s l'entrée du Laser Quest, portail bleu)",
+        "leisure": "sports_centre",
+        "name": "Laser Quest Bordeaux",
+        "opening_hours": "24/7",
+        "parking": "surface",
+        "ref:FR:NAF": "93.29Z",
+        "ref:FR:SIREN": "481094183",
+        "ref:FR:SIRET": "48109418300011",
+        "source": "INSEE - 2025-03",
+        "sport": "laser_tag"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -0.5564658,
+          44.8604477
+        ]
+      },
+      "id": "node/5847382509"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5924198370",
+        "leisure": "sports_centre",
+        "name": "Laser MAXX 06",
+        "sport": "laser_tag"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.9589189,
+          43.5543187
+        ]
+      },
+      "id": "node/5924198370"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5993658416",
+        "bar": "yes",
+        "brand": "Laser Game Evolution",
+        "brand:wikidata": "Q130214296",
+        "contact:city": "Varennes-sur-Seine",
+        "contact:postcode": "77130",
+        "contact:street": "Espace Commercial Du Bréau",
+        "leisure": "amusement_arcade",
+        "name": "Laser Game Evolution",
+        "opening_hours": "We 14:00-22:00; Th-Fr 18:00-22:00; Sa 10:00-24:00; Su 10:00-20:00",
+        "phone": "+33 1 64 23 39 17",
+        "ref:FR:SIRET": "44761079100041",
+        "sport": "laser_tag",
+        "website": "https://varennes-sur-seine.lasergame-evolution.fr/",
+        "wheelchair": "yes"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.9518808,
+          48.3627638
+        ]
+      },
+      "id": "node/5993658416"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/6074563915",
+        "leisure": "sports_centre",
+        "name": "Laser Quest",
+        "sport": "laser_tag",
+        "website": "https://dinard.laserquest.fr/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -2.0634269,
+          48.6155918
+        ]
+      },
+      "id": "node/6074563915"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/6210528862",
+        "addr:city": "Vitry-en-Charollais",
+        "addr:postcode": "71600",
+        "addr:street": "Barberèche",
+        "leisure": "indoor_play",
+        "name": "Laser Game",
+        "sport": "laser_tag"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.0569444,
+          46.4688365
+        ]
+      },
+      "id": "node/6210528862"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/6239514820",
+        "check_date": "2024-12-26",
+        "contact:facebook": "https://www.facebook.com/lasergameevolution.paris11/",
+        "leisure": "sports_centre",
+        "name": "Urban Laser",
+        "phone": "+33 1 47 00 11 11",
+        "sport": "laser_tag",
+        "website": "https://urbanlaser.fr",
+        "wheelchair": "limited"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.3738658,
+          48.8696733
+        ]
+      },
+      "id": "node/6239514820"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/6474734091",
+        "leisure": "sports_centre",
+        "name": "LaserGame - Original Laser",
+        "operator": "Hobby'One Evènements",
+        "sport": "laser_tag"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.2276388,
+          46.2036819
+        ]
+      },
+      "id": "node/6474734091"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/6743996376",
+        "fee": "yes",
+        "image": "https://www.lasergame-evolution.com/v3/img/logo_laser_game_evolution_footer.png",
+        "leisure": "sports_centre",
+        "name": "Laser Game Evolution Mougins",
+        "opening_hours": "Mo-Th 13:00-23:00; Fr-Sa 13:00-00:00; Su 13:00-20:00",
+        "phone": "+33 4 92 28 16 53",
+        "sport": "laser_tag",
+        "website": "https://www.lasergame-evolution.com/fr/141/Mougins/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.9715561,
+          43.6128615
+        ]
+      },
+      "id": "node/6743996376"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/6781125930",
+        "addr:city": "Lyon",
+        "addr:housenumber": "58",
+        "addr:postcode": "69009",
+        "addr:street": "Rue Marietton",
+        "capacity": "40",
+        "email": "info@megazonevaise.com",
+        "fee": "yes",
+        "leisure": "sports_centre",
+        "name": "Megazone Vaise",
+        "opening_hours": "Mo,Tu 15:30-22:30; We 13:00-22:30; Th,Fr 15:30-23:00; Sa 13:00-23:00; Su 13:00-19:00",
+        "phone": "+33 4 82 91 39 23",
+        "sport": "laser_tag",
+        "website": "https://megazonevaise.com/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.8015135,
+          45.7759807
+        ]
+      },
+      "id": "node/6781125930"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/6854078623",
+        "addr:street": "Rue Jean Renoir",
+        "contact:email": "contact@lasergame-millenium.fr",
+        "contact:phone": "+33 1 30 34 46 04",
+        "leisure": "sports_centre",
+        "name": "Laser Game Millenium",
+        "opening_hours": "We 14:00-22:00; Th 17:00-22:00; We 17:00-00:00; Sa 14:00-00:00; Su 14:00-19:00",
+        "sport": "laser_tag",
+        "website": "https://lasergame-millenium.fr/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.2557203,
+          49.1601275
+        ]
+      },
+      "id": "node/6854078623"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/7306036885",
+        "contact:phone": "+33 1 45 45 14 14",
+        "leisure": "sports_centre",
+        "name": "Urban Laser",
+        "opening_hours": "Mo-We 10:00-22:00, Th,Su 10:00-23:00, Fr-Sa 10:00-24:00; SH 10:00-22:00",
+        "ref:FR:SIREN": "800309486",
+        "ref:FR:SIRET": "80030948600010",
+        "ref:vatin": "FR87800309486",
+        "sport": "laser_tag",
+        "website": "https://urbanlaser.fr"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.3288515,
+          48.8326728
+        ]
+      },
+      "id": "node/7306036885"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/7391078156",
+        "access": "customers",
+        "contact:facebook": "lasergameevolution.poitiers",
+        "indoor": "yes",
+        "leisure": "playground",
+        "name": "Laser Game Evolution",
+        "phone": "+33 5 49 300 777",
+        "sport": "laser_tag",
+        "website": "https://www.lasergame-evolution.com/fr/37/Poitiers/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          0.2790257,
+          46.5300221
+        ]
+      },
+      "id": "node/7391078156"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/7448607637",
+        "leisure": "sports_centre",
+        "name": "Laser Game Evolution",
+        "sport": "laser_tag"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.2038276,
+          48.9497785
+        ]
+      },
+      "id": "node/7448607637"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/7560623031",
+        "leisure": "sports_centre",
+        "name": "Laser Game Evolution",
+        "sport": "laser_tag",
+        "website": "https://angers.lasergame-evolution.fr/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -0.5351838,
+          47.4892756
+        ]
+      },
+      "id": "node/7560623031"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/7869712310",
+        "leisure": "escape_game",
+        "name": "Megazone",
+        "sport": "laser_tag",
+        "website": "https://www.megazone-toulouse.com/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          1.28936,
+          43.595424
+        ]
+      },
+      "id": "node/7869712310"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8042797769",
+        "contact:facebook": "https://www.facebook.com/leo.parcaventure",
+        "leisure": "sports_centre",
+        "name": "Léo Parc aventure - Laser Extérieur",
+        "phone": "+33 6 10 91 25 32",
+        "sport": "laser_tag",
+        "website": "http://www.leo-parc-aventure.fr/lasergame/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          1.9471841,
+          47.8982286
+        ]
+      },
+      "id": "node/8042797769"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8042797770",
+        "contact:facebook": "https://www.facebook.com/leo.parcaventure",
+        "leisure": "sports_centre",
+        "name": "Léo Parc aventure - Paintball",
+        "phone": "+33 6 10 91 25 32",
+        "sport": "laser_tag",
+        "website": "http://www.leo-parc-aventure.fr/paintball/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          1.9457357,
+          47.8985594
+        ]
+      },
+      "id": "node/8042797770"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8198728593",
+        "leisure": "sports_hall",
+        "name": "Ceven Games Laser Game",
+        "sport": "laser_tag",
+        "website": "https://ceven-games.fr/trampoline-park-2/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.1069204,
+          44.1537986
+        ]
+      },
+      "id": "node/8198728593"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8232475268",
+        "addr:city": "Courbevoie",
+        "addr:country": "FR",
+        "addr:housenumber": "47",
+        "addr:postcode": "92400",
+        "addr:street": "Avenue de l'Europe",
+        "email": "contact@cybergame.fr",
+        "mobile": "+33 6 09 78 32 41",
+        "name": "Cybergame Laser",
+        "phone": "+33 9 52 23 54 80",
+        "sport": "laser_tag",
+        "website": "https://cybergame.fr",
+        "wikidata": "Q998303"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.2589281,
+          48.9057481
+        ]
+      },
+      "id": "node/8232475268"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8273446022",
+        "leisure": "sports_centre",
+        "name": "Laser Park Voreppe",
+        "sport": "laser_tag",
+        "website": "http://laserpark.fr/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.6444246,
+          45.2565598
+        ]
+      },
+      "id": "node/8273446022"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8634438917",
+        "contact:city": "Paris",
+        "contact:housenumber": "168",
+        "contact:phone": "+33 1 43 35 17 91",
+        "contact:postcode": "75014",
+        "contact:street": "Boulevard du Montparnasse",
+        "contact:website": "https://laser-world-paris.fr/",
+        "leisure": "sports_centre",
+        "name": "Laser World",
+        "official_name": "Laser World Paris",
+        "opening_hours": "Mo-Tu 17:00-22:00; We 13:00-22:00; Th-Fr 15:00-23:00; Sa 10:00-23:59; Su 10:00-20:00",
+        "ref:FR:SIRET": "82382930400026",
+        "sport": "laser_tag",
+        "website": "https://laser-world-paris.fr/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.3355514,
+          48.8397898
+        ]
+      },
+      "id": "node/8634438917"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8634478517",
+        "addr:housenumber": "11",
+        "addr:street": "Avenue de Verdun 1916",
+        "contact:city": "La Garenne-Colombes",
+        "contact:housenumber": "11",
+        "contact:phone": "+33 1 46 49 58 44",
+        "contact:postcode": "92250",
+        "contact:street": "Avenue de Verdun 1916",
+        "leisure": "sports_centre",
+        "name": "Laser World",
+        "official_name": "Laser World La Garenne",
+        "opening_hours": "We 13:00-22:00; Th-Fr 15:00-23:00; Sa 11:00-23:00; Su 11:00-18:00",
+        "ref:FR:SIRET": "84039661800026",
+        "sport": "laser_tag",
+        "website": "https://laser-world-lagarenne.fr/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.2368373,
+          48.905932
+        ]
+      },
+      "id": "node/8634478517"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8792390328",
+        "leisure": "sports_centre",
+        "name": "Laser Game Evolution",
+        "phone": "+33 559484639",
+        "ref:FR:SIRET": "83179823600020",
+        "short_name": "LGE",
+        "sport": "laser_tag",
+        "wheelchair": "yes"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -1.5061905,
+          43.4831229
+        ]
+      },
+      "id": "node/8792390328"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8993401853",
+        "addr:street": "Mulinacciu",
+        "description": "Laser game",
+        "leisure": "sports_centre",
+        "phone": "+334 95 50 17 55",
+        "sport": "laser_tag"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          9.3017827,
+          41.6727247
+        ]
+      },
+      "id": "node/8993401853"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9124531981",
+        "addr:city": "Lognes",
+        "addr:housenumber": "5",
+        "addr:postcode": "77185",
+        "addr:street": "Allée des Palombes",
+        "bar": "yes",
+        "brand": "Laser Game Evolution",
+        "brand:wikidata": "Q130214296",
+        "leisure": "amusement_arcade",
+        "name": "Laser Game Evolution",
+        "opening_hours": "We 14:00-22:00; Th 18:00-22:00; Fr 18:00-24:00; Sa 10:00-24:00; Su 10:00-20:00",
+        "phone": "+33 1 60 37 62 67",
+        "ref:FR:SIRET": "44761079100033",
+        "sport": "laser_tag",
+        "website": "https://lognes.lasergame-evolution.fr/",
+        "wheelchair": "yes"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.6401197,
+          48.8339411
+        ]
+      },
+      "id": "node/9124531981"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9163497204",
+        "leisure": "sports_centre",
+        "name": "Laser Quest",
+        "sport": "laser_tag",
+        "website": "https://tarbes.laserquest.fr/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          0.0787969,
+          43.2413926
+        ]
+      },
+      "id": "node/9163497204"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9384622569",
+        "leisure": "pitch",
+        "name": "24 minutes chrono",
+        "phone": "+33 658701944",
+        "sport": "laser_tag",
+        "website": "http://24minuteschrono.fr/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.5983499,
+          45.3576794
+        ]
+      },
+      "id": "node/9384622569"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9502329749",
+        "addr:city": "Tignieu-Jameyzieu",
+        "addr:housenumber": "60",
+        "addr:postcode": "38230",
+        "addr:street": "Route de Crémieu",
+        "leisure": "pitch",
+        "name": "Laser Games",
+        "phone": "+33 4 72 07 75 03",
+        "sport": "laser_tag",
+        "website": "https://www.lasergamestignieu.com/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.1924278,
+          45.7511971
+        ]
+      },
+      "id": "node/9502329749"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9563536823",
+        "email": "contact@xtremebowling.fr",
+        "leisure": "sports_hall",
+        "name": "Xtreme Laser Game",
+        "phone": "+33 4 68 67 54 09",
+        "sport": "laser_tag",
+        "website": "https://www.xtremebowling.fr/laser-game"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.916103,
+          42.6666673
+        ]
+      },
+      "id": "node/9563536823"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9819387191",
+        "contact:facebook": "https://www.facebook.com/battlelaser",
+        "leisure": "sports_centre",
+        "name": "Battle Laser",
+        "sport": "laser_tag",
+        "website": "https://www.battlelaser.com/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.131247,
+          45.7790024
+        ]
+      },
+      "id": "node/9819387191"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9839159639",
+        "fixme": "Doublon",
+        "leisure": "sports_centre",
+        "level": "1",
+        "name": "Laser game Brest Centre",
+        "sport": "laser_tag",
+        "website": "https://www.lasergame-brest.fr/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -4.4789317,
+          48.3929047
+        ]
+      },
+      "id": "node/9839159639"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/10013958433",
+        "addr:city": "Autun",
+        "addr:housenumber": "11B",
+        "addr:postcode": "71400",
+        "addr:street": "Rue du Théatre Romain",
+        "leisure": "sports_centre",
+        "name": "Urban Arena Autun",
+        "opening_hours": "Mo-Fr,Su 14:00-20:00; Sa 14:00-22:00",
+        "phone": "+33 7 67 63 92 42",
+        "sport": "laser_tag"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3103582,
+          46.9553952
+        ]
+      },
+      "id": "node/10013958433"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/10088957466",
+        "sport": "laser_tag"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          0.1750294,
+          48.0501158
+        ]
+      },
+      "id": "node/10088957466"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/10562280503",
+        "leisure": "sports_centre",
+        "name": "No LiMit 24",
+        "sport": "laser_tag",
+        "website": "https://no-limit24.fr/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          0.7817179,
+          45.1862302
+        ]
+      },
+      "id": "node/10562280503"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/10895928700",
+        "addr:city": "Toulouse",
+        "addr:housenumber": "105",
+        "addr:postcode": "31500",
+        "addr:street": "Route d'Agde",
+        "description": "Chaîne de centres de jeux laser multi-niveaux en salle pour enfants et adultes. Brouillard et effets spéciaux.",
+        "fixme": "Website not working, please check.",
+        "leisure": "sports_centre",
+        "name": "Laser Quest",
+        "opening_hours": "Mo-Sa 14:00-22:00; Su 14:00-20:00",
+        "phone": "+33 5 61 48 31 13",
+        "sport": "laser_tag",
+        "website": "http://laserquest.fr/1/fr/microsite-57/toulouse.html"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          1.480777,
+          43.6297892
+        ]
+      },
+      "id": "node/10895928700"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11134837344",
+        "contact:housenumber": "25",
+        "contact:street": "Avenue Charles de Gaulle",
+        "description": "Jeux de Pistolet Lasers, jusqu’à 25 joueurs peuvent jouer en même temps dans l'arène sombre et essayer de toucher les armes des autres afin de faire gagner des points à leur équipe.",
+        "email": "info@planeteslaser.com",
+        "leisure": "sports_centre",
+        "name": "Planètes Laser",
+        "phone": "+33 3 83212240",
+        "sport": "laser_tag",
+        "website": "https://www.planeteslaser.com/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.2493604,
+          48.7035496
+        ]
+      },
+      "id": "node/11134837344"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11199267177",
+        "leisure": "sports_centre",
+        "name": "Laser Quest",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2012",
+        "sport": "laser_tag"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          1.9182103,
+          47.8662738
+        ]
+      },
+      "id": "node/11199267177"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11228683882",
+        "contact:email": "zonelasernantes@gmail.com",
+        "contact:facebook": "Nanteszonelaser",
+        "contact:housenumber": "1",
+        "contact:instagram": "zonelasernantes",
+        "contact:phone": "+33 2 40 95 10 55",
+        "contact:street": "Boulevard de Chantenay",
+        "contact:website": "https://zonelasernantes.fr/",
+        "description": "Laser game",
+        "leisure": "sports_centre",
+        "name": "Zone Laser Nantes",
+        "ref:FR:NAF": "93.19Z",
+        "ref:FR:SIREN": "824781702",
+        "ref:FR:SIRET": "82478170200025",
+        "source:ref:FR": "INSEE - 2025-08",
+        "sport": "laser_tag"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -1.5860043,
+          47.1979638
+        ]
+      },
+      "id": "node/11228683882"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11348026312",
+        "addr:city": "Limas",
+        "addr:housenumber": "157",
+        "addr:postcode": "69400",
+        "addr:street": "Rue des Chantiers du Beaujolais",
+        "bar": "yes",
+        "brand": "Laser Game Evolution",
+        "brand:wikidata": "Q130214296",
+        "leisure": "amusement_arcade",
+        "name": "Laser Game Evolution",
+        "opening_hours": "Tu 16:00-23:00; We 13:00-23:00; Th 16:00-23:00; Fr 16:00-24:00; Sa 00:00-01:00, 10:00-24:00; Su 00:00-01:00, 10:00-22:00",
+        "phone": "+33 4 74 03 97 36",
+        "ref:FR:SIRET": "50472124200023",
+        "sport": "laser_tag",
+        "website": "https://villefranche-sur-saone.lasergame-evolution.fr/",
+        "wheelchair": "yes"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.7187513,
+          45.9771868
+        ]
+      },
+      "id": "node/11348026312"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11422718832",
+        "addr:city": "La Ravoire",
+        "addr:housenumber": "158",
+        "addr:postcode": "73490",
+        "bar": "yes",
+        "brand": "Laser Game Evolution",
+        "brand:wikidata": "Q130214296",
+        "contact:city": "La Ravoire",
+        "contact:housenumber": "158",
+        "contact:phone": "+33 4 79 72 66 42",
+        "contact:postcode": "73490",
+        "contact:street": "Rue Louis Pasteur",
+        "leisure": "amusement_arcade",
+        "name": "Laser Game Evolution",
+        "opening_hours": "Tu 17:00-22:00; We 14:00-22:00; Th 17:00-22:00; Fr 17:00-23:00; Sa 10:00-23:00; Su 10:00-20:00",
+        "ref:FR:SIRET": "79935874200036",
+        "sport": "laser_tag",
+        "website": "https://linktr.ee/Lasergameevolutionchambery"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.9619718,
+          45.5725946
+        ]
+      },
+      "id": "node/11422718832"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11459861569",
+        "leisure": "sports_centre",
+        "sport": "laser_tag",
+        "website": "http://laseriummontargis.fr/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.7323628,
+          47.9917556
+        ]
+      },
+      "id": "node/11459861569"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11478906566",
+        "addr:city": "Rouen",
+        "addr:housenumber": "9",
+        "addr:postcode": "76000",
+        "addr:street": "Quai Ferdinand de Lesseps",
+        "leisure": "sports_centre",
+        "level": "1",
+        "name": "Laser Game Evolution",
+        "opening_hours": "Tu-Fr 10:00-00:00",
+        "phone": "+33 2 32 13 20 22",
+        "ref:FR:SIRET": "75190932600025",
+        "sport": "laser_tag",
+        "website": "https://rouen.lasergame-evolution.fr"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          1.070091,
+          49.4441577
+        ]
+      },
+      "id": "node/11478906566"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11494334584",
+        "leisure": "sports_centre",
+        "name": "Laser Game Evolution",
+        "sport": "laser_tag"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -1.4839516,
+          47.1892152
+        ]
+      },
+      "id": "node/11494334584"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11540065245",
+        "contact:city": "Mondeville",
+        "contact:postcode": "14120",
+        "contact:street": "Les Carandes",
+        "fee": "yes",
+        "leisure": "sports_centre",
+        "name": "Laser Game",
+        "opening_hours": "We 14:00-22:00; Th 17:00-23:00; Fr 17:00-24:00; Sa 14:00-24:00; Su 14:00-20:00",
+        "phone": "+33 2 61 67 62 56",
+        "ref:FR:SIRET": "92253510900024",
+        "sport": "laser_tag",
+        "website": "https://caen.lasergame-evolution.fr"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -0.286213,
+          49.1567431
+        ]
+      },
+      "id": "node/11540065245"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11576221169",
+        "bar": "yes",
+        "brand": "Laser Game Evolution",
+        "brand:wikidata": "Q130214296",
+        "contact:city": "Tinqueux",
+        "contact:facebook": "https://www.facebook.com/lasergameevolutiontinqueux",
+        "contact:instagram": "https://www.instagram.com/laser_game_evolution_reims",
+        "contact:phone": "+33 3 26 08 43 97",
+        "contact:postcode": "51430",
+        "contact:street": "Zac Du Moulin De L'ecaille",
+        "leisure": "amusement_arcade",
+        "name": "Laser Game Evolution",
+        "opening_hours": "We 14:00-22:00; Th 17:00-22:00; Fr 17:00-23:00; Sa 10:00-24:00; Su 10:00-20:00",
+        "ref:FR:SIRET": "80044451500046",
+        "sport": "laser_tag",
+        "website": "https://reims.lasergame-evolution.fr/",
+        "wheelchair": "yes"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.9881606,
+          49.2398854
+        ]
+      },
+      "id": "node/11576221169"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11633756419",
+        "access": "customers",
+        "covered": "no",
+        "fee": "yes",
+        "indoor": "no",
+        "leisure": "pitch",
+        "source": "survey",
+        "sport": "laser_tag",
+        "surface": "sand"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          0.0408299,
+          44.2919701
+        ]
+      },
+      "id": "node/11633756419"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/12036070769",
+        "contact:city": "Roanne",
+        "contact:housenumber": "219",
+        "contact:phone": "+33 4 77 71 39 53",
+        "contact:postcode": "42300",
+        "contact:street": "Rue De Charlieu",
+        "leisure": "amusement_arcade",
+        "name": "Laser Game",
+        "opening_hours": "We 13:00-23:00; Th 17:00-23:00; Fr 17:00-24:00; Sa 00:00-01:00, 12:00-24:00; Su 00:00-01:00, 12:00-19:00",
+        "ref:FR:SIRET": "85264581100013",
+        "sport": "laser_tag",
+        "website": "https://roanne.lasergame-evolution.fr/",
+        "wheelchair": "yes"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.086944,
+          46.0588198
+        ]
+      },
+      "id": "node/12036070769"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/12060217117",
+        "addr:city": "Saint-Marcel",
+        "addr:housenumber": "6",
+        "addr:postcode": "27950",
+        "addr:street": "Rue de la Croix Blanche",
+        "bar": "yes",
+        "brand": "Laser Game Evolution",
+        "brand:wikidata": "Q130214296",
+        "leisure": "amusement_arcade",
+        "name": "Laser Game Evolution",
+        "opening_hours": "Mo off; Tu-Sa 14:00-24:00; Su 14:00-22:00",
+        "payment:cash": "yes",
+        "payment:credit_cards": "yes",
+        "payment:debit_cards": "yes",
+        "phone": "+33 2 32 54 83 51",
+        "ref:FR:SIRET": "50886203400016",
+        "source": "survey",
+        "sport": "laser_tag",
+        "website": "https://vernon.lasergame-evolution.fr/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          1.4517456,
+          49.1073129
+        ]
+      },
+      "id": "node/12060217117"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/12253414485",
+        "bar": "yes",
+        "brand": "Laser Game Evolution",
+        "brand:wikidata": "Q130214296",
+        "leisure": "amusement_arcade",
+        "name": "Laser Game Evolution",
+        "sport": "laser_tag"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.8894828,
+          44.9548327
+        ]
+      },
+      "id": "node/12253414485"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/12260509074",
+        "bar": "yes",
+        "brand": "Laser Game Evolution",
+        "brand:wikidata": "Q130214296",
+        "leisure": "amusement_arcade",
+        "name": "Laser Game Evolution",
+        "sport": "laser_tag"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -2.074922,
+          47.1120037
+        ]
+      },
+      "id": "node/12260509074"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/12260509075",
+        "bar": "yes",
+        "leisure": "amusement_arcade",
+        "name": "Laser & Dream",
+        "sport": "laser_tag"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -2.074872,
+          47.1119704
+        ]
+      },
+      "id": "node/12260509075"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/12351539465",
+        "leisure": "sports_centre",
+        "name": "La Zone 51",
+        "sport": "laser_tag",
+        "website": "https://www.lazone51-lasergame.com/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.8088023,
+          43.6130308
+        ]
+      },
+      "id": "node/12351539465"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/12407036879",
+        "leisure": "sports_centre",
+        "level": "1",
+        "name": "Seven Squares",
+        "sport": "laser_tag"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.7555333,
+          45.1839037
+        ]
+      },
+      "id": "node/12407036879"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/12500728433",
+        "bar": "yes",
+        "brand": "Laser Game Evolution",
+        "brand:wikidata": "Q130214296",
+        "leisure": "amusement_arcade",
+        "loc_name": "name=Laser Game Evolution Avignon",
+        "name": "Laser Game Evolution",
+        "sport": "laser_tag",
+        "wikidata": "Q120295405"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.8983647,
+          43.9627533
+        ]
+      },
+      "id": "node/12500728433"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/12736917887",
+        "contact:housenumber": "19",
+        "contact:street": "Avenue de la Voie au Coq",
+        "email": "lasergames.caen@gmail.com",
+        "fee": "yes",
+        "leisure": "sports_centre",
+        "name": "LaserGames",
+        "opening_hours": "Su-Th 10:00-23:00; Fr-Sa 10:00-00:00",
+        "phone": "+33 2 31 74 44 92",
+        "ref:FR:SIRET": "48241388700019",
+        "sport": "laser_tag",
+        "website": "https://www.lasergames-caen.com/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -0.4258162,
+          49.1656355
+        ]
+      },
+      "id": "node/12736917887"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/12833306765",
+        "leisure": "pitch",
+        "sport": "laser_tag"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          1.0419381,
+          49.4423649
+        ]
+      },
+      "id": "node/12833306765"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/12833435927",
+        "leisure": "amusement_arcade",
+        "name": "Play in Park",
+        "opening_hours": "Su,Mo 14:00-23:00, Tu-Th 14:00-24:00, Fr 14:00-02:00, Sa 13:00-02:00",
+        "sport": "laser_tag"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.8594282,
+          45.7753613
+        ]
+      },
+      "id": "node/12833435927"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/12840792688",
+        "leisure": "pitch",
+        "name": "Laser tag experience",
+        "sport": "laser_tag"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -4.6128002,
+          48.4321039
+        ]
+      },
+      "id": "node/12840792688"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/12879505216",
+        "addr:city": "Sainte Clotilde",
+        "addr:housenumber": "42",
+        "addr:postcode": "97490",
+        "addr:street": "Rue Gabriel de Kerveguen",
+        "bar": "yes",
+        "brand": "Laser Game Evolution",
+        "brand:wikidata": "Q130214296",
+        "leisure": "amusement_arcade",
+        "name": "Laser Game Evolution",
+        "ref:FR:SIRET": "53311138100018",
+        "sport": "laser_tag"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          55.4966703,
+          -20.8894976
+        ]
+      },
+      "id": "node/12879505216"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/12881030857",
+        "addr:housenumber": "60",
+        "addr:street": "Avenue Pierre Mendès France",
+        "bar": "yes",
+        "brand": "LaserGames",
+        "email": "lasergames.caen@gmail.com",
+        "leisure": "amusement_arcade",
+        "name": "LaserGames",
+        "phone": "+33 9 55 78 98 83",
+        "sport": "laser_tag",
+        "website": "https://www.lasergames-caen.com/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -0.3224593,
+          49.1685722
+        ]
+      },
+      "id": "node/12881030857"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/13049888286",
+        "bar": "yes",
+        "brand": "Laser Game Evolution",
+        "leisure": "amusement_arcade",
+        "name": "dundee parc",
+        "sport": "laser_tag"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.4506751,
+          48.6082968
+        ]
+      },
+      "id": "node/13049888286"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/13230142166",
+        "bar": "yes",
+        "brand": "Laser Game Evolution",
+        "brand:wikidata": "Q130214296",
+        "leisure": "amusement_arcade",
+        "name": "Laser Game Evolution",
+        "sport": "laser_tag"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.2475928,
+          48.9221193
+        ]
+      },
+      "id": "node/13230142166"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/13233562243",
+        "description": "Un espace 100 % dédié au divertissement à Perpignan. Profitez d’un cadre immersif et moderne pour vivre une expérience unique entre amis, en famille ou en groupe.",
+        "leisure": "amusement_arcade",
+        "name": "DeltaGame Perpignan",
+        "opening_hours": "Tu-Su 13:00-23:00",
+        "phone": "+33 4 68 21 18 90",
+        "sport": "laser_tag",
+        "website": "https://deltagameperpignan.fr/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.8812504,
+          42.680856
+        ]
+      },
+      "id": "node/13233562243"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/13421192503",
+        "contact:instagram": "outzergame",
+        "contact:tiktok": "outzergame",
+        "name": "Outzer Game",
+        "sport": "laser_tag",
+        "website": "outzergame.com"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -61.5828718,
+          16.2543509
+        ]
+      },
+      "id": "node/13421192503"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/13461158495",
+        "bar": "yes",
+        "contact:housenumber": "1b",
+        "contact:phone": "+33 6 43 14 07 22",
+        "contact:street": "Rue du Pré Droué",
+        "contact:website": "https://www.gamespark88.fr/",
+        "leisure": "amusement_arcade",
+        "name": "Games Park 88",
+        "sport": "laser_tag"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.4362442,
+          48.216265
+        ]
+      },
+      "id": "node/13461158495"
+    }
+  ]
+}

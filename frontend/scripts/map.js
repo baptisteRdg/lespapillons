@@ -350,8 +350,9 @@ function createMarker(activity) {
     // Icône personnalisée selon la catégorie
     const iconConfig = getIconConfig(activity.category);
     
+    const fallbackIcon = iconConfig.icon || 'map-marker-alt';
     const iconHtml = iconConfig.svg
-        ? `<img src="${iconConfig.svg}" alt="" style="width:20px;height:20px;filter:invert(1);">`
+        ? `<img src="${iconConfig.svg}" alt="" style="width:20px;height:20px;filter:invert(1);" onerror="this.style.display='none';this.nextElementSibling.style.display='inline';"><i class="fas fa-${fallbackIcon}" style="display:none"></i>`
         : `<i class="fas fa-${iconConfig.icon}"></i>`;
 
     const customIcon = L.divIcon({
@@ -448,48 +449,40 @@ async function loadAndShowActivityDetails(activityId, marker) {
 }
 
 /**
- * Retourne la configuration d'icône selon la catégorie
- * @param {string} category - Catégorie de l'activité
- * @returns {Object} Configuration de l'icône
+ * Dérive un nom de fichier depuis le type (ex. "laser game" → "laser-game", "nightclub" → "nightclub")
+ * Convention béta : type = nom du SVG dans assets/icon/
+ */
+function typeToIconFilename(type) {
+    if (!type) return 'autre';
+    return type.toLowerCase()
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        .trim().replace(/\s+/g, '-')
+        .replace(/[^a-z0-9-]/g, '');
+}
+
+/**
+ * Retourne la configuration d'icône selon la catégorie.
+ * Par défaut : type "nightclub" → assets/icon/nightclub.svg (même nom que le type).
+ * Overrides possibles ci-dessous pour couleurs ou icônes Font Awesome.
  */
 function getIconConfig(category) {
-    const configs = {
-        // Culture
-        'musée':        { svg: 'assets/icon/musee.svg', color: 'blue' },
-        'cinéma':       { svg: 'assets/icon/film.svg', color: 'indigo' },
-        'théâtre':      { icon: 'masks-theater', color: 'purple' },
-        'galerie':      { icon: 'palette', color: 'pink' },
-        'bibliothèque': { icon: 'book', color: 'blue' },
+    const key = category?.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+    const fileBase = typeToIconFilename(category);
 
-        // Nature & Loisirs
-        'parc':         { svg: 'assets/icon/tree.svg', color: 'green' },
-        'jardin':       { svg: 'assets/icon/tree.svg', color: 'green' },
-        'zoo':          { icon: 'paw', color: 'green' },
-
-        // Sport
-        'karting':        { icon: 'flag-checkered', color: 'orange' },
-        'golf':           { svg: 'assets/icon/golf.svg', color: 'green' },
-        'piscine':        { svg: 'assets/icon/pool.svg', color: 'blue' },
-        'centre sportif': { icon: 'dumbbell', color: 'red' },
-        'stade':          { icon: 'futbol', color: 'orange' },
-
-        // Vie nocturne & Restaurants
-        'vie nocturne': { svg: 'assets/icon/music.svg', color: 'purple' },
-        'nightclub':    { svg: 'assets/icon/music.svg', color: 'purple' },
-        'restaurant':   { icon: 'utensils', color: 'orange' },
-        'café':         { icon: 'mug-hot', color: 'brown' },
-        'bar':          { icon: 'martini-glass', color: 'purple' },
-
-        // Autres
-        'attraction': { icon: 'star', color: 'yellow' },
-        'autre':      { icon: 'map-marker-alt', color: 'gray' }
+    // Overrides : types qui n'utilisent pas un SVG au même nom, ou Font Awesome uniquement
+    const overrides = {
+        'autre': { icon: 'map-marker-alt', color: 'gray' }
     };
-
-    const key = category?.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-    const normalized = Object.entries(configs).find(([k]) =>
+    const overrideKey = Object.keys(overrides).find(k =>
         k.normalize('NFD').replace(/[\u0300-\u036f]/g, '') === key
     );
-    return normalized ? normalized[1] : { icon: 'map-marker-alt', color: 'blue' };
+    if (overrideKey) return overrides[overrideKey];
+
+    // Par défaut : type → assets/icon/<type>.svg (ex. nightclub → nightclub.svg)
+    return {
+        svg: `assets/icon/${fileBase}.svg`,
+        color: 'blue'
+    };
 }
 
 /**
