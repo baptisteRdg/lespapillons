@@ -16,31 +16,18 @@ Cela lance automatiquement :
 
 ### Production sur Serveur
 
-**Avec reverse proxy (recommandé – un seul port public 80)**
+**Avec reverse proxy (recommandé)**
 
-Le dossier `reverse-proxy/` contient une config Nginx. Le public accède uniquement au port 80 ; Nginx envoie `/` vers le frontend (8080) et `/api` vers le backend (3000). Voir `reverse-proxy/README.md` pour l’installation.
+Une commande : `npm run start:all`. Port 80 uniquement. Nginx sert le frontend (fichiers) et proxy `/api` vers le backend.
 
-**Sans reverse proxy**
-
-1. Backend :
-```bash
-cd backend
-npm start
-```
-
-2. Frontend :
-```bash
-cd frontend
-npx http-server -p 8080
-```
+**Sans reverse proxy**  
+`cd backend && npm start` puis `cd frontend && npx http-server -p 8080`. Ouvrir les ports 3000 et 8080.
 
 ---
 
 ## Vérifications
 
-**Avec reverse proxy** : ouvrir uniquement le port **80** (Nginx). Les ports 3000 et 8080 restent en localhost.
-
-**Sans reverse proxy** : ouvrir les ports 3000 et 8080.
+Avec reverse proxy : port **80** uniquement. Sans : 3000 et 8080.
 
 ---
 
@@ -64,9 +51,7 @@ http://localhost:3000/api-docs
 curl http://VOTRE_IP:3000/api/activities
 ```
 
-Ou ouvrir dans le navigateur :
-- Avec reverse proxy : `http://VOTRE_IP` ou `http://VOTRE_DOMAINE` (tout passe par le port 80 ; Swagger : `/api-docs`)
-- Sans reverse proxy : Frontend `http://VOTRE_IP:8080`, Swagger `http://VOTRE_IP:3000/api-docs`
+Navigateur : avec reverse proxy → `http://VOTRE_IP` (Swagger : `/api-docs`). Sans → `http://VOTRE_IP:8080` et `:3000/api-docs`.
 
 
 
@@ -98,25 +83,14 @@ copy backend\prisma\dev.db backend\prisma\dev.db.backup
 
 ## Problèmes courants
 
-### Toujours "Welcome to nginx" au lieu de l'app
-
-**Cause :** Le site par défaut de Nginx est encore actif et prend la priorité.
-
-**Solution :** Supprimer le site par défaut puis recharger Nginx :
-```bash
-sudo rm -f /etc/nginx/sites-enabled/default
-sudo nginx -t && sudo systemctl reload nginx
-```
-Ou relancer le script de config : `sudo bash reverse-proxy/setup-nginx.sh`
+### Toujours "Welcome to nginx"
+Relancer la config : `sudo bash reverse-proxy/setup-nginx.sh` (supprime le site default).
 
 ### "Failed to fetch" dans la console
 
 **Problème** : Le frontend ne peut pas contacter le backend
 
-**Solutions** :
-1. Vérifier que le backend est démarré : `http://VOTRE_IP:3000/api-docs`
-2. Vérifier que le port 3000 est ouvert dans le firewall
-3. Regarder dans la console : `🌐 API URL: ...`
+**Solutions** : Backend démarré ? Avec reverse proxy : `http://VOTRE_IP/api-docs`. Sinon : port 3000 ouvert et `http://VOTRE_IP:3000/api-docs`. Console : `🌐 API URL`.
 
 ### Erreur EADDRINUSE (port déjà utilisé)
 
