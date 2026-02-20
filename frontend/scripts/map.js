@@ -64,18 +64,19 @@ function initMap() {
     // Création de l'infobulle pour le rayon
     createRadiusTooltip();
     
-    // Chargement des activités (sans rayon par défaut)
-    loadActivitiesInRadius();
-    
-    // Positionner le marqueur sur la position du navigateur si disponible
+    // Un seul chargement des activités : après la géoloc (ou sur Paris si refus/erreur)
     trySetUserPositionFromBrowser();
 }
 
 /**
- * Place le marqueur et centre la carte sur la position du navigateur si disponible
+ * Place le marqueur sur la position du navigateur puis charge les activités une seule fois.
+ * Si pas de géoloc ou refus/erreur : on charge quand même (Paris).
  */
 function trySetUserPositionFromBrowser() {
-    if (!navigator.geolocation) return;
+    if (!navigator.geolocation) {
+        loadActivitiesInRadius();
+        return;
+    }
     navigator.geolocation.getCurrentPosition(
         (pos) => {
             const lat = pos.coords.latitude;
@@ -92,7 +93,8 @@ function trySetUserPositionFromBrowser() {
             loadActivitiesInRadius();
         },
         () => {
-            // Refus ou erreur : on garde le centre par défaut (Paris)
+            // Refus ou erreur : on garde Paris et on charge une seule fois
+            loadActivitiesInRadius();
         },
         { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
     );
