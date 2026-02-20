@@ -118,6 +118,15 @@ async function getActivityDetails(activityId) {
         
         console.log(`✅ API: Détails activité #${activityId} reçus`);
         
+        // Extraire wikidata depuis le champ properties (JSON sérialisé)
+        let wikidata = null;
+        if (activity.properties) {
+            try {
+                const props = JSON.parse(activity.properties);
+                wikidata = props.wikidata || null;
+            } catch {}
+        }
+
         // Convertir le format de l'API vers le format attendu par le frontend
         return {
             id: activity.id,
@@ -129,7 +138,8 @@ async function getActivityDetails(activityId) {
             phone: activity.phone,
             description: activity.description || 'Description non disponible',
             category: activity.type,
-            openingHours: activity.openingHours
+            openingHours: activity.openingHours,
+            wikidata
         };
         
     } catch (error) {
@@ -185,6 +195,42 @@ async function addToFavoritesAPI(activityId) {
     // Fonction conservée pour compatibilité mais ne fait rien
     // Les favoris sont gérés uniquement dans localStorage
     return { success: true, message: "Favori géré localement" };
+}
+
+/**
+ * Récupère l'URL d'une image depuis Wikidata (propriété P18 = image principale)
+ * @param {string} wikidataId - Code Wikidata (ex: "Q12345")
+ * @returns {Promise<string|null>} URL de l'image (Commons Special:FilePath) ou null
+ */
+async function getWikidataImage(wikidataId) {
+    console.log(`🌐 Wikidata: requête image pour ${wikidataId}`);
+    try {
+        const apiUrl = `https://www.wikidata.org/w/api.php?action=wbgetentities&ids=${encodeURIComponent(wikidataId)}&props=claims&format=json&origin=*`;
+        const response = await fetch(apiUrl);
+        if (!response.ok) {
+            console.warn(`⚠️ Wikidata: réponse HTTP ${response.status} pour ${wikidataId}`);
+            return null;
+        }
+        const data = await response.json();
+        const entity = data.entities?.[wikidataId];
+        const imageList = entity?.claims?.P18;
+        if (!imageList?.length) {
+            console.log(`ℹ️ Wikidata: pas d'image (P18) pour ${wikidataId}`);
+            return null;
+        }
+        const imageName = imageList[0]?.mainsnak?.datavalue?.value;
+        if (!imageName) {
+            console.warn(`⚠️ Wikidata: nom de fichier vide pour ${wikidataId}`);
+            return null;
+        }
+        const encoded = encodeURIComponent(imageName.replace(/ /g, '_'));
+        const imageUrl = `https://commons.wikimedia.org/wiki/Special:FilePath/${encoded}?width=500`;
+        console.log(`✅ Wikidata: image trouvée pour ${wikidataId} →`, imageUrl);
+        return imageUrl;
+    } catch (err) {
+        console.error(`❌ Wikidata: erreur pour ${wikidataId}`, err);
+        return null;
+    }
 }
 
 /**

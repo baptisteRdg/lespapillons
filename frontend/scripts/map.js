@@ -471,6 +471,12 @@ async function loadAndShowActivityDetails(activityId, marker) {
         setTimeout(() => {
             setupPopupEventListeners(details);
         }, 10);
+
+        // Enrichissement asynchrone : image Wikidata (fire & forget)
+        console.log(`🏷️ Wikidata: code = ${details.wikidata ?? 'aucun'} pour #${activityId}`);
+        if (details.wikidata) {
+            enrichPopupWithWikidataImage(details.id, details.wikidata);
+        }
         
     } catch (error) {
         console.error(`❌ Erreur popup #${activityId}:`, error);
@@ -518,6 +524,37 @@ function getIconConfig(category) {
 }
 
 /**
+ * Récupère une image Wikidata et l'injecte dans le header du popup si disponible
+ * @param {number} activityId
+ * @param {string} wikidataId
+ */
+async function enrichPopupWithWikidataImage(activityId, wikidataId) {
+    console.log(`🖼️ Enrichissement popup #${activityId} avec Wikidata ${wikidataId}...`);
+    const imageUrl = await getWikidataImage(wikidataId);
+    if (!imageUrl) {
+        console.log(`🖼️ Aucune image Wikidata → popup #${activityId} garde le gradient`);
+        return;
+    }
+
+    const img = document.getElementById(`popup-header-img-${activityId}`);
+    const header = document.getElementById(`popup-header-${activityId}`);
+    if (!img || !header) {
+        console.warn(`⚠️ Éléments DOM introuvables pour popup #${activityId} (popup fermé ?)`);
+        return;
+    }
+
+    img.onload = () => {
+        console.log(`✅ Image chargée dans popup #${activityId}`);
+        header.classList.add('has-image');
+    };
+    img.onerror = (e) => {
+        console.warn(`⚠️ Échec chargement image pour popup #${activityId}`, e);
+    };
+    console.log(`⏳ Chargement image popup #${activityId}:`, imageUrl);
+    img.src = imageUrl;
+}
+
+/**
  * Crée le contenu HTML du popup
  * @param {Object} activity - Données complètes de l'activité
  * @returns {string} HTML du popup
@@ -536,9 +573,12 @@ function createPopupContent(activity) {
     
     return `
         <div class="popup-content">
-            <div class="popup-header">
-                <h3 class="text-xl font-bold mb-1">${activity.title}</h3>
-                <span class="category-badge category-${categoryClass}">${activity.category || 'Autre'}</span>
+            <div class="popup-header" id="popup-header-${activity.id}">
+                <img class="popup-header-img" id="popup-header-img-${activity.id}" alt="" aria-hidden="true">
+                <div class="popup-header-text">
+                    <h3 class="text-xl font-bold mb-1">${activity.title}</h3>
+                    <span class="category-badge category-${categoryClass}">${activity.category || 'Autre'}</span>
+                </div>
             </div>
             
             <div class="popup-body">
