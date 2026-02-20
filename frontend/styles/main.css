@@ -227,12 +227,48 @@ header {
 
 /* Style personnalisé pour le contenu du popup */
 .popup-header {
+    position: relative;
+    overflow: hidden;
     background: linear-gradient(135deg, rgba(59, 130, 246, 0.95) 0%, rgba(96, 165, 250, 0.95) 100%);
     color: white;
     padding: 1rem;
     border-radius: 12px 12px 0 0;
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
+}
+
+/* Image Wikidata : couvre le rectangle, invisible par défaut */
+.popup-header-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+}
+
+/* Texte au-dessus de l'image */
+.popup-header-text {
+    position: relative;
+    z-index: 2;
+}
+
+/* Quand l'image est chargée */
+.popup-header.has-image .popup-header-img {
+    opacity: 1;
+}
+
+/* Overlay sombre pour lisibilité du texte sur l'image */
+.popup-header.has-image::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.1) 100%);
+    z-index: 1;
+    pointer-events: none;
 }
 
 .popup-body {
