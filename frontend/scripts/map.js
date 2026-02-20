@@ -30,16 +30,19 @@ const MAP_CONFIG = {
 
 // Variables globales
 let map;
-let activities = []; // Activités légères (dans le rayon)
-let markers = [];
+const activityPool = new Map(); // id → { activity, marker } — pool des activités chargées
+const MAX_POOL = 400;           // Taille max du pool avant éviction
+let searchMarkers = [];         // { marker, activity } temporaires pour la recherche
+let isSearchMode = false;       // true quand une recherche est active
+let viewportLoadTimeout = null; // Debounce du rechargement viewport
 let userMarker;
 let userCircle;
-let resizeHandle; // Nouvelle variable pour le handle de redimensionnement
+let resizeHandle;
 let userPosition = MAP_CONFIG.center;
-let currentRadius = MAP_CONFIG.defaultRadiusMeters; // Rayon actuel
-let circleEnabled = false; // Par défaut : pas de rayon (recherche sans limite)
-let isResizingCircle = false; // Mode redimensionnement
-let radiusTooltip; // Infobulle pour afficher la distance
+let currentRadius = MAP_CONFIG.defaultRadiusMeters;
+let circleEnabled = false;
+let isResizingCircle = false;
+let radiusTooltip;
 
 /**
  * Initialise la carte Leaflet
@@ -63,6 +66,13 @@ function initMap() {
     
     // Création de l'infobulle pour le rayon
     createRadiusTooltip();
+
+    // Rechargement debouncé du viewport à chaque déplacement/zoom
+    map.on('moveend', () => {
+        if (isSearchMode) return;
+        clearTimeout(viewportLoadTimeout);
+        viewportLoadTimeout = setTimeout(loadActivitiesInViewport, 400);
+    });
     
     // Un seul chargement des activités : après la géoloc (ou sur Paris si refus/erreur)
     trySetUserPositionFromBrowser();
@@ -74,7 +84,7 @@ function initMap() {
  */
 function trySetUserPositionFromBrowser() {
     if (!navigator.geolocation) {
-        loadActivitiesInRadius();
+        loadActivitiesInViewport();
         return;
     }
     navigator.geolocation.getCurrentPosition(
@@ -90,11 +100,11 @@ function trySetUserPositionFromBrowser() {
             if (resizeHandle) {
                 updateHandlePosition();
             }
-            loadActivitiesInRadius();
+            loadActivitiesInViewport();
         },
         () => {
             // Refus ou erreur : on garde Paris et on charge une seule fois
-            loadActivitiesInRadius();
+            loadActivitiesInViewport();
         },
         { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
     );
@@ -159,13 +169,11 @@ function createUserMarker() {
         }
     });
     
-    // Événement de fin de déplacement
+    // Événement de fin de déplacement du marqueur utilisateur
     userMarker.on('dragend', function(e) {
         const newPos = e.target.getLatLng();
         userPosition = [newPos.lat, newPos.lng];
-        
-        // Recharger les activités dans le nouveau rayon
-        loadActivitiesInRadius();
+        // Le chargement se fait via moveend si la vue a bougé
     });
     
     // Événement de clic sur le marqueur : toggle du cercle
@@ -252,8 +260,7 @@ function createResizeHandle() {
             map.removeLayer(radiusTooltip);
         }
         
-        // Recharger les activités avec le nouveau rayon
-        loadActivitiesInRadius();
+        // Le viewport ne change pas lors du resize du cercle, pas de rechargement
     });
 }
 
@@ -330,47 +337,84 @@ function toggleCircle(e) {
         
         showToast('Recherche sans limite de distance', 'info');
     }
-    
-    // Recharger les activités
-    loadActivitiesInRadius();
+    // Le chargement est piloté par viewport, pas par le cercle
 }
 
 /**
- * Charge les activités dans le rayon actuel
+ * Retourne le nombre max d'activités par type selon le niveau de zoom
+ * @param {number} zoom
+ * @returns {number}
  */
-async function loadActivitiesInRadius() {
+function getLimitPerType(zoom) {
+    if (zoom >= 16) return 50;
+    if (zoom >= 14) return 20;
+    if (zoom >= 12) return 10;
+    return 5;
+}
+
+/**
+ * Charge les activités visibles dans le viewport courant et les fusionne dans le pool
+ */
+async function loadActivitiesInViewport() {
+    if (isSearchMode) return;
     try {
-        // Appel API avec ou sans rayon selon circleEnabled
-        const radius = circleEnabled ? currentRadius : null;
-        activities = await getActivitiesInRadius(userPosition[0], userPosition[1], radius);
-        
-        // Afficher les activités sur la carte
-        displayActivities(activities);
-        
-        // Mettre à jour le compteur de favoris
+        const bounds = map.getBounds();
+        const zoom = map.getZoom();
+        const limitPerType = getLimitPerType(zoom);
+
+        const newActivities = await getActivitiesByBbox(bounds, limitPerType);
+        mergeIntoPool(newActivities);
+        cleanupPool();
         updateFavoritesCount();
-        
-        console.log(`${activities.length} activité(s) chargée(s) ${circleEnabled ? 'dans le rayon' : 'sans limite'}`);
+
+        console.log(`🗺️ Pool: ${activityPool.size} activités chargées (zoom=${zoom}, limitPerType=${limitPerType})`);
     } catch (error) {
-        console.error('Erreur lors du chargement des activités:', error);
-        showToast('Erreur lors du chargement des activités', 'error');
+        console.error('Erreur lors du chargement du viewport:', error);
     }
 }
 
 /**
- * Affiche les activités sur la carte
- * @param {Array} activitiesToDisplay - Liste des activités à afficher
+ * Fusionne de nouvelles activités dans le pool sans recréer les markers existants
+ * @param {Array} newActivities
  */
-function displayActivities(activitiesToDisplay) {
-    // Suppression des markers existants
-    markers.forEach(marker => map.removeLayer(marker));
-    markers = [];
-    
-    // Création des markers pour chaque activité
-    activitiesToDisplay.forEach(activity => {
-        const marker = createMarker(activity);
-        markers.push(marker);
+function mergeIntoPool(newActivities) {
+    newActivities.forEach(activity => {
+        if (!activityPool.has(activity.id)) {
+            const marker = createMarker(activity);
+            activityPool.set(activity.id, { activity, marker });
+        }
     });
+}
+
+/**
+ * Évince les activités les plus éloignées du centre si le pool dépasse MAX_POOL
+ */
+function cleanupPool() {
+    if (activityPool.size <= MAX_POOL) return;
+
+    const center = map.getCenter();
+    const bounds = map.getBounds();
+
+    // Trier : d'abord hors viewport (candidats à l'éviction), puis par distance décroissante
+    const entries = [...activityPool.entries()].map(([id, entry]) => ({
+        id,
+        entry,
+        dist: calculateDistance(center.lat, center.lng, entry.activity.lat, entry.activity.lng),
+        inBounds: bounds.contains([entry.activity.lat, entry.activity.lng])
+    }));
+
+    entries.sort((a, b) => {
+        if (a.inBounds !== b.inBounds) return a.inBounds ? 1 : -1; // hors bounds en premier
+        return b.dist - a.dist; // plus loin en premier
+    });
+
+    const toEvict = entries.slice(0, activityPool.size - MAX_POOL);
+    toEvict.forEach(({ id, entry }) => {
+        map.removeLayer(entry.marker);
+        activityPool.delete(id);
+    });
+
+    console.log(`🧹 Pool nettoyé : ${toEvict.length} activités évincées, ${activityPool.size} restantes`);
 }
 
 /**
@@ -688,8 +732,9 @@ function toggleFavorite(activityId, activityData = null) {
         favorites.splice(existingIndex, 1);
         showToast('Retiré des favoris', 'info');
     } else {
-        // Priorité : données passées directement, sinon chercher dans activities[]
-        const source = activityData || activities.find(a => a.id === activityId);
+        // Priorité : données passées directement, sinon chercher dans le pool
+        const poolEntry = activityPool.get(activityId);
+        const source = activityData || (poolEntry ? poolEntry.activity : null);
         if (source) {
             favorites.push({
                 id: source.id,
@@ -799,24 +844,20 @@ async function showFavoritesSidebar() {
                 const offsetLatLng = map.unproject(markerPoint.subtract([0, 150]), zoom);
                 map.setView(offsetLatLng, zoom);
                 
-                // Chercher le marker dans ceux affichés
-                let marker = markers.find(m => 
-                    Math.abs(m.getLatLng().lat - lat) < 0.0001 && 
-                    Math.abs(m.getLatLng().lng - lng) < 0.0001
-                );
-                
-                if (!marker) {
-                    // Marker non visible (hors rayon ou filtre) → créer un marker temporaire
-                    console.log(`📍 Marker #${id} absent de la carte, création d'un marker temporaire`);
+                // Chercher le marker dans le pool
+                let poolEntry = activityPool.get(id);
+                let marker;
+
+                if (poolEntry) {
+                    marker = poolEntry.marker;
+                    if (!map.hasLayer(marker)) marker.addTo(map);
+                } else {
+                    // Pas encore dans le pool → créer un marker temporaire et l'ajouter au pool
+                    console.log(`📍 Marker #${id} absent du pool, création d'un marker temporaire`);
                     const fav = getFavorites().find(f => f.id === id);
-                    marker = createMarker({
-                        id: id,
-                        lat: lat,
-                        lng: lng,
-                        category: fav ? fav.type : 'autre'
-                    });
-                    // Ajouter au tableau markers pour qu'il persiste sur la carte
-                    markers.push(marker);
+                    const activity = { id, lat, lng, category: fav ? fav.type : 'autre' };
+                    marker = createMarker(activity);
+                    activityPool.set(id, { activity, marker });
                 }
                 
                 await loadAndShowActivityDetails(id, marker);
@@ -882,32 +923,53 @@ function showToast(message, type = 'success') {
  * Filtre les activités selon le terme de recherche
  * @param {string} searchTerm - Terme de recherche
  */
+/**
+ * Active le mode recherche : masque le pool, affiche uniquement les résultats
+ * @param {Array} results - Activités trouvées
+ */
+function enterSearchMode(results) {
+    isSearchMode = true;
+    // Masquer tous les markers du pool
+    activityPool.forEach(({ marker }) => {
+        if (map.hasLayer(marker)) map.removeLayer(marker);
+    });
+    // Supprimer les anciens markers de recherche
+    searchMarkers.forEach(({ marker }) => map.removeLayer(marker));
+    searchMarkers = [];
+    // Créer les markers pour les résultats
+    results.forEach(activity => {
+        const marker = createMarker(activity);
+        searchMarkers.push({ marker, activity });
+    });
+}
+
+/**
+ * Quitte le mode recherche : restaure le pool et recharge le viewport
+ */
+function exitSearchMode() {
+    isSearchMode = false;
+    searchMarkers.forEach(({ marker }) => map.removeLayer(marker));
+    searchMarkers = [];
+    // Réafficher les markers du pool
+    activityPool.forEach(({ marker }) => {
+        if (!map.hasLayer(marker)) marker.addTo(map);
+    });
+    loadActivitiesInViewport();
+}
+
 async function searchActivities(searchTerm) {
     if (!searchTerm || searchTerm.trim() === '') {
-        // Recherche vide : recharger les activités normales
-        await loadActivitiesInRadius();
+        exitSearchMode();
         return;
     }
-    
+
     const term = searchTerm.trim();
-    let results = [];
-    
-    if (circleEnabled) {
-        // Avec rayon actif : filtrage côté client sur les activités déjà chargées
-        results = activities.filter(activity => {
-            const title = activity.title.toLowerCase();
-            const category = activity.category.toLowerCase();
-            return title.includes(term.toLowerCase()) || category.includes(term.toLowerCase());
-        });
-    } else {
-        // Sans rayon : recherche dans toute la base côté serveur
-        console.log(`🔍 Recherche globale côté serveur pour "${term}"`);
-        const userPos = userMarker.getLatLng();
-        results = await searchActivitiesGlobal(term, userPos.lat, userPos.lng);
-    }
-    
-    displayActivities(results);
-    
+    console.log(`🔍 Recherche globale côté serveur pour "${term}"`);
+    const userPos = userMarker.getLatLng();
+    const results = await searchActivitiesGlobal(term, userPos.lat, userPos.lng);
+
+    enterSearchMode(results);
+
     if (results.length === 0) {
         showToast(`Aucune activité trouvée pour "${term}"`, 'info');
     } else {
@@ -929,20 +991,19 @@ async function centerOnSearchResults(results) {
         const markerPoint = map.project([activity.lat, activity.lng], zoom);
         const offsetLatLng = map.unproject(markerPoint.subtract([0, 150]), zoom);
         map.setView(offsetLatLng, zoom);
-        
-        const marker = markers.find(m =>
-            Math.abs(m.getLatLng().lat - activity.lat) < 0.0001 &&
-            Math.abs(m.getLatLng().lng - activity.lng) < 0.0001
+
+        const entry = searchMarkers.find(e =>
+            Math.abs(e.activity.lat - activity.lat) < 0.0001 &&
+            Math.abs(e.activity.lng - activity.lng) < 0.0001
         );
-        if (marker) {
-            await loadAndShowActivityDetails(activity.id, marker);
+        if (entry) {
+            await loadAndShowActivityDetails(activity.id, entry.marker);
         }
     } else {
-        // Construire les bounds pour englober tous les résultats
         const bounds = L.latLngBounds(results.map(a => [a.lat, a.lng]));
         map.fitBounds(bounds, {
-            padding: [60, 60],  // Marge autour des markers
-            maxZoom: 14         // Ne pas zoomer trop près si les points sont proches
+            padding: [60, 60],
+            maxZoom: 14
         });
     }
 }

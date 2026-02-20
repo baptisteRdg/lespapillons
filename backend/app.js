@@ -76,7 +76,7 @@ app.get('/', (req, res) => {
  */
 app.get('/api/activities', async (req, res) => {
     try {
-        const { type, lat, lng, radius, search } = req.query;
+        const { type, lat, lng, radius, search, bbox, limitPerType } = req.query;
         
         // Récupérer uniquement les champs nécessaires pour l'affichage sur la carte
         let activities = await prisma.activity.findMany({
@@ -105,6 +105,18 @@ app.get('/api/activities', async (req, res) => {
                 a.type.toLowerCase().includes(term)
             );
         }
+
+        // Filtrer par bounding box (minLat,minLng,maxLat,maxLng)
+        if (bbox) {
+            const parts = bbox.split(',').map(parseFloat);
+            if (parts.length === 4 && parts.every(n => !isNaN(n))) {
+                const [minLat, minLng, maxLat, maxLng] = parts;
+                activities = activities.filter(a =>
+                    a.latitude  >= minLat && a.latitude  <= maxLat &&
+                    a.longitude >= minLng && a.longitude <= maxLng
+                );
+            }
+        }
         
         // Si lat/lng fournis, calculer la distance pour chaque activité
         if (lat && lng) {
@@ -129,13 +141,25 @@ app.get('/api/activities', async (req, res) => {
             // Trier par distance (plus proche en premier)
             activities.sort((a, b) => a.distance - b.distance);
             
-            // Si pas de rayon ET pas de recherche texte, limiter à 100 résultats
-            if (!radius && !search) {
+            // Fallback : sans rayon, sans recherche texte, sans bbox → limiter à 100
+            if (!radius && !search && !bbox) {
                 activities = activities.slice(0, 100);
             }
             
             // Supprimer le champ distance avant de renvoyer
             activities = activities.map(({ distance, ...activity }) => activity);
+        }
+
+        // Limiter le nombre de résultats par type (pour éviter la surcharge visuelle)
+        if (limitPerType) {
+            const limit = parseInt(limitPerType, 10);
+            if (!isNaN(limit) && limit > 0) {
+                const countByType = {};
+                activities = activities.filter(a => {
+                    countByType[a.type] = (countByType[a.type] || 0) + 1;
+                    return countByType[a.type] <= limit;
+                });
+            }
         }
         
         res.json({
