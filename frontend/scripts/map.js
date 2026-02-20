@@ -37,7 +37,7 @@ let userCircle;
 let resizeHandle; // Nouvelle variable pour le handle de redimensionnement
 let userPosition = MAP_CONFIG.center;
 let currentRadius = MAP_CONFIG.defaultRadiusMeters; // Rayon actuel
-let circleEnabled = true; // Le cercle est activé par défaut
+let circleEnabled = false; // Par défaut : pas de rayon (recherche sans limite)
 let isResizingCircle = false; // Mode redimensionnement
 let radiusTooltip; // Infobulle pour afficher la distance
 
@@ -64,8 +64,38 @@ function initMap() {
     // Création de l'infobulle pour le rayon
     createRadiusTooltip();
     
-    // Chargement des activités dans le rayon
+    // Chargement des activités (sans rayon par défaut)
     loadActivitiesInRadius();
+    
+    // Positionner le marqueur sur la position du navigateur si disponible
+    trySetUserPositionFromBrowser();
+}
+
+/**
+ * Place le marqueur et centre la carte sur la position du navigateur si disponible
+ */
+function trySetUserPositionFromBrowser() {
+    if (!navigator.geolocation) return;
+    navigator.geolocation.getCurrentPosition(
+        (pos) => {
+            const lat = pos.coords.latitude;
+            const lng = pos.coords.longitude;
+            userPosition = [lat, lng];
+            map.setView(userPosition, MAP_CONFIG.zoom);
+            userMarker.setLatLng(userPosition);
+            if (userCircle) {
+                userCircle.setLatLng(userPosition);
+            }
+            if (resizeHandle) {
+                updateHandlePosition();
+            }
+            loadActivitiesInRadius();
+        },
+        () => {
+            // Refus ou erreur : on garde le centre par défaut (Paris)
+        },
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
+    );
 }
 
 /**
