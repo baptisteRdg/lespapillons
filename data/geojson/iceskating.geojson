@@ -1,0 +1,2295 @@
+{
+  "type": "FeatureCollection",
+  "generator": "overpass-turbo",
+  "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL.",
+  "timestamp": "2026-02-20T13:21:57Z",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "relation/3380599",
+        "addr:city": "Viry-Châtillon",
+        "addr:housenumber": "31",
+        "addr:postcode": "91170",
+        "addr:street": "Avenue du Général de Gaulle",
+        "building": "public",
+        "leisure": "ice_rink",
+        "name": "Patinoire des lacs",
+        "opening_hours": "We 14:00-17:00; Fr 20:30-23:00; Sa 14:00-17:00; Su 09:45-12:15,14:30-17:30; PH 09:45-12:15,14:30-17:30; SH Mo-Th 14:00-17:45; SH Fr-Sa 14:00-17:45,20:30-23:30; SH Su 09:45-12:15,14:30-17:30",
+        "seasonal": "yes",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre ; mise à jour : 2013",
+        "sport": "ice_hockey;curling;ice_skating",
+        "type": "multipolygon",
+        "website": "https://www.grandorlyseinebievre.fr/patinoire-des-lacs-viry-chatillon",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.386457,
+          48.6740528
+        ]
+      },
+      "id": "relation/3380599"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "relation/5944270",
+        "addr:city": "Samoëns",
+        "addr:housenumber": "155",
+        "addr:postcode": "74340",
+        "addr:street": "Route des Drugères",
+        "building:levels": "1",
+        "capacity": "450",
+        "contact:email": "piscine-patinoire.samoens@orange.fr",
+        "contact:phone": "+33 4 50 34 13 92",
+        "leisure": "ice_rink",
+        "name": "Patinoire",
+        "note": "Nouvelle patinoire, bâtiment construit, inauguration le 21 octobre 2015, import depuis le cadastre réalisé en février 2016",
+        "opening_hours": "Nov 02-Dec 18 We 10:00-12:00,14:30-18:00; Nov 02-Dec 18 Sa 14:30-18:00,20:30-22:30; Nov 02-Dec 18 Su 14:30-18:00 \"La patinoire est ouverte en saison d'hiver, du début des vacances de Toussaint à la fin des vacances de Printemps (Calendrier scolaire fr)\"",
+        "operator": "Mairie de Samoëns",
+        "roof:shape": "many",
+        "seasonal": "winter",
+        "sport": "ice_hockey;ice_skating",
+        "start_date": "2015-10-21",
+        "type": "site",
+        "website": "https://www.mairiedesamoens.fr/patinoire-municipale",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.721475,
+          46.0820965
+        ]
+      },
+      "id": "relation/5944270"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "relation/13672314",
+        "addr:city": "Cergy",
+        "addr:housenumber": "33",
+        "addr:postcode": "95800",
+        "addr:street": "avenue de la Plaine des Sports",
+        "architect": "Chabanne",
+        "building": "yes",
+        "layer": "1",
+        "leisure": "ice_rink",
+        "name": "Aren'ice",
+        "opening_hours": "We 11:00-17:45; Th 20:15-23:30; Fr,Sa 10:00-20:00; Su 10:00-19:00",
+        "source": "cadastre-dgi-fr source : Direction Générale des Finances Publiques - Cadastre. Mise à jour : 2017",
+        "type": "multipolygon",
+        "wall": "no",
+        "website": "http://arenice.cergypontoise.fr/",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.0563137,
+          49.0516262
+        ]
+      },
+      "id": "relation/13672314"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/16922857",
+        "addr:city": "Montpellier",
+        "addr:postcode": "34000",
+        "addr:street": "Place de France",
+        "building": "yes",
+        "check_date": "2025-02-05",
+        "email": "vegapolis@vert-marine.com",
+        "height": "11",
+        "leisure": "ice_rink",
+        "name": "Patinoire Vegapolis Montpellier",
+        "phone": "+33 4 99 52 26 00",
+        "seasonal": "no",
+        "source": "http://www.montpellier.fr/1070-patinoire-vegapolis.htm",
+        "sport": "ice_hockey",
+        "start_date": "2000-12-16",
+        "website": "https://www.vegapolis.fr",
+        "wikidata": "Q3368778",
+        "wikipedia": "fr:Patinoire Végapolis",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.915136,
+          43.6030592
+        ]
+      },
+      "id": "way/16922857"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/24726702",
+        "building": "sports_centre",
+        "check_date": "2025-09-04",
+        "layer": "2",
+        "leisure": "ice_rink",
+        "name": "Patinoire de Bordeaux",
+        "sport": "ice_skating",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -0.5879725,
+          44.8352086
+        ]
+      },
+      "id": "way/24726702"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/25742984",
+        "addr:city": "Grenoble",
+        "addr:floor": "-1",
+        "addr:housenumber": "1",
+        "addr:postcode": "38100",
+        "addr:street": "Avenue d'Innsbruck",
+        "building": "yes",
+        "check_date": "2025-04-17",
+        "elevator": "yes",
+        "internet_access": "no",
+        "leisure": "ice_rink",
+        "level": "0",
+        "name": "Patinoire Pôle Sud",
+        "payment:cash": "yes",
+        "payment:credit_cards": "yes",
+        "payment:debit_cards": "yes",
+        "seasonal": "no",
+        "sport": "ice_skating;ice_hockey",
+        "website": "https://www.grenoblealpesmetropole.fr/233-patinoire-polesud.htm",
+        "wheelchair": "yes",
+        "wikidata": "Q1141309",
+        "wikipedia": "fr:Patinoire Polesud",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.7345446,
+          45.1576477
+        ]
+      },
+      "id": "way/25742984"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/27657756",
+        "addr:city": "Annecy",
+        "addr:housenumber": "90",
+        "addr:postcode": "74000",
+        "addr:street": "Chemin des Fins Nord",
+        "building": "yes",
+        "check_date": "2024-05-21",
+        "leisure": "ice_rink",
+        "name": "Patinoire Jean Régis",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2014",
+        "sport": "ice_skating",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.1216123,
+          45.9209464
+        ]
+      },
+      "id": "way/27657756"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/28905298",
+        "addr:city": "Rennes",
+        "addr:housenumber": "8",
+        "addr:postcode": "35000",
+        "addr:street": "Avenue des Gayeulles",
+        "building": "public",
+        "building:levels": "2",
+        "leisure": "ice_rink",
+        "name": "Patinoire Le Blizz",
+        "operator": "Patinoire Skating de Rennes",
+        "phone": "+33 2 99 36 28 10",
+        "roof:levels": "0",
+        "sport": "ice_skating;ice_hockey",
+        "website": "https://www.leblizz.com/",
+        "wikidata": "Q3220472",
+        "wikipedia": "fr:Le Blizz",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -1.6507051,
+          48.1325533
+        ]
+      },
+      "id": "way/28905298"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/30806198",
+        "building": "yes",
+        "check_date": "2024-07-08",
+        "leisure": "ice_rink",
+        "name": "Patinoire Bellevue",
+        "phone": "+33 5 61 52 93 53",
+        "sport": "skating",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          1.4530477,
+          43.5676301
+        ]
+      },
+      "id": "way/30806198"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/35331106",
+        "building": "sports_centre",
+        "check_date": "2024-10-19",
+        "email": "icearenametz@greenconceptsport.com",
+        "leisure": "ice_rink",
+        "name": "Patinoire Ice Arena",
+        "opening_hours": "Mo-Tu off; We,Fr,PH 14:00-17:00; Th,Sa 14:00-17:00,20:30-23:00; Su 09:30-12:00,15:00-18:00",
+        "payment:cash": "yes",
+        "payment:credit_cards": "yes",
+        "payment:debit_cards": "yes",
+        "phone": "+33 3 87 66 47 30",
+        "seasonal": "no",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2009",
+        "sport": "ice_skating",
+        "wheelchair": "limited",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.1626465,
+          49.1129001
+        ]
+      },
+      "id": "way/35331106"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/40652721",
+        "building": "yes",
+        "leisure": "ice_rink",
+        "name": "Patinoire",
+        "seasonal": "yes",
+        "sport": "ice_skating;ice_hockey;curling",
+        "wikidata": "Q3368792",
+        "wikipedia": "fr:Patinoire de Saint-Pierre",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -56.1803004,
+          46.7748821
+        ]
+      },
+      "id": "way/40652721"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/41418130",
+        "building": "yes",
+        "diff:ref:FR:RNB": "splitted",
+        "leisure": "ice_rink",
+        "name": "Patinoire l'Iceberg",
+        "ref:FR:RNB": "TZ86DM7T4YGJ",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre ; mise à jour : 2009",
+        "sport": "ice_skating;ice_hockey",
+        "wikidata": "Q3368771",
+        "wikipedia": "fr:Patinoire Iceberg",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          7.7260629,
+          48.58972
+        ]
+      },
+      "id": "way/41418130"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/42513462",
+        "addr:city": "Brest",
+        "addr:country": "FR",
+        "addr:housenumber": "29",
+        "addr:postcode": "29200",
+        "addr:street": "Place Napoléon III",
+        "building": "yes",
+        "leisure": "ice_rink",
+        "name": "Patinoire Rinkla Stadium",
+        "sport": "ice_skating",
+        "wikidata": "Q16510635",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -4.5085776,
+          48.4049823
+        ]
+      },
+      "id": "way/42513462"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/44049047",
+        "architect": "Laurent Bansac Architecte",
+        "building": "yes",
+        "capacity": "4200",
+        "check_date": "2024-04-22",
+        "leisure": "ice_rink",
+        "name": "Patinoire Charlemagne",
+        "opening_hours": "We 14:00-17:00; Fr 21:00-23:00; Sa 14:30-17:30,21:00-23:00; Su 10:30-13:00,14:00-17:30; SH Mo 10:00-12:00,14:00-17:30; SH Tu-Fr 10:00-12:00,14:00-17:30,20:30-22:30; SH Sa 14:00-17:30,20:30-22:30; SH Su 10:30-13:00,14:00-17:30",
+        "operator": "Ville de Lyon",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre;mise à jour : 2008",
+        "sport": "ice_hockey;ice_skating",
+        "website": "https://www.lyon.fr/lieu/patinoires/patinoire-charlemagne",
+        "website:booking": "https://www.piscines-patinoires.lyon.fr/index.php?a=planning&ide=13",
+        "wikidata": "Q9511",
+        "wikipedia": "fr:Patinoire Charlemagne",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.8196848,
+          45.7425239
+        ]
+      },
+      "id": "way/44049047"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/44792017",
+        "leisure": "ice_rink",
+        "name": "Patinoire Municipale",
+        "sport": "ice_hockey;ice_skating",
+        "wikidata": "Q18745384",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.2529368,
+          48.8952487
+        ]
+      },
+      "id": "way/44792017"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/47424799",
+        "building": "yes",
+        "leisure": "ice_rink",
+        "name": "Patinoire olympique",
+        "sport": "ice_skating",
+        "wikidata": "Q15265667",
+        "wikipedia": "en:Patinoire olympique de Pralognan-la-Vanoise",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.7221671,
+          45.3770855
+        ]
+      },
+      "id": "way/47424799"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/47826194",
+        "addr:city": "Colmar",
+        "addr:housenumber": "15",
+        "addr:postcode": "68000",
+        "addr:street": "Rue Robert Schuman",
+        "building": "yes",
+        "leisure": "ice_rink",
+        "name": "Patinoire de Colmar",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2010",
+        "sport": "ice_hockey",
+        "wikidata": "Q3368781",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          7.3325305,
+          48.0807638
+        ]
+      },
+      "id": "way/47826194"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/51415105",
+        "building": "yes",
+        "leisure": "ice_rink",
+        "name": "Patinoire Jacques Raynaud",
+        "phone": "+33 5 62 747 140",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre ; mise à jour : 2010",
+        "sport": "ice_skating",
+        "website": "https://patinoireblagnac.fr/",
+        "wikidata": "Q3368769",
+        "wikipedia": "fr:Patinoire Jacques-Raynaud",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          1.3824249,
+          43.6411132
+        ]
+      },
+      "id": "way/51415105"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/57826791",
+        "building": "yes",
+        "check_date": "2024-09-08",
+        "leisure": "ice_rink",
+        "name": "Glisséo",
+        "payment:cash": "yes",
+        "payment:credit_cards": "yes",
+        "payment:debit_cards": "yes",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2010",
+        "wikidata": "Q18785767",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -0.8782698,
+          47.0541155
+        ]
+      },
+      "id": "way/57826791"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/62341878",
+        "building": "yes",
+        "check_date": "2024-04-02",
+        "leisure": "ice_rink",
+        "name": "Patinoire de Baraban",
+        "operator": "Ville de Lyon",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2010",
+        "sport": "ice_hockey;ice_skating;curling",
+        "wikidata": "Q60221343",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.8679246,
+          45.7618158
+        ]
+      },
+      "id": "way/62341878"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/62515151",
+        "building": "yes",
+        "leisure": "ice_rink",
+        "name": "Patinoire Philippe Candeloro",
+        "source": "data.gouv.fr:Le ministère des droits des femmes, de la ville, de la jeunesse et des sports - 2014",
+        "sport": "ice_hockey",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.0423798,
+          42.5143764
+        ]
+      },
+      "id": "way/62515151"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/63272203",
+        "building": "yes",
+        "leisure": "ice_rink",
+        "name": "Patinoire de Saint-Étienne",
+        "operator": "Ville de Saint-Étienne",
+        "seasonal": "no",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre;mise à jour : 2009",
+        "sport": "ice_skating",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3964591,
+          45.4483049
+        ]
+      },
+      "id": "way/63272203"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/64601679",
+        "building": "yes",
+        "email": "patinoire.bourges@ville-bourges.fr",
+        "leisure": "ice_rink",
+        "name": "Patinoire",
+        "opening_date": "2021-09-25",
+        "operator": "Ville de Bourges",
+        "phone": "+33 2 48 57 80 01",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2010",
+        "sport": "ice_skating;ice_hockey",
+        "website": "https://www.ville-bourges.fr/site/patinoire",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.3816393,
+          47.0847521
+        ]
+      },
+      "id": "way/64601679"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/65034920",
+        "addr:city": "Rouen",
+        "addr:postcode": "76000",
+        "addr:street": "Allée du Docteur Duchêne",
+        "building": "yes",
+        "leisure": "ice_rink",
+        "name": "Patinoire de loisirs Edith Ballester",
+        "operator": "Ville de Rouen",
+        "phone": "+33 2 35 07 94 70",
+        "seasonal": "no",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2010",
+        "sport": "ice_skating;ice_hockey",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          1.1039549,
+          49.4308181
+        ]
+      },
+      "id": "way/65034920"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/66372618",
+        "building": "retail",
+        "leisure": "ice_rink",
+        "name": "CyberGlace la patinoire",
+        "source": "extraction vectorielle v1 cadastre-dgi-fr source : Direction Générale des Impôts - Cadas. Mise à jour : 2010",
+        "sport": "ice_skating",
+        "website": "https://www.cyberglace.com/",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.551286,
+          47.84791
+        ]
+      },
+      "id": "way/66372618"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/66687794",
+        "addr:city": "Clermont-Ferrand",
+        "addr:housenumber": "155",
+        "addr:postcode": "63000",
+        "addr:street": "Boulevard Gustave Flaubert",
+        "building": "sports_centre",
+        "leisure": "ice_rink",
+        "name": "Patinoire Papadakis & Cizeron",
+        "operator": "Clermont Auvergne Métropole",
+        "seasonal": "no",
+        "source": "survey",
+        "source:building": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2010",
+        "sport": "multi",
+        "survey:date": "2023-04-13",
+        "wikidata": "Q60221347",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.1277263,
+          45.7625925
+        ]
+      },
+      "id": "way/66687794"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/66767753",
+        "building": "commercial",
+        "leisure": "ice_rink",
+        "name": "Patinoire Olympique",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2010",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.134335,
+          49.2440905
+        ]
+      },
+      "id": "way/66767753"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/67434428",
+        "building": "yes",
+        "leisure": "ice_rink",
+        "name": "Cityglace",
+        "seasonal": "no",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2010",
+        "sport": "ice_skating",
+        "wikidata": "Q2974598",
+        "wikipedia": "fr:Cityglace",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          0.1517275,
+          48.016377
+        ]
+      },
+      "id": "way/67434428"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/69519859",
+        "building": "yes",
+        "leisure": "ice_rink",
+        "name": "Salle du Manège",
+        "opening_hours": "Tu 18:00-21:00; We 14:00-18:00; Sa 14:00-22:00; Su 09:00-12:00,14:00-18:00; Jul-Aug We,Sa 14:00-18:00 || SH Mo 14:00-18:00; We-Fr 14:00-21:00; Sa 14:00-22:00; Su 09:00-12:00,14:00-18:00",
+        "operator": "Ville de Toul",
+        "source": "survey",
+        "sport": "ice_skating",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.8939043,
+          48.6733771
+        ]
+      },
+      "id": "way/69519859"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/70351736",
+        "addr:city": "Argenteuil",
+        "addr:postcode": "95100",
+        "addr:street": "Allée de la Griffe d'Argent",
+        "building": "yes",
+        "check_date": "2024-05-11",
+        "leisure": "ice_rink",
+        "name": "Patinoire d'Argenteuil",
+        "seasonal": "yes",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2010",
+        "sport": "ice_skating;ice_hockey",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.232614,
+          48.9498006
+        ]
+      },
+      "id": "way/70351736"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/70375062",
+        "building": "sports_centre",
+        "leisure": "ice_rink",
+        "name": "Patinoire Olympique Municipale de Limoges",
+        "operator": "Ville de Limoges",
+        "seasonal": "no",
+        "source": "extraction vectorielle: cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2010",
+        "sport": "ice_skating",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          1.2708397,
+          45.8310165
+        ]
+      },
+      "id": "way/70375062"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/70783159",
+        "addr:city": "Asnières-sur-Seine",
+        "addr:housenumber": "1",
+        "addr:postcode": "92600",
+        "addr:street": "Boulevard Pierre de Coubertin",
+        "building": "yes",
+        "check_date": "2025-03-06",
+        "leisure": "ice_rink",
+        "name": "Patinoire Olympique des Courtilles",
+        "note": "Horaires spéciales durant vacances scolaires Du lundi au vendredi : 14h - 18h Samedi : 10h - 12h et 14h - 18h Dimanche : 9h - 12h et 14h - 18h",
+        "opening_hours": "Mo 09:15-11:45; Th-Fr 09:15-11:45; We 14:30-17:00; Sa 14:30-18:00; Su 09:00-12:00,14:30-18:00",
+        "operator": "Municipalité d'Asnières-sur-Seine",
+        "phone": "+33 1 47 99 96 06",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2010;http://www.asnieres-sur-seine.fr/Sport/Installations mise à jour 20/06/15",
+        "sport": "ice_skating",
+        "website": "https://www.asnieres-sur-seine.fr/Sport/Installations",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.2836555,
+          48.9275048
+        ]
+      },
+      "id": "way/70783159"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/73133543",
+        "building": "yes",
+        "leisure": "ice_rink",
+        "name": "Patinoire des 3 Seine",
+        "note": "Le nom s'ortographie sans 's'",
+        "payment:cash": "yes",
+        "phone": "+33 3 25 41 48 34",
+        "source": "data.gouv.fr:Le ministère des droits des femmes, de la ville, de la jeunesse et des sports - 11/2015",
+        "sport": "ice_skating",
+        "website": "https://www.patinoire-troyes.fr",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.0813716,
+          48.2925607
+        ]
+      },
+      "id": "way/73133543"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/73303009",
+        "building": "yes",
+        "leisure": "ice_rink",
+        "name": "Patinoire",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2010",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -0.4890552,
+          46.3184599
+        ]
+      },
+      "id": "way/73303009"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/76078332",
+        "building": "yes",
+        "check_date": "2024-10-14",
+        "leisure": "ice_rink",
+        "name": "Patinoire Municipale",
+        "operator": "Commune du Havre",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2010",
+        "sport": "ice_skating",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          0.1332,
+          49.5072658
+        ]
+      },
+      "id": "way/76078332"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/76925704",
+        "building": "yes",
+        "fee": "yes",
+        "leisure": "ice_rink",
+        "name": "Patinoire",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2010",
+        "sport": "ice_skating",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.2216914,
+          48.991795
+        ]
+      },
+      "id": "way/76925704"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/84244682",
+        "building": "yes",
+        "leisure": "ice_rink",
+        "name": "Patinoire \"La Forge\"",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2019",
+        "sport": "ice_skating",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          0.5356648,
+          46.8126872
+        ]
+      },
+      "id": "way/84244682"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/84704899",
+        "building": "yes",
+        "leisure": "ice_rink",
+        "name": "Patinoire olympique de Rezé",
+        "name:br": "Poull-ruzikat olimpek Reudied",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2010",
+        "sport": "ice_skating",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -1.5727344,
+          47.1823823
+        ]
+      },
+      "id": "way/84704899"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/87188308",
+        "leisure": "ice_rink",
+        "name": "Patinoire",
+        "seasonal": "yes",
+        "source": "data.gouv.fr:Le ministère des droits des femmes, de la ville, de la jeunesse et des sports - 2014",
+        "sport": "ice_skating",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.8001435,
+          45.8920627
+        ]
+      },
+      "id": "way/87188308"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/100811619",
+        "building": "yes",
+        "check_date": "2025-01-29",
+        "leisure": "ice_rink",
+        "name": "Patinoire",
+        "operator": "Dauphins d'Épinal",
+        "source": "cadastre-dgi-fr source : Direction Générale des Finances Publiques - Cadastre. Mise à jour : 2022",
+        "sport": "ice_skating;ice_hockey",
+        "wikipedia": "fr:Patinoire de Poissompré",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.4636057,
+          48.1799096
+        ]
+      },
+      "id": "way/100811619"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/101945137",
+        "addr:city": "Chambéry",
+        "addr:postcode": "73000",
+        "addr:street": "Rue Sainte-Rose",
+        "building": "yes",
+        "leisure": "ice_rink",
+        "name": "Patinoire de Chambéry Métropole - Cœur des Bauges",
+        "operator": "Chambéry Métropole",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2011",
+        "sport": "ice_skating",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.9363702,
+          45.5646575
+        ]
+      },
+      "id": "way/101945137"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/115659634",
+        "addr:city": "Dijon",
+        "addr:postcode": "21000",
+        "addr:street": "Boulevard Trimolet",
+        "building": "sports_centre",
+        "capacity": "840",
+        "check_date": "2024-10-15",
+        "leisure": "ice_rink",
+        "name": "Patinoire Trimolet",
+        "operator": "Dijon Métropole",
+        "operator:wikidata": "Q2986991",
+        "start_date": "1972",
+        "wikidata": "Q3368773",
+        "wikipedia": "fr:Patinoire Trimolet",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.0639531,
+          47.3236457
+        ]
+      },
+      "id": "way/115659634"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/119318079",
+        "access": "yes",
+        "building": "yes",
+        "hide": "no",
+        "leisure": "ice_rink",
+        "name": "Patinoire",
+        "ref": "L15",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2010",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.5564205,
+          44.4917705
+        ]
+      },
+      "id": "way/119318079"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/124108490",
+        "building": "yes",
+        "leisure": "ice_rink",
+        "name": "Le Yéti",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2011",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -1.4475853,
+          49.0336916
+        ]
+      },
+      "id": "way/124108490"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/124601600",
+        "building": "yes",
+        "check_date": "2025-11-30",
+        "leisure": "ice_rink",
+        "name": "Patinoire municipale",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          1.5437332,
+          45.1590236
+        ]
+      },
+      "id": "way/124601600"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/126667304",
+        "building": "yes",
+        "leisure": "ice_rink",
+        "name": "Patinoire de la Base de Loisir",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2011",
+        "wall": "no",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.979982,
+          50.672453
+        ]
+      },
+      "id": "way/126667304"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/141817345",
+        "building": "sports_centre",
+        "leisure": "ice_rink",
+        "name": "Patinoire",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2011",
+        "sport": "ice_hockey",
+        "wikidata": "Q60221336",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.1256569,
+          45.0107469
+        ]
+      },
+      "id": "way/141817345"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/144152828",
+        "addr:city": "Vannes",
+        "addr:housenumber": "6",
+        "addr:postcode": "56000",
+        "addr:street": "Rue Georges Caldray",
+        "building": "yes",
+        "contact:email": "direction@patinium.com",
+        "leisure": "ice_rink",
+        "name": "Patinium",
+        "operator": "Patinium",
+        "phone": "+33 2 97 40 91 23",
+        "seasonal": "no",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2012",
+        "website": "https://www.patinium.com",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -2.7786815,
+          47.66305
+        ]
+      },
+      "id": "way/144152828"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/145438936",
+        "building": "yes",
+        "leisure": "ice_rink",
+        "name": "Patinoire de Neuilly-sur-Marne",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2012",
+        "wikidata": "Q3368802",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.5317564,
+          48.8678213
+        ]
+      },
+      "id": "way/145438936"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/147471775",
+        "contact:website": "https://www.lesgets.com/que-faire/activites-hiver/loisirs-sportifs/patinoire/",
+        "fee": "yes",
+        "leisure": "ice_rink",
+        "name": "Patinoire extérieure",
+        "opening_hours": "Dec 20-Apr 6 Mo-Su 10:00-12:00, 15:00-19:00; Feb Mo-Su 10:00-12:00, 14:00-19:00, 20:00-22:00",
+        "seasonal": "winter",
+        "sport": "ice_skating",
+        "wikidata": "Q60221332",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.6698042,
+          46.1592638
+        ]
+      },
+      "id": "way/147471775"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/150236867",
+        "building": "yes",
+        "leisure": "ice_rink",
+        "name": "Patinoire Olympique",
+        "name:de": "Olympische Eishalle",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          7.3203487,
+          47.736042
+        ]
+      },
+      "id": "way/150236867"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/154604841",
+        "building": "yes",
+        "leisure": "ice_rink",
+        "name": "Palais Omnisports Marseille Grand-Est",
+        "name:oc": "Palais Omnispòrts Marselha Levantesa",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2012",
+        "source:leisure": "data.gouv.fr:Le ministère des droits des femmes, de la ville, de la jeunesse et des sports - 2014",
+        "source:name:oc": "ieo-bdtopoc",
+        "sport": "ice_skating;skateboard",
+        "wheelchair": "no",
+        "wikidata": "Q3361208",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.401819,
+          43.2820792
+        ]
+      },
+      "id": "way/154604841"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/155645070",
+        "addr:housenumber": "8",
+        "building": "civic",
+        "building:levels": "2",
+        "capacity": "1499",
+        "check_date": "2024-11-15",
+        "leisure": "ice_rink",
+        "name": "Patinoire de Caen la mer",
+        "operator": "Drakkars de Caen",
+        "roof:levels": "0",
+        "source": "data.gouv.fr:Le ministère des droits des femmes, de la ville, de la jeunesse et des sports - 11/2015",
+        "sport": "swimming",
+        "wikidata": "Q3368784",
+        "wikipedia": "fr:Patinoire de Caen la mer",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -0.3691569,
+          49.1774785
+        ]
+      },
+      "id": "way/155645070"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/157126332",
+        "access": "yes",
+        "addr:city": "Anglet",
+        "addr:housenumber": "299",
+        "addr:postcode": "64600",
+        "building": "yes",
+        "email": "patinoire@anglet.fr",
+        "fee": "yes",
+        "leisure": "ice_rink",
+        "name": "Patinoire de la Barre",
+        "operator": "Commune d'Anglet",
+        "phone": "+33 5 59 57 17 30",
+        "seasonal": "no",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2012",
+        "sport": "ice_skating;ice_hockey",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -1.5221484,
+          43.526921
+        ]
+      },
+      "id": "way/157126332"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/182917390",
+        "building": "yes",
+        "covered": "yes",
+        "leisure": "ice_rink",
+        "name": "Patinoire Philippe Candeloro",
+        "operator": "SEM Valloire",
+        "seasonal": "yes",
+        "sport": "ice_skating",
+        "website": "https://www.valloire.net/equipement/patinoire-philippe-candeloro-valloire/",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.4305581,
+          45.1673451
+        ]
+      },
+      "id": "way/182917390"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/185138247",
+        "leisure": "ice_rink",
+        "name": "Patinoire",
+        "sport": "ice_skating",
+        "wikidata": "Q60221422",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.9318351,
+          44.2251213
+        ]
+      },
+      "id": "way/185138247"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/185312619",
+        "leisure": "ice_rink",
+        "name": "Patinoire",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2012",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.8636185,
+          45.6259125
+        ]
+      },
+      "id": "way/185312619"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/197085738",
+        "building": "yes",
+        "leisure": "ice_rink",
+        "name": "Patinoire de La Garde",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2012",
+        "wikidata": "Q3368786",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.0002866,
+          43.122142
+        ]
+      },
+      "id": "way/197085738"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/203637602",
+        "building": "yes",
+        "leisure": "ice_rink",
+        "name": "Patinoire Milou Ducourtioux",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2013;GPS",
+        "sport": "ice_hockey",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -0.1149247,
+          45.0427753
+        ]
+      },
+      "id": "way/203637602"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/208144907",
+        "building": "yes",
+        "check_date": "2024-08-05",
+        "leisure": "ice_rink",
+        "name": "Patinoire couverte de Gèdre",
+        "phone": "+33 5 62 92 49 61",
+        "sport": "ice_skating",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          0.0180452,
+          42.7890139
+        ]
+      },
+      "id": "way/208144907"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/214477263",
+        "building": "yes",
+        "leisure": "ice_rink",
+        "name": "Patinoire Alex Jany",
+        "opening_hours": "Tu 16:30-18:30; We 15:30-19:00; Th 16:30-19:00; Fr 16:00-21:00; Sa 15:00-19:00; Su 14:00-18:00",
+        "phone": "+33 5 81 91 78 56",
+        "sport": "ice_skating",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          1.4787057,
+          43.6239466
+        ]
+      },
+      "id": "way/214477263"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/220270024",
+        "leisure": "ice_rink",
+        "name": "Patinoire synthétique",
+        "sport": "ice_hockey;ice_skating",
+        "website": "https://montgenevre.com/prestataire/patinoire-synthetique-4888636",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.7267775,
+          44.9314268
+        ]
+      },
+      "id": "way/220270024"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/238806758",
+        "building": "yes",
+        "leisure": "ice_rink",
+        "name": "Patinoire",
+        "source": "cadastre-dgi-fr source : Direction Générale des Finances Publiques - Cadastre. Mise à jour : 2013",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.0057925,
+          46.942808
+        ]
+      },
+      "id": "way/238806758"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/246399017",
+        "addr:housenumber": "67",
+        "addr:postcode": "74170",
+        "addr:street": "Impasse de la Cascade",
+        "building": "yes",
+        "leisure": "ice_rink",
+        "name": "Patinoire municipale",
+        "seasonal": "no",
+        "source": "cadastre-dgi-fr source : Direction Générale des Finances Publiques - Cadastre. Mise à jour : 2013",
+        "sport": "ice_skating",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.7135635,
+          45.8880325
+        ]
+      },
+      "id": "way/246399017"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/249567946",
+        "building": "roof",
+        "leisure": "ice_rink",
+        "name": "Patinoire",
+        "seasonal": "no",
+        "sport": "ice_skating",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.4221764,
+          45.9035728
+        ]
+      },
+      "id": "way/249567946"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/254096465",
+        "building": "yes",
+        "leisure": "ice_rink",
+        "name": "Patinoire André Ravix",
+        "operator": "Ours de Villard-de-Lans",
+        "source": "cadastre-dgi-fr source : Direction Générale des Finances Publiques - Cadastre. Mise à jour : 2013",
+        "sport": "ice_skating",
+        "wikidata": "Q3368765",
+        "wikipedia": "fr:Patinoire André Ravix",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.5508216,
+          45.0727165
+        ]
+      },
+      "id": "way/254096465"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/269281270",
+        "building": "yes",
+        "leisure": "ice_rink",
+        "name": "Patinoire intercommunale",
+        "source": "data.gouv.fr:Le ministère des droits des femmes, de la ville, de la jeunesse et des sports - 11/2015",
+        "sport": "ice_skating",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.3922765,
+          48.974503
+        ]
+      },
+      "id": "way/269281270"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/273685100",
+        "addr:city": "Megève",
+        "addr:postcode": "74120",
+        "leisure": "ice_rink",
+        "name": "Patinoire de plein air",
+        "seasonal": "winter",
+        "wikimedia_commons": "File:Ice rink, Place de la Résistance, Megève, 2025.jpg",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.6201032,
+          45.8575795
+        ]
+      },
+      "id": "way/273685100"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/290591428",
+        "leisure": "ice_rink",
+        "name": "La patinoire de Val d'Isère",
+        "name:en": "Ice skating rink",
+        "opening_hours": "Mo-Sa 15:00-20:00",
+        "operator": "SEM SOGEVALDI",
+        "seasonal": "yes",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.9780834,
+          45.4485307
+        ]
+      },
+      "id": "way/290591428"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/370089114",
+        "building": "yes",
+        "leisure": "ice_rink",
+        "name": "Arche des neiges",
+        "operator": "SAEM Super Lioran",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2010",
+        "sport": "ice_skating",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.7473568,
+          45.0814891
+        ]
+      },
+      "id": "way/370089114"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/543774374",
+        "addr:city": "Nîmes",
+        "addr:housenumber": "156",
+        "addr:postcode": "30900",
+        "addr:street": "Avenue Georges Dayan",
+        "building": "yes",
+        "leisure": "ice_rink",
+        "name": "Patinoire de Nîmes",
+        "opening_hours": "sunrise-sunset",
+        "operator": "Ville de Nîmes",
+        "seasonal": "no",
+        "sport": "ice_hockey;curling;ice_stock",
+        "website": "https://www.nimes.fr/sports/equipements-sportifs/patinoire.html",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3453444,
+          43.8228708
+        ]
+      },
+      "id": "way/543774374"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/604214452",
+        "addr:city": "Dunkerque",
+        "addr:housenumber": "2480",
+        "addr:postcode": "59140",
+        "addr:street": "Route du Quai Freycinet 3",
+        "architect": "Chabanne",
+        "building": "public",
+        "building:colour": "firebrick",
+        "building:levels": "3",
+        "leisure": "ice_rink",
+        "name": "Patinoire Michel Raffoux",
+        "roof:colour": "white",
+        "roof:shape": "flat",
+        "sport": "ice_skating;ice_hockey",
+        "start_date": "2019",
+        "website": "https://www.patinoire-dunkerque.com/",
+        "wikidata": "Q18745383",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.3651946,
+          51.0369189
+        ]
+      },
+      "id": "way/604214452"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/628040347",
+        "building": "civic",
+        "covered": "yes",
+        "leisure": "ice_rink",
+        "name": "Patinoire du Mont Dore",
+        "seasonal": "no",
+        "sport": "ice_skating",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.8087231,
+          45.5729751
+        ]
+      },
+      "id": "way/628040347"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/668710439",
+        "building": "yes",
+        "leisure": "ice_rink",
+        "name": "Ice Rink - Seasonal",
+        "seasonal": "yes",
+        "sport": "ice_skating",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.6759259,
+          45.5064201
+        ]
+      },
+      "id": "way/668710439"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/766254066",
+        "leisure": "ice_rink",
+        "name": "La BUL",
+        "sport": "ice_hockey;ice_skating",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.2846341,
+          49.8391748
+        ]
+      },
+      "id": "way/766254066"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/976042578",
+        "leisure": "ice_rink",
+        "name": "Patinoire Arago",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -1.447094,
+          46.6703679
+        ]
+      },
+      "id": "way/976042578"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/977197813",
+        "leisure": "ice_rink",
+        "name": "Patinoire IceParc",
+        "name:fr": "Patinoire IceParc",
+        "sport": "ice_skating;ice_hockey",
+        "wikidata": "Q65127857",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -0.5488252,
+          47.4801416
+        ]
+      },
+      "id": "way/977197813"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/977864891",
+        "addr:city": "Meudon",
+        "addr:housenumber": "16",
+        "addr:postcode": "92360",
+        "addr:street": "Place Simone Veil",
+        "check_date": "2024-10-20",
+        "email": "hello@ucpasportstation-meudon.com",
+        "image": "https://www.meudon.fr/wp-content/uploads/sites/5/2021/02/BG_Visite-UCPA-Sport-Nation-BD-27-1024x683.jpg",
+        "indoor": "yes",
+        "leisure": "ice_rink",
+        "level": "0",
+        "name": "Patinoire UCPA",
+        "old_name": "Patinoire de Meudon",
+        "opening_hours": "Mo-Sa 07:00-23:00; Su 09:00-18:00",
+        "operator": "UCPA Sport Station",
+        "phone": "+33 1 85 74 44 37",
+        "seasonal": "no",
+        "sport": "ice_hockey;ice_skating",
+        "start_date": "2021-06-09",
+        "website": "https://www.ucpa.com/sport-station/meudon/espace-glace",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.2264111,
+          48.782654
+        ]
+      },
+      "id": "way/977864891"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1110124918",
+        "addr:city": "Champigny-sur-Marne",
+        "addr:housenumber": "3",
+        "addr:postcode": "94500",
+        "addr:street": "Boulevard Jules Guesde",
+        "email": "patinoire.champigny@vert-marine.com",
+        "leisure": "ice_rink",
+        "name": "Patinoire de Champigny-sur-Marne",
+        "opening_hours": "We 14:45-17:30; Fr 21:15-23:45; Sa 14:30-17:30,21:15-24:00; Su 10:00-12:15,14:30-18:00; Jun-Aug off",
+        "operator": "Vert Marine",
+        "phone": "+33 1 48 81 82 82",
+        "seasonal": "yes",
+        "sport": "ice_skating;ice_hockey",
+        "website": "https://www.patinoire-champigny.com/",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.5098208,
+          48.8189142
+        ]
+      },
+      "id": "way/1110124918"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1238646866",
+        "leisure": "ice_rink",
+        "name": "Patinoire d'Orelle",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.5465925,
+          45.2077135
+        ]
+      },
+      "id": "way/1238646866"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1262608102",
+        "building": "yes",
+        "leisure": "ice_rink",
+        "name": "Patinoire Marcel Dassault",
+        "sport": "ice_skating",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.0927464,
+          49.4526104
+        ]
+      },
+      "id": "way/1262608102"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1263187196",
+        "capacity": "2316",
+        "email": "sport@ville-tours.fr",
+        "indoor": "room",
+        "leisure": "ice_rink",
+        "level": "0;1;2",
+        "name": "Patinoire Municipale de Tours",
+        "operator": "Remparts de Tours",
+        "phone": "+33 2 47 70 86 30",
+        "sport": "ice_skating;ice_hockey",
+        "start_date": "1972",
+        "website": "https://www.tours.fr/annuaire/506/9-patinoire-municipale-de-tours.htm",
+        "wikidata": "Q3368793",
+        "wikipedia": "fr:Patinoire de Tours",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          0.6941807,
+          47.3829295
+        ]
+      },
+      "id": "way/1263187196"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1333317896",
+        "building": "yes",
+        "leisure": "ice_rink",
+        "name": "Patinoire Polarys Douaisis",
+        "seasonal": "no",
+        "sport": "ice_hockey;ice_skating",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.101768,
+          50.3517289
+        ]
+      },
+      "id": "way/1333317896"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1346975696",
+        "leisure": "ice_rink",
+        "name": "Patinoire de Dreux",
+        "seasonal": "no",
+        "sport": "ice_skating;ice_hockey",
+        "website": "https://patinoire-dreux.fr/",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          1.3594877,
+          48.7470583
+        ]
+      },
+      "id": "way/1346975696"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/1502795095",
+        "check_date": "2025-04-02",
+        "leisure": "ice_rink",
+        "name": "Patinoire Salvador Allende",
+        "seasonal": "no",
+        "sport": "ice_skating",
+        "wikidata": "Q60221380"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.4825817,
+          48.8545027
+        ]
+      },
+      "id": "node/1502795095"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/2415685107",
+        "leisure": "ice_rink",
+        "name": "L'Avalache"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -2.1531874,
+          47.2350153
+        ]
+      },
+      "id": "node/2415685107"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/2432302013",
+        "leisure": "ice_rink",
+        "name": "Patinoire Pailleron"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.378145,
+          48.8806654
+        ]
+      },
+      "id": "node/2432302013"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4850349260",
+        "leisure": "ice_rink",
+        "name": "Skoda Arena",
+        "opening_hours": "Mo,Tu,Th 10:00-12:00, 14:00-16:00; We,Fr 14:00-16:00",
+        "seasonal": "no",
+        "sport": "ice_hockey"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.7050854,
+          46.1841001
+        ]
+      },
+      "id": "node/4850349260"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5204092777",
+        "addr:city": "Paris",
+        "addr:housenumber": "222",
+        "addr:postcode": "75012",
+        "addr:street": "Quai de Bercy",
+        "leisure": "ice_rink",
+        "name": "Patinoire Sonja Henie",
+        "operator": "SAE POPB",
+        "wikidata": "Q3368772"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.3785653,
+          48.8382949
+        ]
+      },
+      "id": "node/5204092777"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/6303743302",
+        "addr:city": "Megève",
+        "addr:postcode": "74120",
+        "contact:website": "https://lepalaismegeve.com/",
+        "leisure": "ice_rink",
+        "name": "Patinoire",
+        "operator": "Le Palais",
+        "seasonal": "no",
+        "sport": "ice_skating;ice_hockey;curling;ice_stock"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.6182322,
+          45.8609595
+        ]
+      },
+      "id": "node/6303743302"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/6697923471",
+        "leisure": "ice_rink",
+        "name": "Patinoire d'Orcières Merlette 1850",
+        "sport": "ice_skating;ice_hockey"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.3217297,
+          44.6958982
+        ]
+      },
+      "id": "node/6697923471"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/7282418002",
+        "leisure": "ice_rink",
+        "name": "La boite à patins",
+        "opening_hours": "We 14:00-19:00; Fr 14:00-22:00; Sa 14:00-23:00; Su 14:00-18:00",
+        "phone": "+33 7 66 31 41 52",
+        "sport": "roller_skating",
+        "website": "https://www.laboiteapatins.fr/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.2689988,
+          49.907763
+        ]
+      },
+      "id": "node/7282418002"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/7550938936",
+        "addr:city": "Reims",
+        "addr:housenumber": "1",
+        "addr:postcode": "51100",
+        "addr:street": "Boulevard Albert 1er",
+        "check_date": "2024-06-25",
+        "leisure": "ice_rink",
+        "name": "Patinoire Albert 1er",
+        "phone": "+33 3 26 79 66 02",
+        "wikidata": "Q20127596",
+        "wikipedia": "fr:Patinoire Albert 1er"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.0094431,
+          49.2660611
+        ]
+      },
+      "id": "node/7550938936"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/7670914837",
+        "addr:city": "Cauterets",
+        "addr:postcode": "65110",
+        "addr:street": "Avenue de la Gare",
+        "leisure": "ice_rink",
+        "name": "Patinoire de Cauterets",
+        "phone": "+33562925848"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -0.1141708,
+          42.8926877
+        ]
+      },
+      "id": "node/7670914837"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/7952703712",
+        "contact:city": "Charleville-Mézières",
+        "contact:postcode": "08000",
+        "contact:street": "Promenade de la Warenne",
+        "leisure": "ice_rink",
+        "name": "Patinoire Elena Issatchenko"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.6871499,
+          49.7612609
+        ]
+      },
+      "id": "node/7952703712"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/7960996786",
+        "contact:facebook": "patinoiredepoitiersofficiel",
+        "email": "patinoire@grandpoitiers.fr",
+        "leisure": "ice_rink",
+        "name": "Patinoire de Grand Poitiers",
+        "operator": "Grand Poitiers",
+        "phone": "+33 5 49 30 20 40",
+        "seasonal": "no",
+        "sport": "ice_skating",
+        "website": "https://www.poitiers.fr/c__66_408__patinoire.html"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          0.3702025,
+          46.570149
+        ]
+      },
+      "id": "node/7960996786"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8093217730",
+        "addr:city": "Courchevel",
+        "addr:postcode": "73120",
+        "addr:street": "Place du Forum",
+        "leisure": "ice_rink",
+        "name": "Patinoire de Courchevel",
+        "operator": "Mairie de Courchevel",
+        "sport": "multi"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.6325038,
+          45.4160094
+        ]
+      },
+      "id": "node/8093217730"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8756206847",
+        "addr:city": "Louviers",
+        "addr:postcode": "27400",
+        "addr:street": "Rue du Canal",
+        "check_date": "2024-11-02",
+        "leisure": "ice_rink",
+        "name": "Glacéo",
+        "operator": "Communauté d’agglomération Seine-Eure",
+        "phone": "+33 2 32 09 86 19",
+        "seasonal": "no",
+        "url": "https://www.patinoire-glaceo.fr/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          1.1787653,
+          49.2150165
+        ]
+      },
+      "id": "node/8756206847"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9213964414",
+        "access": "permit",
+        "leisure": "ice_rink",
+        "level": "-1",
+        "name": "Patinoire municipale de Joué-lès-Tours",
+        "source": "Le ministère de la ville, de la jeunesse et des sports - 2021-04",
+        "sport": "ice_hockey;ice_skating"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          0.6615547,
+          47.3513271
+        ]
+      },
+      "id": "node/9213964414"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/10157114317",
+        "leisure": "ice_rink",
+        "name": "Patinoire de Roanne",
+        "seasonal": "yes",
+        "website": "https://www.aggloroanne.fr/ma-collectivite/sport/patinoire-de-roanne-252.html"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.0489913,
+          46.0315225
+        ]
+      },
+      "id": "node/10157114317"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/13421327965",
+        "leisure": "ice_rink",
+        "name": "Patinoire"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.12717,
+          45.7162678
+        ]
+      },
+      "id": "node/13421327965"
+    }
+  ]
+}
