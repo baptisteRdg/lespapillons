@@ -1,0 +1,3719 @@
+{
+  "type": "FeatureCollection",
+  "generator": "overpass-turbo",
+  "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL.",
+  "timestamp": "2026-02-23T11:10:17Z",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "relation/17858268",
+        "addr:city": "Vétraz-Monthoux",
+        "addr:housenumber": "10",
+        "addr:postcode": "74100",
+        "addr:street": "Allée des Chênes",
+        "brand:wikidata": "Q124329187",
+        "building": "yes",
+        "building:levels": "2",
+        "charge": "17 EUR/day",
+        "climbing:boulder": "yes",
+        "climbing:grade:french:max": "8A",
+        "climbing:grade:french:min": "4",
+        "climbing:speed": "no",
+        "climbing:sport": "no",
+        "contact:facebook": "arkosegenevois",
+        "contact:instagram": "arkose.genevois",
+        "description": "Salle d'escalade de Bloc, Yoga, Restaurant",
+        "fee": "yes",
+        "hot_water": "yes",
+        "image": "https://arkose.com/files/img/page/ee00f21511f6c/b25b5e9e65-disp.jpg",
+        "internet_access": "no",
+        "leisure": "sports_centre",
+        "name": "Arkose Genevois",
+        "opening_hours": "Mo-Su 07:00-00:00",
+        "payment:cards": "yes",
+        "payment:cash": "yes",
+        "payment:mastercard": "yes",
+        "payment:qr_code": "no",
+        "payment:visa": "yes",
+        "phone": "+33 4 57 43 60 62",
+        "service:climbing_shoes:rental": "yes",
+        "service:climbing_shoes:rental:fee": "yes",
+        "shower": "yes",
+        "smoking": "no",
+        "sport": "climbing",
+        "type": "multipolygon",
+        "website": "https://arkose.com/genevois",
+        "wheelchair": "yes",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.272081,
+          46.1850926
+        ]
+      },
+      "id": "relation/17858268"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/44895049",
+        "building": "sports_centre",
+        "charge": "16",
+        "check_date": "2022-08-21",
+        "cuisine": "sandwich;pizza",
+        "email": "lyon-gerland@climb-up.fr",
+        "fee": "yes",
+        "leisure": "sports_centre",
+        "name": "Climb Up Lyon Gerland",
+        "old_name": "Mur de Lyon",
+        "opening_hours": "Mo-Su 08:00-24:00",
+        "outdoor_seating": "yes",
+        "payment:cash": "yes",
+        "payment:credit_cards": "yes",
+        "payment:mastercard": "yes",
+        "payment:visa": "yes",
+        "phone": "+33 4 72 71 83 84",
+        "sport": "climbing",
+        "website": "https://lyon-gerland.climb-up.fr/",
+        "wheelchair": "yes",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.8359362,
+          45.7431997
+        ]
+      },
+      "id": "way/44895049"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/49197614",
+        "access": "customers",
+        "addr:housenumber": "5",
+        "addr:street": "Rue Jean Rodier",
+        "building": "yes",
+        "climbing:boulder": "yes",
+        "climbing:speed": "no",
+        "email": "toulousemontaudran@altissimo.fr",
+        "fee": "yes",
+        "leisure": "sports_centre",
+        "name": "Altissimo Montaudran",
+        "opening_hours": "Mo-Fr 10:00-23:00;PH,Sa,Su 10:00-20:00",
+        "phone": "+33 5 61 54 32 00",
+        "sport": "climbing",
+        "website": "https://toulouse-montaudran.altissimo.fr",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          1.4874422,
+          43.5668246
+        ]
+      },
+      "id": "way/49197614"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/51851439",
+        "addr:city": "Saint-Herblain",
+        "addr:housenumber": "7",
+        "addr:postcode": "44800",
+        "addr:street": "Rue des Compagnons",
+        "building": "yes",
+        "building:levels": "1",
+        "check_date": "2026-02-17",
+        "climbing:boulder": "yes",
+        "climbing:toprope": "yes",
+        "fee": "yes",
+        "indoor": "yes",
+        "leisure": "sports_centre",
+        "name": "El Cap",
+        "opening_hours": "Mo 12:00-23:00; Tu-Fr 10:00-23:00; Sa-Su 10:00-19:00",
+        "operator": "El Cap",
+        "operator:type": "private",
+        "payment:debit_cards": "yes",
+        "phone": "+33 2 40 36 48 16",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2010",
+        "sport": "climbing",
+        "website": "https://www.elcap.fr/",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -1.6412121,
+          47.2236657
+        ]
+      },
+      "id": "way/51851439"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/56016849",
+        "addr:city": "Grenoble",
+        "addr:housenumber": "22",
+        "addr:postcode": "38000",
+        "addr:street": "Rue Victor Lastella",
+        "check_date:opening_hours": "2021-12-17",
+        "climbing:boulder": "yes",
+        "climbing:sport": "yes",
+        "email": "espacevertical@yahoo.fr",
+        "fee": "yes",
+        "leisure": "sports_centre",
+        "name": "Espace vertical 3",
+        "opening_hours": "Mo-Fr 12:00-22:30, Sa,Su,PH 10:00-19:00; Dec 24 10:00-17:00; Dec 31 10:00-17:00; Dec 25 off; Jan 01 off",
+        "phone": "+33 4 76 53 16 60",
+        "short_name": "EV3",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2010",
+        "sport": "climbing",
+        "website": "https://www.espacevertical.com/",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.7036472,
+          45.1846479
+        ]
+      },
+      "id": "way/56016849"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/58266307",
+        "addr:city": "Dijon",
+        "addr:housenumber": "14",
+        "addr:postcode": "21000",
+        "addr:street": "Impasse Boirac",
+        "building": "yes",
+        "climbing:boulder": "yes",
+        "climbing:sport": "yes",
+        "description": "Salle de blocs et voies",
+        "fee": "yes",
+        "leisure": "sports_centre",
+        "name": "Climb Up Dijon",
+        "opening_hours": "Mo-Fr 09:30-22:30; Sa, Su 09:00-20:00",
+        "phone": "+33 3 55 33 38 66",
+        "sport": "climbing",
+        "website": "https://dijon.climb-up.fr/",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.0655367,
+          47.3513646
+        ]
+      },
+      "id": "way/58266307"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/70116553",
+        "addr:housenumber": "25",
+        "addr:street": "Rue de Douai",
+        "building": "yes",
+        "leisure": "sports_centre",
+        "name": "Climb Up",
+        "phone": "+33 9 80 74 89 28",
+        "ref:FR:NAF": "9311Z",
+        "ref:FR:SIREN": "789256690",
+        "ref:FR:SIRET": "78925669000015",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2010",
+        "sport": "climbing",
+        "website": "https://climb-up-limoges.fr",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          1.267361,
+          45.8124792
+        ]
+      },
+      "id": "way/70116553"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/70665205",
+        "building": "yes",
+        "check_date": "2025-12-24",
+        "climbing:boulder": "yes",
+        "climbing:sport": "no",
+        "climbing:toprope": "no",
+        "climbing:traditional": "no",
+        "fee": "yes",
+        "leisure": "sports_centre",
+        "name": "Blocpark Arkose",
+        "opening_hours": "Mo-Su 07:00-00:00;PH open",
+        "payment:cash": "yes",
+        "payment:credit_cards": "yes",
+        "phone": "+33 1 64 47 07 47",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2010",
+        "sport": "climbing",
+        "website": "https://massy.arkose.com/",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.2696439,
+          48.7227211
+        ]
+      },
+      "id": "way/70665205"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/74625508",
+        "addr:city": "Versailles",
+        "addr:housenumber": "11",
+        "addr:postcode": "78000",
+        "addr:street": "Rue Exelmans",
+        "building": "yes",
+        "climbing:boulder": "yes",
+        "climbing:sport": "no",
+        "email": "info-versailles@blocbuster.fr",
+        "fee": "yes",
+        "leisure": "sports_centre",
+        "name": "Blocbuster",
+        "opening_hours": "Mo,Tu,Th,Fr 11:00-23:00; We 09:00-23:00; Sa-Su 09:00-20:00",
+        "phone": "+33 1 30 21 63 53",
+        "source": "extraction vectorielle v1 cadastre-dgi-fr source : Direction Générale des Impôts - Cadas. Mise à jour : 2010",
+        "sport": "climbing",
+        "wall": "no",
+        "website": "https://blocbuster.fr/versailles/",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.1251853,
+          48.8136337
+        ]
+      },
+      "id": "way/74625508"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/81776027",
+        "addr:city": "Montreuil",
+        "addr:housenumber": "33",
+        "addr:postcode": "93100",
+        "addr:street": "Rue du Progrès",
+        "building": "yes",
+        "building:levels": "2",
+        "climbing:boulder": "yes",
+        "fee": "yes",
+        "indoor": "yes",
+        "name": "(double) Arkose Montreuil",
+        "opening_hours": "Mo-Su 07:00-00:00",
+        "phone": "+33 1 49 88 45 07",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2011",
+        "sport": "climbing",
+        "was:leisure": "sports_centre",
+        "website": "https://www.arkose.com/montreuil",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.4192722,
+          48.8516273
+        ]
+      },
+      "id": "way/81776027"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/84392839",
+        "addr:city": "Portet-sur-Garonne",
+        "addr:housenumber": "8",
+        "addr:postcode": "31120",
+        "addr:street": "Chemin des Genêts",
+        "building": "yes",
+        "email": "info@la-o-escalade.fr",
+        "fee": "yes",
+        "leisure": "sports_centre",
+        "name": "La Ô Escalade",
+        "opening_hours": "Mo-Fr 12:00-22:00; Sa 10:00-20:00",
+        "phone": "+33 5 61 56 97 28",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2010",
+        "sport": "climbing",
+        "website": "https://www.la-o-escalade.fr",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          1.4057594,
+          43.5356307
+        ]
+      },
+      "id": "way/84392839"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/86358314",
+        "addr:city": "Le Puy-en-Velay",
+        "addr:housenumber": "590",
+        "addr:postcode": "43000",
+        "addr:street": "Rue de Farnier",
+        "building": "yes",
+        "fee": "yes",
+        "leisure": "sports_centre",
+        "name": "Techno Bloc",
+        "opening_hours": "Mo,We 10:00-22:00; Tu 12:00-22:00; Th-Fr 14:00-23:00; Sa-Su 10:00-20:00",
+        "phone": "+33 960361594",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2010",
+        "sport": "climbing",
+        "website": "https://www.technobloc.fr",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.9107198,
+          45.0463602
+        ]
+      },
+      "id": "way/86358314"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/88764819",
+        "building": "retail",
+        "check_date": "2025-07-30",
+        "climbing:boulder": "yes",
+        "fee": "yes",
+        "leisure": "sports_centre",
+        "name": "Climb up",
+        "opening_hours": "Mo-Fr 10:30-22:00; Sa-Su, PH 14:00-19:30",
+        "phone": "+33442397734",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2010",
+        "sport": "climbing",
+        "website": "https://aix-lesmilles.climb-up.fr",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.3741783,
+          43.4802823
+        ]
+      },
+      "id": "way/88764819"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/92314037",
+        "addr:city": "Les Angles",
+        "addr:housenumber": "6",
+        "addr:postcode": "30133",
+        "building": "yes",
+        "leisure": "sports_centre",
+        "name": "SoEscalade",
+        "phone": "+33 4 90 252 251",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2010",
+        "sport": "climbing",
+        "website": "https://www.soescalade.com/",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.7546397,
+          43.9595463
+        ]
+      },
+      "id": "way/92314037"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/104069183",
+        "access": "customers",
+        "building": "yes",
+        "climbing:boulder": "yes",
+        "climbing:grade:french:max": "8b",
+        "climbing:grade:french:min": "3",
+        "climbing:speed": "no",
+        "climbing:sport": "yes",
+        "email": "toulousesaintmartin@altissimo.fr",
+        "fee": "yes",
+        "leisure": "sports_centre",
+        "name": "Altissimo Saint-Martin",
+        "opening_hours": "Mo-Fr 10:00-23:00;PH,Sa,Su 10:00-20:00",
+        "phone": "+33 5 61 31 02 02",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre;mise à jour : 2015",
+        "sport": "climbing",
+        "website": "https://toulouse-saint-martin.altissimo.fr",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          1.3672416,
+          43.6019656
+        ]
+      },
+      "id": "way/104069183"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/112539236",
+        "access": "customers",
+        "addr:city": "Quint-Fonsegrives",
+        "addr:housenumber": "13",
+        "addr:postcode": "31130",
+        "addr:street": "Rue de la ZA de Ribaute",
+        "building": "yes",
+        "climbing:boulder": "yes",
+        "climbing:sport": "no",
+        "fee": "yes",
+        "leisure": "sports_centre",
+        "name": "Start In Bloc",
+        "opening_hours": "Mo-Fr 11:00-23:00;PH,Sa,Su 10:00-20:00",
+        "phone": "+33 5 61 81 37 09",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2011",
+        "sport": "climbing",
+        "website": "https://www.start-in-bloc.com/",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          1.5151699,
+          43.5835808
+        ]
+      },
+      "id": "way/112539236"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/113714841",
+        "addr:city": "Montigny-le-Bretonneux",
+        "addr:housenumber": "10",
+        "addr:postcode": "78180",
+        "building": "yes",
+        "leisure": "sports_centre",
+        "name": "Vertical Art",
+        "opening_hours": "Mo-Fr 11:00-23:00; Sa,Su 09:00-21:00",
+        "phone": "+33 1 75 21 38 59",
+        "source": "http://www.vertical-art.fr/contact/",
+        "sport": "climbing",
+        "website": "https://www.vertical-art.fr/",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.0457574,
+          48.7974045
+        ]
+      },
+      "id": "way/113714841"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/118748578",
+        "addr:city": "Blois",
+        "addr:housenumber": "7",
+        "building": "yes",
+        "check_date": "2025-06-07",
+        "email": "contact@pekabloc.com",
+        "fee": "yes",
+        "leisure": "sports_centre",
+        "name": "Pekabloc",
+        "payment:PayPay": "yes",
+        "payment:cash": "yes",
+        "payment:coins": "yes",
+        "payment:credit_cards": "yes",
+        "payment:debit_cards": "yes",
+        "payment:mastercard": "yes",
+        "payment:notes": "yes",
+        "payment:visa": "yes",
+        "payment:visa_debit": "yes",
+        "phone": "+33 7 43 01 30 99;+33 7 78 37 45 51",
+        "ref:FR:SIRET": "91240162700019",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2011",
+        "sport": "climbing",
+        "start_date": "2023-08-08",
+        "website": "https://www.pekabloc.fr",
+        "wheelchair": "yes",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          1.3227795,
+          47.601283
+        ]
+      },
+      "id": "way/118748578"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/129893005",
+        "addr:city": "Limonest",
+        "addr:housenumber": "1",
+        "addr:postcode": "69760",
+        "addr:street": "Rue des Vergers",
+        "brand": "Block'Out",
+        "climbing:boulder": "yes",
+        "email": "contact.lyon@blockout.fr",
+        "leisure": "sports_centre",
+        "name": "Block'Out Lyon",
+        "opening_hours": "Mo-Fr 11:00-23:00; Sa, Su 09:00-21:00",
+        "phone": "+33 4 78 21 90 97",
+        "sport": "climbing",
+        "website": "https://www.blockout.fr/bo-lyon",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.7717344,
+          45.806586
+        ]
+      },
+      "id": "way/129893005"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/130687236",
+        "addr:city": "Labenne",
+        "addr:housenumber": "24",
+        "addr:postcode": "40530",
+        "addr:street": "Rue de Labranère",
+        "building": "yes",
+        "leisure": "sports_centre",
+        "name": "Gravity Bouldering",
+        "phone": "+33 5 24 33 08 15",
+        "ref:FR:CRTA": "ASCAQU040V50XKHK",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2011",
+        "sport": "climbing",
+        "wall": "no",
+        "website": "https://www.gravity-bouldering.fr/",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -1.4346584,
+          43.5810223
+        ]
+      },
+      "id": "way/130687236"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/131987459",
+        "addr:city": "Dijon",
+        "addr:housenumber": "14",
+        "addr:postcode": "21000",
+        "addr:street": "Rue Marius Chanteur",
+        "building": "yes",
+        "check_date": "2024-10-07",
+        "climbing:sport": "yes",
+        "fee": "yes",
+        "indoor": "yes",
+        "leisure": "sports_centre",
+        "name": "Cime Altitude 245",
+        "opening_hours": "Mo-Fr 12:00-22:30; Sa-Su 10:00-19:00",
+        "operator": "UCPA",
+        "payment:cash": "yes",
+        "payment:credit_cards": "yes",
+        "phone": "+33 3 80 31 91 35",
+        "sport": "climbing",
+        "website": "https://nager-grimper.metropole-dijon.fr/accueil.html",
+        "wheelchair": "yes",
+        "wikidata": "Q2972408",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.064676,
+          47.3361631
+        ]
+      },
+      "id": "way/131987459"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/149488755",
+        "addr:city": "Saint-Martin-d'Hères",
+        "addr:housenumber": "41",
+        "addr:postcode": "38400",
+        "addr:street": "Rue des Glairons",
+        "brewery": "various",
+        "building": "retail",
+        "charge": "16 EUR",
+        "email": "grenoble@vertical-art.fr",
+        "fee": "yes",
+        "height": "7",
+        "leisure": "sports_centre",
+        "min_age": "4",
+        "name": "Vertical'Art Grenoble",
+        "opening_hours": "Mo-Fr 11:00-23:00; Sa-Su 09:00-21:00",
+        "payment:cash": "yes",
+        "payment:credit_cards": "yes",
+        "phone": "+33 9 81 71 49 01",
+        "ref:FR:RNB": "FYHABY1QQVTF",
+        "sport": "climbing",
+        "start_date": "2023-10-28",
+        "website": "https://grenoble.vertical-art.fr/",
+        "wheelchair": "yes",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.767953,
+          45.1859315
+        ]
+      },
+      "id": "way/149488755"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/153534427",
+        "addr:city": "Marseille",
+        "addr:housenumber": "101",
+        "addr:postcode": "13009",
+        "addr:street": "Boulevard Michelet",
+        "building": "yes",
+        "fee": "yes",
+        "leisure": "sports_centre",
+        "name": "Arkose Prado",
+        "opening_hours": "Mo-Sa 08:00-24:00",
+        "payment:cash": "yes",
+        "payment:coins": "yes",
+        "payment:credit_cards": "yes",
+        "phone": "+33 4 84 26 76 46",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2012",
+        "sport": "climbing",
+        "start_date": "2018-03-27",
+        "website": "https://arkose.com/prado",
+        "wheelchair": "yes",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.395327,
+          43.2674975
+        ]
+      },
+      "id": "way/153534427"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/179941866",
+        "addr:city": "Pontault-Combault",
+        "addr:postcode": "77340",
+        "addr:street": "Route Départementale 21",
+        "building": "civic",
+        "description": "Le Nautil est un complexe intercommunal de sports et de loisirs créé en 1996, situé en Seine et Marne, entre Pontault-Combault et Roissy-en-Brie. Il offre aux sportifs amateurs et professionnels des installations et des services de qualité.",
+        "email": "contact@le-nautil.fr",
+        "facebook": "https://fr-fr.facebook.com/lenautil.fr",
+        "fee": "yes",
+        "leisure": "sports_centre",
+        "name": "Le Nautil - Salle d'Escalade",
+        "operator": "Communauté d'agglomération Paris - Vallée de la Marne",
+        "operator:type": "public",
+        "phone": "+33 1 60 37 27 77",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2012",
+        "sport": "climbing",
+        "website": "https://le-nautil.fr/escalade/",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.6238317,
+          48.7855855
+        ]
+      },
+      "id": "way/179941866"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/457008055",
+        "addr:city": "Pérols",
+        "addr:postcode": "34470",
+        "addr:street": "Allée de la Bouvine",
+        "email": "montpellier@blocsession.com",
+        "indoor": "room",
+        "leisure": "sports_centre",
+        "level": "0",
+        "name": "Bloc Session",
+        "opening_hours": "Mo-Fr 12:00-22:00; Sa,Su 15:00-22:00",
+        "phone": "+33 9 81 34 98 44",
+        "sport": "climbing",
+        "website": "https://www.blocsession.com/salle-escalade/montpellier",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.9384581,
+          43.5750319
+        ]
+      },
+      "id": "way/457008055"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/463549966",
+        "addr:city": "Issy-les-Moulineaux",
+        "addr:country": "FR",
+        "addr:housename": "Les Arches d'Issy",
+        "addr:housenumber": "1-6",
+        "addr:postcode": "92130",
+        "addr:street": "Boulevard Garibaldi",
+        "brand": "MurMur",
+        "climbing:boulder": "yes",
+        "climbing:length": "11,5",
+        "climbing:speed": "no",
+        "climbing:sport": "yes",
+        "climbing:toprope": "yes",
+        "climbing:traditional": "no",
+        "leisure": "sports_centre",
+        "name": "MurMur Issy",
+        "name:en": "Arkose Issy-les-Moulineaux (ex MurMur)",
+        "name:fr": "Arkose Issy-les-Moulineaux (ex MurMur)",
+        "opening_hours": "Mo-Su 07:00-24:00; PH open",
+        "phone": "+33 1 58 88 00 22",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2009",
+        "sport": "climbing",
+        "website": "https://arkose.com/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.2624384,
+          48.8234134
+        ]
+      },
+      "id": "node/463549966"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/478486259",
+        "addr:city": "Veyrignac",
+        "addr:postcode": "24370",
+        "addr:street": "Route des Carrières",
+        "building": "yes",
+        "description": "Salle d'escalade de type Pan",
+        "leisure": "sports_centre",
+        "name": "Salle d'escalade de Veyrignac",
+        "phone": "+33 6 71 64 42 26",
+        "sport": "climbing",
+        "website": "https://perigord-escalade.fr/",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          1.3090604,
+          44.8300919
+        ]
+      },
+      "id": "way/478486259"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/494192013",
+        "addr:city": "Saint-Jean-de-la-Ruelle",
+        "addr:postcode": "45140",
+        "addr:street": "Avenue Pierre Mendès France",
+        "brand": "Vertical Art",
+        "building": "yes",
+        "check_date": "2024-12-24",
+        "climbing:boulder": "yes",
+        "climbing:sport": "no",
+        "email": "orleans@vertical-art.fr",
+        "fee": "yes",
+        "leisure": "sports_centre",
+        "name": "Vertical Art",
+        "opening_hours": "Mo-Fr 11:00-23:00, Sa-Su 09:00-21:00",
+        "operator": "Vertical Art",
+        "operator:type": "private",
+        "phone": "+33 2 38 68 86 04",
+        "sport": "climbing",
+        "website": "https://orleans.vertical-art.fr/",
+        "wheelchair": "yes",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          1.8676914,
+          47.90713
+        ]
+      },
+      "id": "way/494192013"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/519979874",
+        "addr:housenumber": "400",
+        "addr:postcode": "34170",
+        "addr:street": "Avenue Marcel Dassault",
+        "alt_name": "Boulderline",
+        "building": "yes",
+        "fee": "yes",
+        "leisure": "sports_centre",
+        "name": "Boulder Line - BL1",
+        "opening_hours": "Mo-Fr 09:00-23:00; Sa-Su 09:00-20:00",
+        "operator:type": "private",
+        "phone": "+33 4 67 15 01 65",
+        "sport": "climbing",
+        "start_date": "2017",
+        "website": "https://www.boulderline.fr",
+        "wheelchair": "limited",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.9098708,
+          43.6297112
+        ]
+      },
+      "id": "way/519979874"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/528325875",
+        "addr:housenumber": "50",
+        "addr:postcode": "69210",
+        "addr:street": "Rue des Martinets",
+        "building": "yes",
+        "email": "espaceescalade@gmail.com",
+        "leisure": "sports_centre",
+        "name": "Espace Escalade",
+        "opening_hours": "Tu-Fr 09:00-18:00; Sa 09:00-18:00; Sep-Apr: Su 10:00-18:00",
+        "phone": "+33 4 74 01 22 26",
+        "sport": "climbing",
+        "website": "https://www.espace-escalade.fr",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.6071259,
+          45.8246312
+        ]
+      },
+      "id": "way/528325875"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/655065740",
+        "addr:city": "Fontainebleau",
+        "addr:street": "Route Militaire",
+        "building": "gymnasium",
+        "climbing:boulder": "yes",
+        "climbing:sport": "yes",
+        "climbing:toprope": "yes",
+        "description": "Karma est une salle d'escalade appartenant au CNSD (Centre National des Sports de la Défense) à Avon ouvert aux civils. C'est un endroit parfait pour tous les niveaux, de débutant à expert, avec un espace baby et un côté Pôle France !",
+        "image": "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.pinterest.fr%2Fpin%2F886857351594625218%2F&psig=AOvVaw05qEsXh-l0wUmzkhGh12Mc&ust=1715957600731000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCLi7pq62koYDFQAAAAAdAAAAABAJ",
+        "leisure": "sports_centre",
+        "level": "0",
+        "name": "Karma",
+        "opening_hours": "Mo-Fr 12:00-22:00; Sa-Su 10:00-20:00",
+        "payment:account_cards": "yes",
+        "payment:cash": "yes",
+        "phone": "+33 1 64 23 19 31",
+        "source": "cadastre-dgi-fr source : Direction Générale des Finances Publiques - Cadastre. Mise à jour : 2018",
+        "sport": "climbing",
+        "website": "http://karma.ffme.fr/",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.7224527,
+          48.3985446
+        ]
+      },
+      "id": "way/655065740"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/666261176",
+        "addr:city": "Bouc-Bel-Air",
+        "addr:postcode": "13320",
+        "addr:street": "RN8 Avenue des Chabauds",
+        "building": "yes",
+        "facebook": "https://www.facebook.com/climbupaixboucbelair",
+        "fee": "yes",
+        "indoor": "yes",
+        "instagram": "https://www.instagram.com/climbup_aix_boucbelair/",
+        "leisure": "sports_centre",
+        "name": "Climb up",
+        "opening_hours": "Mo-Fr 09:30-00:00; Sa,Su 09:30-22:00",
+        "phone": "+33 4 42 69 79 59",
+        "sauna": "yes",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2019",
+        "sport": "climbing",
+        "website": "https://aix-boucbelair.climb-up.fr/",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.3998163,
+          43.4305928
+        ]
+      },
+      "id": "way/666261176"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/700578232",
+        "addr:city": "Mondeville",
+        "addr:postcode": "14120",
+        "building": "yes",
+        "email": "contact@isatix.com",
+        "fee": "yes",
+        "leisure": "sports_centre",
+        "level": "0;1",
+        "name": "Isatix",
+        "opening_hours": "Mo-Fr 10:00-22:30; Sa,Su 10:00-20:00",
+        "payment:cash": "yes",
+        "payment:credit_cards": "yes",
+        "payment:mastercard": "yes",
+        "payment:visa": "yes",
+        "phone": "+33 2 31822133",
+        "source": "local knowledge;aerial imagery",
+        "sport": "climbing",
+        "website": "https://isatix.com/",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -0.2894319,
+          49.1536232
+        ]
+      },
+      "id": "way/700578232"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/740148622",
+        "addr:city": "Mérignac",
+        "addr:housenumber": "17",
+        "addr:postcode": "33700",
+        "addr:street": "Avenue Pythagore",
+        "building": "yes",
+        "climbing:boulder": "yes",
+        "climbing:speed": "yes",
+        "climbing:sport": "yes",
+        "climbing:toprope": "yes",
+        "fee": "yes",
+        "internet_access": "wlan",
+        "internet_access:fee": "no",
+        "leisure": "sports_centre",
+        "name": "Climb Up Mérignac",
+        "opening_hours": "Mo 09:00-23:00; Tu-Th 09:00-00:00; Fr-Su 09:00-23:00",
+        "payment:cards": "yes",
+        "payment:cash": "yes",
+        "payment:qr_code": "no",
+        "phone": "+33 5 36 44 36 44",
+        "ref:FR:NAF": "93.11Z",
+        "ref:FR:SIREN": "829806918",
+        "ref:FR:SIRET": "82980691800027",
+        "service:climbing_belay_device:rental": "yes",
+        "service:climbing_belay_device:rental:fee": "no",
+        "service:climbing_harness:rental": "yes",
+        "service:climbing_rope:rental": "yes",
+        "service:climbing_rope:rental:fee": "no",
+        "service:climbing_shoes:rental": "yes",
+        "service:climbing_shoes:rental:fee": "yes",
+        "shower": "hot",
+        "source": "INSEE - 2025-03",
+        "sport": "climbing",
+        "website": "https://bordeaux-merignac.climb-up.fr/",
+        "wheelchair": "yes",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -0.681923,
+          44.8312306
+        ]
+      },
+      "id": "way/740148622"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/784837879",
+        "addr:city": "Saint-Étienne",
+        "addr:housenumber": "9",
+        "addr:postcode": "42000",
+        "addr:street": "Esplanade Bénévent",
+        "email": "saint-etienne@climb-up.fr",
+        "fee": "yes",
+        "leisure": "sports_centre",
+        "level": "0",
+        "name": "Climb Up",
+        "opening_hours": "Mo-Fr 10:00-23:00; Sa-Su 09:00-20:00",
+        "operator": "Climb Up",
+        "operator:type": "business",
+        "payment:american_express": "yes",
+        "payment:cash": "yes",
+        "payment:contactless": "yes",
+        "payment:credit_cards": "yes",
+        "payment:debit_cards": "yes",
+        "payment:mastercard": "yes",
+        "payment:visa": "yes",
+        "phone": "+33 428770144",
+        "sport": "climbing",
+        "website": "https://saint-etienne.climb-up.fr/",
+        "wheelchair": "yes"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3932856,
+          45.4627613
+        ]
+      },
+      "id": "node/784837879"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/799125466",
+        "addr:city": "Besançon",
+        "addr:housenumber": "13",
+        "addr:postcode": "25000",
+        "addr:street": "Avenue Léo Lagrange",
+        "building": "yes",
+        "fee": "yes",
+        "leisure": "sports_centre",
+        "name": "Salle Marie Paradis",
+        "opening_hours": "Mo-Tu, Th-Fr 12:00-22:00; We 09:00-22:00; Sa-Su 09:00-19:00",
+        "phone": "+33381513131",
+        "source": "cadastre-dgi-fr source : Direction Générale des Finances Publiques - Cadastre. Mise à jour : 2020",
+        "sport": "climbing",
+        "website": "https://www.entre-temps-escalade.fr/",
+        "wheelchair": "yes",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.0054033,
+          47.2434863
+        ]
+      },
+      "id": "way/799125466"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/802278283",
+        "addr:city": "Alfortville",
+        "addr:housenumber": "11",
+        "addr:postcode": "94140",
+        "addr:street": "Rue Parmentier",
+        "climbing:boulder": "yes",
+        "climbing:sport": "no",
+        "email": "contact@hardbloc.fr",
+        "fee": "yes",
+        "indoor": "yes",
+        "leisure": "sports_centre",
+        "name": "Hardbloc",
+        "opening_hours": "Mo-Fr 10:30-22:30; Sa-Su 10:00-20:00",
+        "phone": "+33 6 09 85 57 15",
+        "sport": "climbing",
+        "website": "https://www.hardbloc.fr",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.4121667,
+          48.8074483
+        ]
+      },
+      "id": "way/802278283"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/884073806",
+        "addr:city": "Caen",
+        "addr:postcode": "14000",
+        "addr:street": "Les Rives de l'Orne",
+        "email": "caen@climb-up.fr",
+        "fee": "yes",
+        "indoor": "yes",
+        "leisure": "sports_centre",
+        "name": "Climb Up",
+        "opening_hours": "Mo-Fr 10:00-23:00; Sa,Su 10:00-21:00",
+        "phone": "+33 2 90 87 00 54",
+        "ref:FR:SIRET": "85187350500016",
+        "sport": "climbing",
+        "website": "https://caen.climb-up.fr/",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -0.3513971,
+          49.1768261
+        ]
+      },
+      "id": "way/884073806"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/902977953",
+        "access": "customers",
+        "addr:housenumber": "1",
+        "addr:postcode": "49130",
+        "addr:street": "Boulevard Léo Lagrange",
+        "building": "yes",
+        "climbing:boulder": "yes",
+        "climbing:toprope": "yes",
+        "fee": "yes",
+        "leisure": "sports_centre",
+        "name": "Climb Up",
+        "opening_hours": "Mo-Fr 10:00-23:00; Sa-Su 09:00-20:00",
+        "phone": "+33 2 90 87 88 89",
+        "service:climbing_harness:rental": "yes",
+        "service:climbing_shoes:rental": "yes",
+        "sport": "climbing",
+        "website": "https://angers-lespontsdece.climb-up.fr",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -0.5003268,
+          47.4336131
+        ]
+      },
+      "id": "way/902977953"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/910137896",
+        "addr:housenumber": "27",
+        "addr:street": "Rue de Pontaniou",
+        "harassment_prevention": "ask_angela",
+        "leisure": "fitness_centre",
+        "level": "0;1",
+        "name": "Climb Up Brest",
+        "opening_hours": "Mo-Fr 10:00-23:00; Sa-Su 10:00-20:00",
+        "phone": "+33988037826",
+        "ref:FR:NAF": "93.11Z",
+        "ref:FR:SIREN": "838602779",
+        "ref:FR:SIRET": "83860277900012",
+        "sauna": "yes",
+        "source": "INSEE - 2026-01",
+        "sport": "climbing",
+        "website": "https://brest.climb-up.fr/",
+        "wheelchair": "limited",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -4.4983633,
+          48.3899929
+        ]
+      },
+      "id": "way/910137896"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/975258168",
+        "addr:city": "Paris",
+        "addr:housenumber": "101",
+        "addr:postcode": "75014",
+        "addr:street": "Boulevard Brune",
+        "building": "yes",
+        "climbing": "boulder",
+        "climbing:boulder": "yes",
+        "climbing:speed": "no",
+        "climbing:sport": "no",
+        "climbing:toprope": "no",
+        "climbing:traditional": "no",
+        "email": "contactdidot@arkose.com",
+        "fee": "yes",
+        "leisure": "sports_centre",
+        "name": "Arkose Didot",
+        "opening_hours": "Mo-Su 07:00-24:00",
+        "phone": "+33 1 77 35 44 11",
+        "service:climbing_shoes:rental": "yes",
+        "service:climbing_shoes:rental:fee": "yes",
+        "sport": "climbing",
+        "website": "https://didot.arkose.com",
+        "wheelchair": "limited",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.3150353,
+          48.8261766
+        ]
+      },
+      "id": "way/975258168"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/999229013",
+        "addr:housenumber": "32",
+        "addr:street": "Rue Jean Pages",
+        "building": "yes",
+        "climbing:boulder": "yes",
+        "climbing:sport": "yes",
+        "climbing:toprope": "yes",
+        "fee": "yes",
+        "hot_water": "yes",
+        "leisure": "sports_centre",
+        "name": "Climb Up Bordeaux Villenave",
+        "opening_hours": "09:00-23:00",
+        "payment:cards": "yes",
+        "payment:cash": "yes",
+        "payment:qr_code": "no",
+        "phone": "+33 5 81 33 15 62",
+        "ref:FR:NAF": "93.11Z",
+        "ref:FR:SIREN": "829806918",
+        "ref:FR:SIRET": "82980691800043",
+        "service:climbing_belay_device:rental": "yes",
+        "service:climbing_belay_device:rental:fee": "no",
+        "service:climbing_harness:rental": "yes",
+        "service:climbing_rope:rental": "yes",
+        "service:climbing_rope:rental:fee": "no",
+        "service:climbing_shoes:rental": "yes",
+        "service:climbing_shoes:rental:fee": "yes",
+        "shower": "yes",
+        "source": "INSEE - 2025-02",
+        "sport": "climbing",
+        "website": "https://bordeaux-villenave.climb-up.fr/",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -0.5643552,
+          44.7789092
+        ]
+      },
+      "id": "way/999229013"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1144467565",
+        "addr:housenumber": "26 bis",
+        "addr:postcode": "75008",
+        "addr:street": "Rue de Saint-Pétersbourg",
+        "building": "church",
+        "building:levels": "6",
+        "check_date": "2024-03-26",
+        "climbing:boulder": "no",
+        "climbing:toprope": "yes",
+        "climbing:traditional": "no",
+        "denomination": "catholic",
+        "disused:amenity": "place_of_worship",
+        "disused:religion": "christian",
+        "email": "26@climbingdistrict.com",
+        "fee": "yes",
+        "indoor": "yes",
+        "internet_access": "wlan",
+        "internet_access:fee": "no",
+        "leisure": "sports_centre",
+        "name": "Climbing District Saint-Lazare",
+        "opening_hours": "Mo-Fr 07:00-00:00; Sa-Su 08:00-00:00",
+        "operator:type": "private",
+        "payment:cash": "yes",
+        "payment:credit_cards": "yes",
+        "payment:debit_cards": "yes",
+        "phone": "+33 7 69 12 51 33",
+        "sport": "climbing",
+        "website": "https://climbingdistrict.com/saint-lazare/",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.3261641,
+          48.8818146
+        ]
+      },
+      "id": "way/1144467565"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1160413896",
+        "addr:housenumber": "7",
+        "addr:postcode": "31510",
+        "addr:street": "Rue Armand Ribet",
+        "building": "yes",
+        "leisure": "sports_centre",
+        "name": "Salle d'escalade intercommunale Jérôme Thinières",
+        "opening_hours": "Mo 18:00-21:30; Tu, Fr 18:00-21:00; We-Th 19:00-22:00; Sa 15:00-19:00",
+        "phone": "+33 6 84 49 96 18",
+        "sport": "climbing",
+        "website": "https://www.entreterreciel.fr",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          0.5897601,
+          43.0413501
+        ]
+      },
+      "id": "way/1160413896"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1208600553",
+        "addr:city": "Chenôve",
+        "addr:housenumber": "17",
+        "addr:postcode": "21300",
+        "addr:street": "Rue Nicolas Cugnot",
+        "building": "yes",
+        "climbing:boulder": "yes",
+        "climbing:sport": "no",
+        "fee": "yes",
+        "leisure": "sports_centre",
+        "membership": "yes",
+        "name": "Vertical'Art Dijon",
+        "opening_hours": "Mo-Fr 11:00-23:00; Sa-Su 09:00-21:00",
+        "phone": "+33380273689",
+        "sport": "climbing",
+        "website": "https://dijon.vertical-art.fr/",
+        "wheelchair": "yes",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.0227173,
+          47.2945532
+        ]
+      },
+      "id": "way/1208600553"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1244171808",
+        "addr:city": "Pertuis",
+        "addr:housenumber": "37",
+        "addr:postcode": "84120",
+        "addr:street": "Rue François Gernelle",
+        "building": "yes",
+        "fee": "yes",
+        "leisure": "sports_centre",
+        "name": "Bloc session",
+        "opening_hours": "Mo-Fr 12:00-22:00; Sa-Su 14:00-19:00",
+        "payment:cash": "yes",
+        "payment:credit_cards": "yes",
+        "phone": "+33 4 90 09 59 92",
+        "sport": "climbing",
+        "website": "https://www.blocsession.com/salle-escalade/aix-pertuis/",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.5034212,
+          43.6766155
+        ]
+      },
+      "id": "way/1244171808"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1280615601",
+        "addr:housenumber": "4",
+        "addr:postcode": "14200",
+        "addr:street": "Boulevard du Grand Parc",
+        "building": "yes",
+        "email": "info@escaladeaventure.com",
+        "internet_access": "wlan",
+        "leisure": "sports_hall",
+        "name": "Escalade Aventure",
+        "opening_hours": "Mo-Fr 17:00-22:00; Sa 10:00-18:00",
+        "phone": "+33 2 31 94 19 86",
+        "sport": "climbing",
+        "website": "https://escaladeaventure.com/",
+        "wheelchair": "yes",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -0.334074,
+          49.196626
+        ]
+      },
+      "id": "way/1280615601"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1323401216",
+        "addr:city": "Saint-Gervais-les-Bains",
+        "addr:housenumber": "76",
+        "addr:postcode": "74170",
+        "addr:street": "Route du Bois Charmant",
+        "building": "sports_hall",
+        "building:levels": "3",
+        "climbing:boulder": "yes",
+        "climbing:length": "25",
+        "climbing:speed": "no",
+        "climbing:sport": "yes",
+        "climbing:toprope": "yes",
+        "fee": "yes",
+        "height": "30",
+        "leisure": "sports_centre",
+        "name": "Le Topo",
+        "opening_hours": "Mo, Tu, Th, Fr 12:00-22:00; We, Sa 10:00-22:00; Su 10:00-19:00",
+        "panoramax": "f38695fc-9323-4259-9eb7-03b77cd28271;aafa96d0-4d75-43e7-8c28-6c235f0f7bb8;16866bdc-ce55-495a-b213-36c5a73add95;18917dd7-414d-48b5-aff1-ce268dda3bea",
+        "payment:cards": "yes",
+        "payment:cash": "yes",
+        "payment:qr_code": "no",
+        "phone": "+33 7 87 21 27 17",
+        "service:climbing_belay_device:rental": "no",
+        "service:climbing_harness:rental": "yes",
+        "service:climbing_rope:rental": "yes",
+        "service:climbing_shoes:rental": "yes",
+        "service:climbing_shoes:rental:fee": "yes",
+        "sport": "climbing",
+        "website": "https://letopo.fr/",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.6942784,
+          45.9076718
+        ]
+      },
+      "id": "way/1323401216"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1378867427",
+        "addr:city": "Gouesnou",
+        "addr:housenumber": "8",
+        "addr:postcode": "29850",
+        "addr:street": "Avenue Baron Lacrosse",
+        "building": "yes",
+        "fee": "no",
+        "leisure": "sports_centre",
+        "name": "Vertical'Art Brest",
+        "opening_hours": "Mo-Fr 11:00-23:00; Sa-Su 09:00-21:00",
+        "phone": "+33230909319",
+        "sport": "climbing",
+        "website": "https://brest.vertical-art.fr/",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -4.4614839,
+          48.427257
+        ]
+      },
+      "id": "way/1378867427"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/1453606196",
+        "addr:housenumber": "22 ter",
+        "addr:postcode": "63000",
+        "addr:street": "Impasse Bonnabaud",
+        "climbing:boulder": "yes",
+        "climbing:sport": "81",
+        "fee": "yes",
+        "indoor": "yes",
+        "leisure": "sports_centre",
+        "name": "Casamur",
+        "opening_hours": "Mo-Th 12:00-22:00; Fr 14:00-22:00; Sa 13:30-18:00",
+        "operator": "FFME 63",
+        "phone": "+33 4 73 29 24 71",
+        "sport": "climbing",
+        "website": "http://ffme63.blogspot.fr/p/salle-dcasamur.html"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0787746,
+          45.7752242
+        ]
+      },
+      "id": "node/1453606196"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/1867296766",
+        "addr:city": "Le Havre",
+        "addr:housenumber": "27",
+        "addr:postcode": "76600",
+        "addr:street": "Rue d'Iéna",
+        "climbing:boulder": "yes",
+        "fee": "yes",
+        "leisure": "sports_centre",
+        "name": "The Roof",
+        "opening_hours": "Mo-Fr 10:00-22:00; Sa-Su 09:00-21:00",
+        "phone": "+33 2 78 34 04 99",
+        "sport": "climbing",
+        "website": "https://lehavre.theroof.fr/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          0.1355753,
+          49.4915696
+        ]
+      },
+      "id": "node/1867296766"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/1966811708",
+        "addr:housenumber": "50",
+        "alt_name": "Block Out",
+        "amenity": "restaurant",
+        "bar": "yes",
+        "brand": "Block'Out",
+        "climbing:boulder": "yes",
+        "climbing:sport": "no",
+        "climbing:toprope": "no",
+        "climbing:traditional": "no",
+        "leisure": "sports_centre",
+        "name": "Block'Out",
+        "opening_hours": "Mo-Fr 11:00-23:00; Sa-Su 09:00-21:00; PH 09:00-21:00",
+        "phone": "+33 1 40 10 91 50",
+        "sport": "climbing",
+        "website": "https://www.blockout.fr/bo2-paris",
+        "wheelchair": "yes"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.3247937,
+          48.9113364
+        ]
+      },
+      "id": "node/1966811708"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3034693785",
+        "leisure": "sports_centre",
+        "name": "Accrobranche Via Ferrata Roc'Aventure",
+        "phone": "+33 5 61 96 08 22",
+        "source": "data.gouv.fr:Le ministère des droits des femmes, de la ville, de la jeunesse et des sports - 2014",
+        "sport": "climbing",
+        "website": "https://www.horizonvertical.net/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          1.1067628,
+          42.9593015
+        ]
+      },
+      "id": "node/3034693785"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3105289259",
+        "addr:city": "Montreuil",
+        "addr:housenumber": "33",
+        "addr:postcode": "93100",
+        "addr:street": "Rue du Progrès",
+        "brand": "Arkose",
+        "check_date": "2025-10-01",
+        "climbing:boulder": "yes",
+        "club": "sport",
+        "fee": "yes",
+        "internet_access": "wlan",
+        "internet_access:fee": "customers",
+        "leisure": "sports_centre",
+        "name": "Arkose Montreuil",
+        "opening_hours": "Mo-Su 07:00-00:00",
+        "phone": "+33 1 49 88 45 07",
+        "smoking": "outside",
+        "sport": "climbing",
+        "website": "https://arkose.com/montreuil"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.4192138,
+          48.8516526
+        ]
+      },
+      "id": "node/3105289259"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3472124903",
+        "addr:city": "Saran",
+        "addr:postcode": "45770",
+        "addr:street": "Allée de l'Orée de la Forêt",
+        "check_date": "2025-12-26",
+        "contact:email": "climbup@climbup.fr",
+        "image": "https://panoramax-storage-public-fast.s3.gra.perf.cloud.ovh.net/main-pictures/44/8e/5a/43/c894-46f2-b95a-d26f5a0b0929.jpg",
+        "leisure": "sports_centre",
+        "name": "Climb'Up",
+        "opening_hours": "Mo-Tu,Th-Fr 11:00-22:00; We 10:00-22:00; Sa-Su 10:00-18:30",
+        "phone": "+33 2 38 54 22 22",
+        "source": "Le ministère de la ville, de la jeunesse et des sports - 2021-04",
+        "sport": "climbing",
+        "surface": "concrete",
+        "website": "https://climbup.fr/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          1.8930402,
+          47.9590902
+        ]
+      },
+      "id": "node/3472124903"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4056212926",
+        "addr:housenumber": "175",
+        "addr:street": "Avenue Félix Faure",
+        "leisure": "sports_centre",
+        "name": "Bloc Session Lyon Centre",
+        "opening_hours": "Mo-Su 10:00-22:00",
+        "operator": "Bloc Session",
+        "phone": "+33 6 99 82 38 57",
+        "sport": "climbing",
+        "website": "https://www.blocsession.com/salle-escalade/lyon-centre/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.8683676,
+          45.755265
+        ]
+      },
+      "id": "node/4056212926"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4315774031",
+        "addr:street": "Rue Guérin",
+        "email": "cafanjou@ffcam.fr",
+        "leisure": "sports_centre",
+        "name": "Club Alpin Français (CAF)",
+        "phone": "+33 2 41 60 09 99",
+        "sport": "climbing",
+        "website": "https://anjou.ffcam.fr/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -0.5390605,
+          47.4758653
+        ]
+      },
+      "id": "node/4315774031"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4408108149",
+        "addr:city": "Avignon",
+        "addr:housenumber": "82",
+        "addr:postcode": "84000",
+        "description": "salle d'escalade",
+        "email": "contact@lepandavignon.fr",
+        "fee": "yes",
+        "indoor": "yes",
+        "leisure": "sports_centre",
+        "name": "Le Pan d'Avignon",
+        "opening_hours": "Mo-Fr 10:00-22:00; PH,Sa,Su 10:00-20:00",
+        "phone": "+33 4 90 88 19 92",
+        "sport": "climbing",
+        "survey:date": "2023-11-16",
+        "website": "https://www.lepandavignon.fr/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.8277828,
+          43.9397013
+        ]
+      },
+      "id": "node/4408108149"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4752600712",
+        "addr:city": "Courbevoie",
+        "addr:housenumber": "47",
+        "addr:postcode": "92400",
+        "addr:street": "Avenue de l'Europe",
+        "brand": "Blocbuster",
+        "climbing:boulder": "yes",
+        "climbing:sport": "no",
+        "climbing:toprope": "no",
+        "climbing:traditional": "no",
+        "fee": "yes",
+        "leisure": "sports_centre",
+        "name": "Blocbuster",
+        "opening_hours": "Mo-Fr 11:00-23:00; Sa-Su 10:00-20:00;PH 10:00-20:00",
+        "phone": "+33 1 71 12 86 32",
+        "sauna": "no",
+        "sport": "climbing",
+        "website": "https://blocbuster.fr/",
+        "wheelchair": "no"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.2584894,
+          48.9060403
+        ]
+      },
+      "id": "node/4752600712"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4926983305",
+        "addr:housenumber": "3",
+        "addr:street": "Rue des Alouettes",
+        "charge": "14 EUR",
+        "climbing:boulder": "no",
+        "climbing:speed": "no",
+        "climbing:sport": "yes",
+        "climbing:toprope": "yes",
+        "climbing:traditional": "no",
+        "email": "info@roc-et-resine.fr",
+        "fee": "yes",
+        "indoor": "yes",
+        "leisure": "sports_centre",
+        "name": "Roc & Résine",
+        "opening_hours": "Mo-Fr 11:00-23:00; Sa,Su 09:30-20:00",
+        "phone": "+33 1 46 75 04 21",
+        "sport": "climbing",
+        "website": "https://rocetresine.com/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.3736781,
+          48.7518716
+        ]
+      },
+      "id": "node/4926983305"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4927102957",
+        "addr:city": "Épinay-sur-Seine",
+        "addr:housenumber": "8",
+        "addr:postcode": "93800",
+        "addr:street": "Rue Henri Wallon",
+        "climbing:boulder": "no",
+        "climbing:speed": "no",
+        "climbing:sport": "yes",
+        "climbing:toprope": "yes",
+        "climbing:traditional": "no",
+        "fee": "yes",
+        "indoor": "yes",
+        "leisure": "sports_centre",
+        "name": "Climb Up Épinay",
+        "opening_hours": "Mo-Tu 12:00-23:00; We 10:00-23:00; Th-Fr 12:00-23:00; Sa 10:00-20:00; Su 10:00-18:00",
+        "phone": "+33 1 48 21 80 39",
+        "sport": "climbing",
+        "website": "https://epinay.climb-up.fr/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.3219625,
+          48.953824
+        ]
+      },
+      "id": "node/4927102957"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4994251888",
+        "addr:housenumber": "2929",
+        "addr:postcode": "34070",
+        "addr:street": "Avenue Étienne Méhul",
+        "fee": "yes",
+        "indoor": "yes",
+        "leisure": "sports_centre",
+        "name": "Mad Monkey",
+        "office": "company",
+        "opening_hours": "We, Sa-Su 10:00-20:00; Th-Fr 16:00-21:00",
+        "phone": "+33 4 67 42 49 55",
+        "sport": "climbing",
+        "website": "https://madmonkey.fr/montpellier/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.8605759,
+          43.5774165
+        ]
+      },
+      "id": "node/4994251888"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5014463697",
+        "addr:city": "Eysines",
+        "addr:housenumber": "2",
+        "addr:postcode": "33320",
+        "addr:street": "Allée Maryse Hilsz",
+        "climbing:boulder": "yes",
+        "climbing:speed": "no",
+        "climbing:sport": "no",
+        "climbing:toprope": "no",
+        "fee": "yes",
+        "indoor": "yes",
+        "leisure": "sports_centre",
+        "name": "Climb Up Bordeaux Eysines",
+        "opening_hours": "Mo 10:00-23:00; Tu 10:00-00:00; We-Th 10:00-23:00; Fr 10:00-21:00; Sa-Su 10:00-20:00",
+        "payment:cards": "yes",
+        "payment:cash": "yes",
+        "payment:qr_code": "no",
+        "phone": "+33 5 57 14 40 09",
+        "ref:FR:NAF": "93.11Z",
+        "ref:FR:SIREN": "829806918",
+        "ref:FR:SIRET": "82980691800035",
+        "service:climbing_shoes:rental": "yes",
+        "service:climbing_shoes:rental:fee": "yes",
+        "shower": "hot",
+        "source": "INSEE - 2025-02",
+        "sport": "climbing",
+        "website": "https://bordeaux-eysines.climb-up.fr/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -0.6647291,
+          44.8594875
+        ]
+      },
+      "id": "node/5014463697"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5091900914",
+        "addr:city": "Toulouse",
+        "addr:housenumber": "131",
+        "addr:postcode": "31200",
+        "addr:street": "Chemin du Sang de Serp",
+        "email": "contact-toulouse@soloescalade.fr",
+        "fee": "yes",
+        "leisure": "sports_centre",
+        "name": "Solo Escalade",
+        "opening_hours": "Mo-Fr 10:00-23:00; Sa 10:00-20:00; Su 10:00-20:00; PH 14:00-19:00",
+        "phone": "+33 9 51 27 57 21",
+        "sport": "climbing",
+        "website": "https://www.soloescalade.fr"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          1.4205081,
+          43.6199814
+        ]
+      },
+      "id": "node/5091900914"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5103498379",
+        "access": "customers",
+        "addr:city": "Bayonne",
+        "addr:housenumber": "3",
+        "addr:postcode": "64100",
+        "addr:street": "Place André Emlinger",
+        "climbing:boulder": "yes",
+        "fee": "yes",
+        "leisure": "sports_centre",
+        "name": "The roof",
+        "opening_hours": "Mo-Fr 08:00-23:00; Sa-Su 08:00-21:00",
+        "phone": "+33 9 86 22 10 20",
+        "ref:FR:SIRET": "81367792900016",
+        "sport": "climbing",
+        "website": "https://bayonne.theroof.fr/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -1.4936413,
+          43.4915041
+        ]
+      },
+      "id": "node/5103498379"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5104890766",
+        "addr:housenumber": "35",
+        "addr:street": "Rue des Grands Champs",
+        "brand": "Arkose",
+        "climbing:boulder": "yes",
+        "climbing:speed": "no",
+        "climbing:sport": "no",
+        "climbing:toprope": "no",
+        "climbing:traditional": "no",
+        "email": "contactnation@arkose.com",
+        "fee": "yes",
+        "leisure": "sports_centre",
+        "name": "Arkose Nation",
+        "opening_hours": "Mo-Fr 07:00-24:00; Sa-Su 09:00-24:00",
+        "phone": "+33 1 71 93 14 34",
+        "sport": "climbing",
+        "website": "https://arkose.com/nation"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.4023078,
+          48.8511883
+        ]
+      },
+      "id": "node/5104890766"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5177676110",
+        "addr:city": "Rungis",
+        "addr:housenumber": "133",
+        "addr:postcode": "94150",
+        "addr:street": "Rue des Solets",
+        "climbing:boulder": "yes",
+        "climbing:sport": "no",
+        "climbing:toprope": "no",
+        "climbing:traditional": "no",
+        "email": "rungis@vertical-art.fr",
+        "leisure": "sports_centre",
+        "name": "Vertical'Art",
+        "opening_hours": "Mo-Fr 11:00-23:00; Sa-Su 09:00-21:00",
+        "phone": "+33 1 84 25 66 11",
+        "sport": "climbing",
+        "website": "https://rungis.vertical-art.fr/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.3500682,
+          48.7417891
+        ]
+      },
+      "id": "node/5177676110"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5302662561",
+        "addr:housenumber": "11",
+        "addr:street": "Rue Adèle Riton, 67000 Strasbourg",
+        "description": "salle d'escalade dans le centre de strasbourg",
+        "indoor": "yes",
+        "leisure": "sports_centre",
+        "name": "Hueco city",
+        "opening_hours": "Mo-Fr 12:00-22:00; Sa, Su 14:00-20:00",
+        "phone": "+33 3 88 32 98 75",
+        "sport": "climbing",
+        "website": "hueco.fr"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          7.7401066,
+          48.5912168
+        ]
+      },
+      "id": "node/5302662561"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5589858395",
+        "amenity": "restaurant",
+        "diet:vegan": "yes",
+        "diet:vegetarian": "yes",
+        "leisure": "sports_centre",
+        "name": "Block'out",
+        "opening_hours": "Mo-Fr 11:00-23:00; Sa,Su 09:00-21:00",
+        "phone": "+33 9 63 52 95 45",
+        "sport": "climbing",
+        "website": "https://www.blockout.fr/bo-lille",
+        "wheelchair": "limited"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.1169056,
+          50.648274
+        ]
+      },
+      "id": "node/5589858395"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/6096312717",
+        "addr:housenumber": "51",
+        "addr:postcode": "59650",
+        "addr:street": "Rue Trémière",
+        "charge": "13 EUR",
+        "fee": "yes",
+        "leisure": "sports_centre",
+        "name": "Climb Up",
+        "payment:cash": "yes",
+        "payment:credit_cards": "yes",
+        "phone": "+33 3 20 04 97 50",
+        "sport": "climbing",
+        "website": "https://lille-villeneuvedascq.climb-up.fr/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.1360625,
+          50.6230745
+        ]
+      },
+      "id": "node/6096312717"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/6133741255",
+        "amenity": "restaurant",
+        "email": "contact@corti-grimpe.fr",
+        "fee": "yes",
+        "leisure": "sports_centre",
+        "name": "Cortigrimpe",
+        "opening_hours": "Mo-Fr 10:00-22:00; Sa 10:00-21:00; Su 10:00-19:00; PH 10:00-19:00",
+        "phone": "+33 4 58 02 01 36",
+        "ref:FR:SIRET": "81082383100013",
+        "sport": "climbing",
+        "website": "http://www.corti-grimpe.fr/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.1080329,
+          45.9363312
+        ]
+      },
+      "id": "node/6133741255"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/6357847843",
+        "addr:city": "Le Havre",
+        "addr:housenumber": "8",
+        "addr:postcode": "76600",
+        "addr:street": "Rue Marcel Toulouzan",
+        "amenity": "cafe",
+        "contact:email": "contact@artsportcafe.com",
+        "contact:instagram": "artsportcafe",
+        "name": "Art'Sport Café",
+        "phone": "+33 2 35 26 38 66",
+        "sport": "climbing",
+        "website": "https://www.artsportcafe.com/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          0.1457189,
+          49.4867381
+        ]
+      },
+      "id": "node/6357847843"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/6387389876",
+        "addr:housenumber": "2",
+        "addr:postcode": "31200",
+        "addr:street": "Rue de l'Égalité",
+        "leisure": "sports_centre",
+        "name": "Block'Out Toulouse",
+        "opening_hours": "Mo-Fr 11:00-23:00; Sa-Su 09:00-21:00",
+        "phone": "+33 5 34 67 08 37",
+        "sport": "climbing",
+        "website": "https://www.blockout.fr/bo-toulouse",
+        "wheelchair": "no"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          1.4125149,
+          43.6317489
+        ]
+      },
+      "id": "node/6387389876"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/6920520180",
+        "addr:city": "Saint-Denis",
+        "addr:housenumber": "61",
+        "addr:postcode": "97490",
+        "addr:street": "Rue des Vavangues",
+        "leisure": "sports_centre",
+        "name": "Basalte Evolution 2",
+        "opening_hours": "Mo,Tu,Fr 12:00-22:00; We 15:00-22:00; Sa 15:00-20:00; Su 15:00-19:00",
+        "phone": "+262 693 90 91 90",
+        "sport": "climbing",
+        "website": "https://www.basaltevolution.com/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          55.4740309,
+          -20.8996822
+        ]
+      },
+      "id": "node/6920520180"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/7031976715",
+        "addr:city": "Sotteville-lès-Rouen",
+        "addr:housenumber": "11",
+        "addr:postcode": "76300",
+        "addr:street": "Rue Marie-Jean-Antoine de Condorcet",
+        "amenity": "restaurant",
+        "climbing:boulder": "yes",
+        "fee": "yes",
+        "indoor": "yes",
+        "leisure": "sports_centre",
+        "man_made": "yes",
+        "name": "Kern’Up",
+        "opening_hours": "Mo-Fr 09:00-23:00; Sa,Su 09:00-21:00",
+        "phone": "+33 2 35 66 88 81",
+        "sport": "climbing",
+        "website": "https://kernup.fr/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          1.1104083,
+          49.4080975
+        ]
+      },
+      "id": "node/7031976715"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/7042371019",
+        "addr:city": "Rennes",
+        "addr:housenumber": "2",
+        "addr:postcode": "35000",
+        "addr:street": "Rue de l'Hôtel Dieu",
+        "climbing:boulder": "yes",
+        "fee": "yes",
+        "leisure": "sports_centre",
+        "name": "The Roof Rennes",
+        "opening_hours": "Mo-Su 11:00-23:00; Aug 25 off",
+        "payment:cash": "yes",
+        "payment:credit_cards": "yes",
+        "phone": "+33669231826",
+        "ref:FR:NAF": "93.11Z",
+        "ref:FR:SIREN": "842006918",
+        "ref:FR:SIRET": "84200691800028",
+        "source": "INSEE - 2025-08",
+        "sport": "climbing",
+        "website": "https://rennes.theroof.fr/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -1.6790565,
+          48.1183338
+        ]
+      },
+      "id": "node/7042371019"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/7127821285",
+        "email": "chambery@climb-up.fr",
+        "leisure": "sports_centre",
+        "name": "Climb-Up",
+        "opening_hours": "Mo-Fr 10:00-23:00; Sa-Su 10:00-20:00",
+        "phone": "+33 4 79 85 39 70",
+        "shop": "outdoor",
+        "sport": "climbing",
+        "website": "https://chambery.climb-up.fr/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.872103,
+          45.6384667
+        ]
+      },
+      "id": "node/7127821285"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/7172991285",
+        "addr:city": "Saint-Genis-Pouilly",
+        "addr:housenumber": "550",
+        "addr:postcode": "01630",
+        "addr:street": "Rue du Mont Blanc",
+        "charge": "15 EUR",
+        "email": "contact@cortigrimpe01.fr",
+        "fee": "yes",
+        "leisure": "sports_centre",
+        "name": "Cortigrimpe 01",
+        "opening_hours": "Mo,Tu,Th,Fr 11:00-22:00, We 10:00-22:00, Sa,Su 10:00-19:00",
+        "payment:cash": "yes",
+        "payment:credit_cards": "yes",
+        "payment:debit_cards": "yes",
+        "phone": "+33 4 50 13 32 18",
+        "sport": "climbing",
+        "website": "https://cortigrimpe01.fr/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.0314383,
+          46.2588078
+        ]
+      },
+      "id": "node/7172991285"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8042797768",
+        "contact:facebook": "https://www.facebook.com/leo.parcaventure",
+        "leisure": "sports_centre",
+        "name": "Léo Parc aventure - Accrobranche",
+        "phone": "+33 6 10 91 25 32",
+        "sport": "climbing",
+        "website": "http://www.leo-parc-aventure.fr/acrobranche/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          1.9458577,
+          47.8976494
+        ]
+      },
+      "id": "node/8042797768"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8043051863",
+        "addr:city": "Grenoble",
+        "addr:housenumber": "56",
+        "addr:postcode": "38000",
+        "addr:street": "Avenue Félix Viallet",
+        "check_date": "2026-02-18",
+        "check_date:opening_hours": "2026-02-18",
+        "climbing:boulder": "yes",
+        "fee": "yes",
+        "leisure": "sports_centre",
+        "name": "Le Labo",
+        "opening_hours": "Mo-Fr 12:00-22:30, Sa,Su,PH 10:00-19:00; Dec 24 10:00-17:00; Dec 31 10:00-17:00; Dec 25 off; Jan 01 off",
+        "phone": "+33 476954515",
+        "sport": "climbing",
+        "website": "https://www.espacevertical.com/labo/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.7161914,
+          45.1905655
+        ]
+      },
+      "id": "node/8043051863"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8086224715",
+        "addr:housenumber": "181",
+        "email": "contactrouen@arkose.com",
+        "fee": "yes",
+        "leisure": "sports_centre",
+        "man_made": "yes",
+        "name": "Arkose",
+        "opening_hours": "Mo-Su 08:00-24:00",
+        "payment:cash": "yes",
+        "payment:contactless": "yes",
+        "payment:credit_cards": "yes",
+        "payment:debit_cards": "yes",
+        "phone": "+33 2 90 87 01 50",
+        "sport": "climbing",
+        "website": "https://rouen.arkose.com/",
+        "wheelchair": "yes"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          1.1049829,
+          49.4270118
+        ]
+      },
+      "id": "node/8086224715"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8121657504",
+        "addr:city": "Voglans",
+        "addr:housenumber": "40",
+        "addr:postcode": "73420",
+        "addr:street": "Rue de la Françon",
+        "contact:facebook": "https://www.facebook.com/LaZipetteEscalade",
+        "contact:instagram": "https://www.instagram.com/lazipetteescalade/",
+        "email": "lazipette.escalade@gmail.com",
+        "fee": "yes",
+        "leisure": "sports_centre",
+        "name": "La Zipette",
+        "opening_hours": "Mo-Fr 10:00-22:00; Sa-Su 10:00-19:00; PH 10:00-19:00",
+        "phone": "+33 4 56571291",
+        "sport": "climbing",
+        "website": "https://lazipette.fr/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.8879666,
+          45.6189304
+        ]
+      },
+      "id": "node/8121657504"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8297102127",
+        "addr:city": "Vert-Saint-Denis",
+        "addr:housenumber": "37 - 39",
+        "addr:postcode": "77240",
+        "addr:street": "Route Départementale 306",
+        "fee": "yes",
+        "leisure": "sports_centre",
+        "man_made": "yes",
+        "name": "Le Rempart",
+        "phone": "+33 1 74 82 85 34",
+        "sport": "climbing",
+        "website": "https://www.le-rempart.fr"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.6332443,
+          48.5597378
+        ]
+      },
+      "id": "node/8297102127"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8301096321",
+        "addr:city": "Paris",
+        "addr:housenumber": "69",
+        "addr:postcode": "75017",
+        "addr:street": "Rue Mstislav Rostropovitch",
+        "brand": "Climbing District",
+        "check_date": "2023-07-20",
+        "climbing:boulder": "yes",
+        "climbing:sport": "no",
+        "climbing:toprope": "no",
+        "climbing:traditional": "no",
+        "fee": "yes",
+        "leisure": "sports_centre",
+        "name": "Climbing District Batignolles",
+        "opening_hours": "mo-su 07:00-24:00",
+        "operator:type": "private",
+        "phone": "+33 7 49 85 88 16",
+        "sport": "climbing",
+        "website": "https://www.climbingdistrict.com",
+        "wheelchair": "no"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.3105121,
+          48.8911894
+        ]
+      },
+      "id": "node/8301096321"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8818672117",
+        "addr:city": "Poitiers",
+        "addr:housenumber": "11",
+        "addr:postcode": "86000",
+        "addr:street": "Rue de la Demi-Lune",
+        "amenity": "restaurant",
+        "changing_table": "yes",
+        "climbing:boulder": "yes",
+        "diet:vegan": "yes",
+        "diet:vegetarian": "yes",
+        "leisure": "sports_centre",
+        "name": "The Roof Poitiers - Maison de l'escalade",
+        "opening_hours": "Mo 17:00-22:00; Tu-Th 11:00-22:00; Sa-Su 11:00-19:00",
+        "payment:credit_cards": "yes",
+        "payment:debit_cards": "yes",
+        "phone": "+33 5 49 31 34 60",
+        "ref:FR:NAF": "9311Z",
+        "ref:FR:SIREN": "839321528",
+        "ref:FR:SIRET": "83932152800029",
+        "source": "INSEE - 2024-12",
+        "sport": "climbing",
+        "website": "https://poitiers.theroof.fr/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          0.3237008,
+          46.5974463
+        ]
+      },
+      "id": "node/8818672117"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9001990453",
+        "description": "Salle d'escalade(bloc), restauration, bar",
+        "leisure": "fitness_centre",
+        "name": "La grappe escalade",
+        "opening_hours": "Mo 17:00-22:00; Tu, Th, Fr 12:00-22:00; We 09:30-19:00; Sa 10:00-19:00; Su 14:00-19:00",
+        "phone": "+33 980571240",
+        "sport": "climbing",
+        "website": "https://la-grappe-escalade.fr/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.88762,
+          42.6930341
+        ]
+      },
+      "id": "node/9001990453"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9044357052",
+        "addr:city": "Paris",
+        "addr:housenumber": "24",
+        "addr:postcode": "75012",
+        "addr:street": "François truffaut",
+        "brand": "Le Triangle",
+        "climbing:boulder": "yes",
+        "climbing:sport": "no",
+        "climbing:toprope": "no",
+        "climbing:traditional": "no",
+        "leisure": "sports_centre",
+        "name": "Le Triangle",
+        "opening_hours": "Mo-Su 07:00-00:00",
+        "phone": "+33 7 77 94 60 05",
+        "ref:FR:SIRET": "84998974400024",
+        "sport": "climbing",
+        "website": "https://www.letriangle.net/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.3856966,
+          48.832988
+        ]
+      },
+      "id": "node/9044357052"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9155195318",
+        "addr:city": "Boulogne-Billancourt",
+        "addr:housenumber": "177",
+        "addr:postcode": "92100",
+        "addr:street": "Allée du Forum",
+        "brand": "Arkose",
+        "check_date": "2023-10-05",
+        "climbing:boulder": "yes",
+        "climbing:speed": "no",
+        "climbing:sport": "yes",
+        "climbing:toprope": "no",
+        "climbing:traditional": "no",
+        "contact:website": "https://pontdesevres.arkose.com/",
+        "email": "contactpontdesevres@arkose.com",
+        "leisure": "sports_centre",
+        "name": "Arkose Pont de Sèvres",
+        "opening_hours": "Mo-Su 07:00-00:00; PH open",
+        "payment:mastercard": "yes",
+        "payment:visa": "yes",
+        "phone": "+33 1 77 35 36 01",
+        "shop": "sports",
+        "sport": "climbing",
+        "website": "https://pontdesevres.arkose.com/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.2332023,
+          48.8290418
+        ]
+      },
+      "id": "node/9155195318"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9213692464",
+        "addr:city": "Paris",
+        "addr:housenumber": "55",
+        "addr:postcode": "75019",
+        "addr:street": "Rue de Meaux",
+        "brand": "Climbing District",
+        "check_date": "2025-10-25",
+        "climbing:boulder": "yes",
+        "climbing:sport": "no",
+        "climbing:toprope": "no",
+        "climbing:traditional": "no",
+        "fee": "yes",
+        "leisure": "sports_centre",
+        "name": "Climbing District Buttes-Chaumont",
+        "opening_hours": "Mo-Fr 07:00-23:00; Sa-Su 08:00-23:00",
+        "operator:type": "private",
+        "payment:mastercard": "yes",
+        "payment:visa": "yes",
+        "phone": "+33 6 70 05 44 48",
+        "sport": "climbing",
+        "website": "https://climbingdistrict.com/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.3734136,
+          48.8815868
+        ]
+      },
+      "id": "node/9213692464"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9355532901",
+        "climbing:boulder": "yes",
+        "climbing:length": "10",
+        "climbing:routes": "27",
+        "climbing:toprope": "yes",
+        "club": "sport",
+        "contact:facebook": "https://www.facebook.com/asmescalade92",
+        "description": "Le Club ASM Escalade à Meudon accueille les grimpeurs enfants, adultes et comités d'entreprise au gymnase Pierre et Marie Curie à Meudon-la-Forêt.",
+        "email": "asmesc@gmail.com",
+        "federation": "FFME",
+        "name": "Les grimpeurs de Meudon",
+        "operator": "ASM Escalade",
+        "phone": "+33672943906",
+        "sport": "climbing",
+        "website": "https://www.asm-escalade.com/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.2280887,
+          48.7898322
+        ]
+      },
+      "id": "node/9355532901"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9391681506",
+        "access": "customers",
+        "climbing:sport": "yes",
+        "email": "toulouseportet@altissimo.fr",
+        "fee": "yes",
+        "leisure": "sports_centre",
+        "name": "Altissimo Portet",
+        "opening_hours": "Mo-Fr 10:00-23:00;PH,Sa,Su 10:00-20:00",
+        "phone": "+33 5 61 51 76 21",
+        "sport": "climbing",
+        "website": "https://toulouse-portet.altissimo.fr/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          1.4084432,
+          43.551527
+        ]
+      },
+      "id": "node/9391681506"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9392109461",
+        "email": "scalatanature@yahoo.fr",
+        "leisure": "sports_centre",
+        "name": "Scalata Nature",
+        "phone": "+33 6 87 57 93 94",
+        "sport": "climbing",
+        "website": "https://scalatanature.fr/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.8346071,
+          43.6259132
+        ]
+      },
+      "id": "node/9392109461"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9410050774",
+        "addr:street": "Centre Commercial Nice Valley, Rue Alain Mimoun",
+        "climbing:boulder": "yes",
+        "climbing:speed": "no",
+        "climbing:sport": "no",
+        "climbing:toprope": "no",
+        "climbing:traditional": "no",
+        "fee": "yes",
+        "hot_water": "yes",
+        "leisure": "sports_centre",
+        "level": "1",
+        "name": "Arkose Nice",
+        "opening_hours": "Mo-Su 09:30-00:00",
+        "payment:cards": "yes",
+        "payment:cash": "yes",
+        "payment:qr_code": "no",
+        "phone": "+33 4 86 11 50 20",
+        "service:climbing_shoes:rental": "yes",
+        "service:climbing_shoes:rental:fee": "yes",
+        "shower": "yes",
+        "sport": "climbing",
+        "website": "https://arkose.com/nice"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          7.1939448,
+          43.706115
+        ]
+      },
+      "id": "node/9410050774"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9456207103",
+        "addr:city": "Paris",
+        "addr:housenumber": "181",
+        "addr:postcode": "75013",
+        "addr:street": "Rue du Chevaleret",
+        "amenity": "bar",
+        "brand": "Arkose",
+        "check_date": "2025-08-28",
+        "climbing:boulder": "yes",
+        "climbing:grade:french:min": "4a",
+        "climbing:sport": "no",
+        "climbing:toprope": "no",
+        "climbing:traditional": "no",
+        "leisure": "sports_centre",
+        "name": "Arkose Chevaleret",
+        "opening_hours": "Mo-Su 07:00-00:00",
+        "operator": "Arkose",
+        "operator:type": "private_for_profit",
+        "payment:cash": "yes",
+        "payment:mastercard": "yes",
+        "payment:visa": "yes",
+        "phone": "+33 1 45 85 87 04",
+        "sport": "climbing",
+        "website": "https://arkose.com/chevaleret"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.3686051,
+          48.8335023
+        ]
+      },
+      "id": "node/9456207103"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9713284824",
+        "contact:city": "Bourgoin-Jallieu",
+        "contact:facebook": "https://www.facebook.com/alpabloc",
+        "contact:housenumber": "4",
+        "contact:instagram": "https://www.instagram.com/alpabloc/",
+        "contact:postcode": "38300",
+        "contact:street": "Rue Louis Braille",
+        "leisure": "sports_centre",
+        "name": "AlpaBloc",
+        "opening_hours": "Mo 15:00-21:30; Tu-Fr 12:00-21:30; Sa-Su 10:00-19:00",
+        "phone": "+33 4 37 03 85 19",
+        "sport": "climbing",
+        "website": "https://www.alpabloc.fr/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.2448384,
+          45.5914728
+        ]
+      },
+      "id": "node/9713284824"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/10003790185",
+        "addr:housenumber": "340",
+        "addr:postcode": "73230",
+        "addr:street": "Chemin des Carrières",
+        "email": "contact@wattabloc.com",
+        "leisure": "sports_centre",
+        "name": "Wattabloc",
+        "phone": "+33 9 54 87 62 56",
+        "sport": "climbing",
+        "website": "https://www.wattabloc.com/",
+        "wheelchair": "limited"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.9585536,
+          45.5749316
+        ]
+      },
+      "id": "node/10003790185"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/10217013305",
+        "addr:city": "Annecy",
+        "addr:housenumber": "25",
+        "addr:postcode": "74000",
+        "addr:street": "Avenue du Parmelan",
+        "changing_table": "yes",
+        "contact:facebook": "https://www.facebook.com/atome.annecy",
+        "contact:instagram": "https://www.instagram.com/atome.annecy/",
+        "email": "infos@atome-annecy.fr",
+        "fee": "yes",
+        "leisure": "sports_centre",
+        "name": "Atome Climbing",
+        "opening_hours": "Mo-Sa 09:00-23:00; Su 09:00-22:00",
+        "phone": "+334 80 48 02 70",
+        "sport": "climbing",
+        "website": "https://www.atome-annecy.fr/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.1313738,
+          45.9062386
+        ]
+      },
+      "id": "node/10217013305"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/10973896674",
+        "addr:housenumber": "22",
+        "addr:street": "Grand Rue",
+        "email": "contact@lacorditelle.com",
+        "name": "La Corditelle",
+        "phone": "+33 6 10 49 51 92",
+        "shop": "sports",
+        "sport": "climbing",
+        "website": "https://www.lacorditelle.com/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.2429404,
+          43.7762548
+        ]
+      },
+      "id": "node/10973896674"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11006323691",
+        "addr:city": "Le Mans",
+        "addr:housenumber": "30",
+        "addr:postcode": "72100",
+        "addr:street": "Boulevard Estienne d'Orves",
+        "email": "lemans@vertical-art.fr",
+        "fee": "yes",
+        "leisure": "sports_centre",
+        "name": "Vertical'Art Le Mans",
+        "opening_hours": "Mo-Fr 11:00-23:00, Sa-Su 09:00-21:00",
+        "phone": "+33 2 43 88 87 42",
+        "ref:FR:SIRET": "88192668700016",
+        "sport": "climbing",
+        "website": "https://lemans.vertical-art.fr/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          0.183439,
+          47.9846618
+        ]
+      },
+      "id": "node/11006323691"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11059134037",
+        "addr:city": "Saint-Martin-d'Hères",
+        "addr:housenumber": "12",
+        "addr:postcode": "38400",
+        "addr:street": "Rue Marceau Leyssieux",
+        "charge": "14 EUR",
+        "email": "espacevertical@yahoo.fr;serviceclient.evlabo@gmail.com",
+        "fee": "yes",
+        "leisure": "sports_centre",
+        "level": "0",
+        "name": "Espace Vertical 4",
+        "opening_hours": "Mo-Fr 12:00-22:30; Sa-Su 10:00-19:00; PH 10:00-19:00; Dec 24 10:00-17:00; Dec 31 10:00-17:00; Dec 25 off; Jan 01 off;",
+        "operator": "Espace Vertical",
+        "operator:type": "private",
+        "payment:cash": "yes",
+        "payment:credit_cards": "yes",
+        "phone": "+33 4 76 44 18 17",
+        "sport": "climbing",
+        "website": "https://www.espacevertical.com",
+        "wikidata": "Q124735648"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.7565397,
+          45.1848059
+        ]
+      },
+      "id": "node/11059134037"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11078547417",
+        "addr:city": "Vitrolles",
+        "addr:housenumber": "Bâtiment F",
+        "addr:postcode": "13127",
+        "addr:street": "Chemin de la Bastide Blanche",
+        "climbing:boulder": "yes",
+        "contact:facebook": "https://www.facebook.com/blockoutvitrolles",
+        "contact:instagram": "https://www.instagram.com/blockoutvitrolles/",
+        "email": "contact.vitrolles@blockout.fr",
+        "leisure": "sports_centre",
+        "name": "Block'Out Vitrolles",
+        "opening_hours": "Mo-Fr 11:00-23:00; Sa-Su 09:00-21:00",
+        "operator": "Block'Out",
+        "operator:type": "private",
+        "payment:cash": "yes",
+        "payment:contactless": "yes",
+        "payment:credit_cards": "yes",
+        "payment:debit_cards": "yes",
+        "payment:notes": "yes",
+        "phone": "+33 4 42 88 08 16",
+        "sport": "climbing",
+        "website": "https://www.blockout.fr/bo-vitrolles/",
+        "wheelchair": "yes"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.2649186,
+          43.4282878
+        ]
+      },
+      "id": "node/11078547417"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11162412436",
+        "addr:city": "Paris",
+        "addr:housenumber": "37",
+        "addr:postcode": "75012",
+        "addr:street": "Avenue Ledru-Rollin",
+        "air_conditioning": "yes",
+        "brand": "Climbing District",
+        "check_date": "2025-09-18",
+        "climbing:boulder": "yes",
+        "email": "bastille@climbingdistrict.com",
+        "fee": "yes",
+        "leisure": "sports_centre",
+        "name": "Climbing District Bastille",
+        "opening_hours": "Mo-Fr 07:00-24:00; Sa-Su 08:00-24:00",
+        "phone": "+33 7 68 56 19 24",
+        "sport": "climbing",
+        "website": "https://climbingdistrict.com/salle-escalade-bastille/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.370589,
+          48.8477962
+        ]
+      },
+      "id": "node/11162412436"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11197714747",
+        "addr:city": "Nanterre",
+        "addr:housenumber": "189",
+        "addr:postcode": "92000",
+        "addr:street": "Allée de Corse",
+        "description": "pour enfants",
+        "leisure": "sports_centre",
+        "name": "Hapik",
+        "opening_hours": "We 10:40-17:00; Fr 14:40-17:00; Sa 10:40-20:00; Su 10:40-19:00",
+        "phone": "+33 1 47 24 45 96",
+        "sport": "climbing",
+        "website": "https://hapik.fr/centres-tarifs/nanterre"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.2131495,
+          48.9000571
+        ]
+      },
+      "id": "node/11197714747"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11228753539",
+        "addr:housenumber": "21",
+        "addr:postcode": "75010",
+        "addr:street": "Rue d'Enghien",
+        "brand": "Arkose",
+        "check_date": "2025-12-28",
+        "leisure": "fitness_centre",
+        "name": "Arkose Strasbourg Saint-Denis",
+        "opening_hours": "Mo-Su 07:00-00:00",
+        "phone": "+33 1 77 37 91 00",
+        "sport": "climbing",
+        "website": "https://arkose.com/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.3513924,
+          48.871864
+        ]
+      },
+      "id": "node/11228753539"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11497083956",
+        "addr:city": "Yzeure",
+        "addr:postcode": "03400",
+        "addr:street": "Rue du Parc de la Mothe",
+        "email": "contact@bloc-zone.fr",
+        "fee": "yes",
+        "leisure": "sports_centre",
+        "name": "Bloc Zone",
+        "opening_hours": "Mo-Tu, Th-Fr 14:00-21:00; We, Sa 10:00-21:00; Su 10:00-18:00",
+        "payment:cash": "yes",
+        "payment:debit_cards": "yes",
+        "phone": "+33 9 78 80 66 76",
+        "sport": "climbing",
+        "website": "https://bloc-zone.fr/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.3439779,
+          46.5471743
+        ]
+      },
+      "id": "node/11497083956"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11554115751",
+        "addr:city": "Bourg-de-Péage",
+        "addr:housenumber": "155",
+        "addr:postcode": "26300",
+        "addr:street": "Allée des Deux Soeurs",
+        "climbing:boulder": "yes",
+        "climbing:sport": "yes",
+        "fee": "yes",
+        "indoor": "yes",
+        "leisure": "sports_centre",
+        "name": "The Roof Vercors",
+        "opening_hours": "Mo-Fr 11:30-22:30; Sa 10:00-21:00; Su 09:00-20:00; PH 09:00-20:00",
+        "phone": "+33475053822",
+        "sport": "climbing",
+        "website": "https://vercors.theroof.fr/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.0415448,
+          45.0180355
+        ]
+      },
+      "id": "node/11554115751"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11662414703",
+        "alt_name": "BelcairEscalade",
+        "email": "belcairescalade@gmail.com",
+        "image": "https://i0.wp.com/belcairescalade.fr/wp-content/uploads/2023/10/2.png",
+        "indoor": "yes",
+        "leisure": "sports_centre",
+        "name": "Salle d'escalade Daniel du Lac",
+        "opening_hours": "Sep-Jun Tu,Th,Sa 13:00-18:00; Sep-Jun We,Fr 15:00-20:00; Jul-Aug Mo-Sa 14:00-20:00",
+        "phone": "+33 7 67 75 64 84",
+        "sport": "climbing",
+        "website": "https://belcairescalade.fr/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          1.9619621,
+          42.8181012
+        ]
+      },
+      "id": "node/11662414703"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11769680037",
+        "addr:housenumber": "7",
+        "addr:street": "Impasse Thimonnier",
+        "name": "West Coast Academy",
+        "phone": "+337 67 33 70 78",
+        "sport": "climbing",
+        "website": "https://wca-jlt.fr/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          0.6287199,
+          47.3396887
+        ]
+      },
+      "id": "node/11769680037"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11851098255",
+        "addr:city": "Courbevoie",
+        "addr:housenumber": "48",
+        "addr:postcode": "92400",
+        "addr:street": "Square des Corolles",
+        "climbing:boulder": "yes",
+        "climbing:speed": "no",
+        "climbing:sport": "no",
+        "climbing:toprope": "no",
+        "email": "info@blocbuster.fr",
+        "fee": "yes",
+        "leisure": "sports_centre",
+        "name": "Blocbuster La Défense",
+        "opening_hours": "Mo-Fr 11:00-23:00; Sa-Su 10:00-20:00",
+        "payment:cards": "yes",
+        "payment:cash": "yes",
+        "payment:qr_code": "no",
+        "phone": "+33 1 41 30 14 04",
+        "service:climbing_belay_device:rental": "no",
+        "service:climbing_harness:rental": "no",
+        "service:climbing_rope:rental": "no",
+        "service:climbing_shoes:rental": "yes",
+        "service:climbing_shoes:rental:fee": "yes",
+        "sport": "climbing",
+        "website": "https://blocbuster.fr/la-defense/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.2452045,
+          48.8900762
+        ]
+      },
+      "id": "node/11851098255"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11922707050",
+        "addr:housenumber": "1",
+        "addr:postcode": "34790",
+        "addr:street": "Rue de la Treille",
+        "brand": "Altissimo",
+        "climbing:boulder": "yes",
+        "climbing:mixed": "yes",
+        "climbing:toprope": "yes",
+        "fee": "yes",
+        "indoor": "yes",
+        "leisure": "sports_centre",
+        "name": "ALTISSIMO GRABELS",
+        "opening_hours": "Mo-Fr 10:00-23:00; Sa-Su 10:00-20:00",
+        "phone": "+33 4 67 03 05 53",
+        "sport": "climbing",
+        "website": "https://montpellier-grabels.altissimo.fr/index.html"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.801559,
+          43.6474685
+        ]
+      },
+      "id": "node/11922707050"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/12084011455",
+        "addr:housenumber": "468",
+        "addr:postcode": "34090",
+        "addr:street": "Rue de la Croix Verte",
+        "climbing:boulder": "yes",
+        "climbing:speed": "no",
+        "climbing:sport": "no",
+        "climbing:toprope": "no",
+        "email": "montpelliernord@blocsession.com",
+        "fee": "yes",
+        "leisure": "sports_centre",
+        "name": "Bloc Session Montpellier Nord",
+        "opening_hours": "Mo-Fr 11:00-22:00; Sa-Su 10:00-20:00",
+        "payment:cards": "yes",
+        "payment:cash": "yes",
+        "payment:qr_code": "no",
+        "phone": "+33 4 34 81 18 72",
+        "service:climbing_belay_device:rental": "no",
+        "service:climbing_harness:rental": "no",
+        "service:climbing_rope:rental": "no",
+        "service:climbing_shoes:rental": "yes",
+        "service:climbing_shoes:rental:fee": "yes",
+        "sport": "climbing",
+        "website": "https://www.blocsession.com/salle-escalade/salle-escalade-montpellier-nord/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.8396511,
+          43.6461162
+        ]
+      },
+      "id": "node/12084011455"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/12119978106",
+        "addr:city": "Albi",
+        "addr:housenumber": "7",
+        "addr:postcode": "81000",
+        "addr:street": "Rue Francisco Goya",
+        "climbing:boulder": "yes",
+        "fee": "yes",
+        "leisure": "sports_centre",
+        "name": "The Roof Albi - Maison de l'escalade",
+        "opening_hours": "Mo 17:00-22:00; Tu-Fr 11:00-22:00; Sa-Su 10:00-20:00",
+        "phone": "+33 5 63 40 38 55",
+        "sport": "climbing",
+        "website": "https://albi.theroof.fr/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.1670571,
+          43.9334128
+        ]
+      },
+      "id": "node/12119978106"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/12133829201",
+        "addr:housenumber": "14",
+        "addr:postcode": "22000",
+        "addr:street": "Rue Pierre de Coubertin",
+        "climbing:boulder": "yes",
+        "fee": "yes",
+        "leisure": "sports_centre",
+        "name": "The Roof",
+        "opening_hours": "We, Sa-Su 10:00-22:00; Mo-Tu, Th-Fr 11:30-22:00",
+        "payment:cash": "yes",
+        "payment:credit_cards": "yes",
+        "phone": "+33 2 96 01 11 92",
+        "sport": "climbing",
+        "website": "https://saintbrieuc.theroof.fr/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -2.7664408,
+          48.4986825
+        ]
+      },
+      "id": "node/12133829201"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/12165167593",
+        "addr:city": "Issy-les-Moulineaux",
+        "addr:housenumber": "5",
+        "addr:postcode": "92130",
+        "addr:street": "Rue du Bateau Lavoir",
+        "brand": "Arkose",
+        "climbing:boulder": "yes",
+        "climbing:sport": "no",
+        "fee": "yes",
+        "leisure": "sports_centre",
+        "name": "Arkose Issy-les-Moulineaux - Bloc",
+        "opening_hours": "Mo-Su 07:00-24:00",
+        "phone": "+33 1 77 37 89 22",
+        "sport": "climbing",
+        "website": "https://arkose.com/issy-les-moulineaux-bloc",
+        "wheelchair": "yes"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.2641539,
+          48.82636
+        ]
+      },
+      "id": "node/12165167593"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/12183613010",
+        "contact:housenumber": "11",
+        "contact:street": "Rue Louis Pasteur",
+        "fee": "yes",
+        "leisure": "sports_centre",
+        "name": "Up'Side escalade & parkour",
+        "opening_hours": "Tu, Th, Fr 11:00-23:00; We 10:00-23:00; Sa, Su 10:00-21:00",
+        "phone": "+332 47 77 98 87",
+        "sport": "climbing",
+        "website": "https://upside-sport.fr/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          0.7329,
+          47.3448221
+        ]
+      },
+      "id": "node/12183613010"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/12270700569",
+        "climbing:boulder": "yes",
+        "climbing:speed": "no",
+        "climbing:sport": "no",
+        "climbing:toprope": "no",
+        "email": "monsieur.grimpeur@gmail.com",
+        "fee": "yes",
+        "leisure": "sports_centre",
+        "name": "Antipode",
+        "opening_hours": "Mo-Fr 13:00-21:30; Sa-Su 14:00-19:00;Mo-Fri 13:00-21:30",
+        "payment:cards": "yes",
+        "payment:cash": "yes",
+        "payment:qr_code": "no",
+        "phone": "+33 5 53 46 53 86",
+        "service:climbing_shoes:rental": "yes",
+        "service:climbing_shoes:rental:fee": "yes",
+        "shower": "hot",
+        "sport": "climbing",
+        "website": "https://antipode24.com/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          0.7824621,
+          45.1898012
+        ]
+      },
+      "id": "node/12270700569"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/12377308395",
+        "addr:street": "970 RN 7, 06270 Villeneuve-Loubet",
+        "description": "Salle d'escalade",
+        "fee": "yes",
+        "leisure": "sports_centre",
+        "name": "Val de Grimpe",
+        "opening_hours": "Mo-Fr 10:00-23:00; Sa, Su 09:00-20:00",
+        "payment:cash": "yes",
+        "payment:credit_cards": "yes",
+        "phone": "+33 4 23 35 92 39",
+        "sport": "climbing",
+        "website": "https://www.valdegrimpe.fr/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          7.1318219,
+          43.6405343
+        ]
+      },
+      "id": "node/12377308395"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/12534830424",
+        "check_date": "2025-01-26",
+        "climbing:boulder": "yes",
+        "email": "aixenprovence@blocsession.com",
+        "fee": "yes",
+        "leisure": "sports_centre",
+        "name": "Bloc Session",
+        "opening_hours": "Mo-Fr 11:00-22:00; Sa,Su 10:00-20:00",
+        "phone": "+33 4 42 53 77 62",
+        "source": "survey",
+        "sport": "climbing",
+        "website": "https://www.blocsession.com/salle-escalade/aix-en-provence/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.4367554,
+          43.5276337
+        ]
+      },
+      "id": "node/12534830424"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/12756863517",
+        "addr:city": "Montpellier",
+        "addr:housenumber": "148",
+        "addr:postcode": "34080",
+        "addr:street": "Rue Jean Giroux",
+        "alt_name": "Boulderline",
+        "fee": "yes",
+        "leisure": "sports_centre",
+        "name": "Boulder Line - BL2",
+        "phone": "+33 4 34 35 80 17",
+        "restaurant": "yes",
+        "sport": "climbing",
+        "website": "https://boulderline.fr/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.8260419,
+          43.6378974
+        ]
+      },
+      "id": "node/12756863517"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/12876706839",
+        "addr:housenumber": "482",
+        "addr:street": "Route de Kerviec",
+        "name": "B'Wall",
+        "opening_hours": "Mo-Fr 10:00-23:00; Sa, Su 09:00-20:00",
+        "phone": "+33 2 97 83 49 25",
+        "sport": "climbing",
+        "website": "https://www.b-wall.fr/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.3552408,
+          47.7784569
+        ]
+      },
+      "id": "node/12876706839"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/12891914406",
+        "contact:city": "Saint-Denis",
+        "contact:housenumber": "345",
+        "contact:postcode": "93200",
+        "contact:street": "Avenue Du Président Wilson",
+        "leisure": "sports_centre",
+        "name": "Arkose Saint-Denis",
+        "opening_hours": "Mo-Su 09:00-00:00",
+        "operator": "Arkose",
+        "phone": "+33177379355",
+        "ref:FR:SIRET": "79319653600247",
+        "sport": "climbing",
+        "website": "https://www.arkose.com/saint-denis"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.3548025,
+          48.9237513
+        ]
+      },
+      "id": "node/12891914406"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/12911229739",
+        "contact:facebook": "https://www.facebook.com/blocsessionbesancon",
+        "email": "besancon@blocsession.com",
+        "leisure": "sports_centre",
+        "name": "Bloc session",
+        "opening_hours": "Mo-Fr 12:00-22:00; Sa-Su 10:00-20:00",
+        "phone": "+33 3 65 67 24 50",
+        "sport": "climbing",
+        "start_date": "2025-05-25",
+        "website": "https://www.blocsession.com/salle-escalade/bs25/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.0603681,
+          47.2658927
+        ]
+      },
+      "id": "node/12911229739"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/13046237055",
+        "brand": "Altissimo",
+        "brand:wikidata": "Q100701592",
+        "email": "montpellierodysseum@altissimo.fr",
+        "fee": "yes",
+        "indoor": "yes",
+        "leisure": "sports_centre",
+        "name": "Altissimo Montpellier Odysseum",
+        "opening_hours": "Mo-Fr 10:00-23:00; Sa-Su 09:00-21:00",
+        "phone": "+33 4 67 64 14 18",
+        "sport": "climbing",
+        "website": "https://montpellier-odysseum.altissimo.fr"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.9182492,
+          43.6034184
+        ]
+      },
+      "id": "node/13046237055"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/13046249695",
+        "leisure": "sports_centre",
+        "name": "Mont-Blanc Escalade",
+        "phone": "+33 4 79 01 07 00",
+        "sport": "climbing",
+        "website": "https://www.montblancescalade.com/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.7889735,
+          45.8922492
+        ]
+      },
+      "id": "node/13046249695"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/13328114763",
+        "check_date": "2025-11-24",
+        "club": "sport",
+        "email": "saou@ffcam.fr",
+        "name": "Club Alpin Français Saoû Synclinal",
+        "phone": "+33 4 75 76 02 73",
+        "sport": "climbing",
+        "website": "https://caf-saou-synclinal.com"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.0633898,
+          44.645998
+        ]
+      },
+      "id": "node/13328114763"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/13398721955",
+        "addr:city": "Pontarlier",
+        "addr:housenumber": "9",
+        "addr:postcode": "25300",
+        "addr:street": "9 rue Charles Marie Lagier,",
+        "email": "pontarlier@blocsession.com",
+        "leisure": "sports_centre",
+        "name": "Bloc Session",
+        "opening_hours": "Mo-Fr 12:00-22:00; Sa 09:00-22:00; Su 09:00-19:00",
+        "phone": "+33 3 81 39 45 77",
+        "sport": "climbing",
+        "website": "https://www.blocsession.com/salle-escalade/pontarlier/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.3420156,
+          46.8982252
+        ]
+      },
+      "id": "node/13398721955"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/13440651883",
+        "addr:city": "Reims",
+        "addr:housenumber": "33",
+        "addr:postcode": "51100",
+        "addr:street": "Rue Jacques de la Giraudière",
+        "amenity": "restaurant",
+        "climbing": "indoor",
+        "leisure": "sports_centre",
+        "name": "Block'Out",
+        "phone": "+33326044756",
+        "restaurant:name": "Le Daim Blanc",
+        "sport": "climbing",
+        "website": "https://www.blockout.fr/reims"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.0860139,
+          49.2409461
+        ]
+      },
+      "id": "node/13440651883"
+    }
+  ]
+}
