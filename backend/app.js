@@ -449,6 +449,82 @@ app.delete('/api/activities/:id', async (req, res) => {
 });
 
 /**
+ * GET /api/og-image?url=...
+ * Proxy côté serveur : récupère l'image og:image (ou twitter:image) d'une URL tierce.
+ * Nécessaire car le navigateur ne peut pas lire le HTML d'autres domaines (CORS).
+ */
+app.get('/api/og-image', async (req, res) => {
+    const { url } = req.query;
+    if (!url) {
+        return res.status(400).json({ imageUrl: null, error: 'url manquante' });
+    }
+
+    // Valider que l'URL est http/https
+    let targetUrl;
+    try {
+        targetUrl = new URL(url);
+        if (!['http:', 'https:'].includes(targetUrl.protocol)) throw new Error();
+    } catch {
+        return res.status(400).json({ imageUrl: null, error: 'url invalide' });
+    }
+
+    try {
+        const response = await fetch(targetUrl.toString(), {
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (compatible; LesPapillons-Bot/1.0)',
+                'Accept': 'text/html'
+            },
+            signal: AbortSignal.timeout(6000),
+            redirect: 'follow'
+        });
+
+        if (!response.ok) {
+            return res.json({ imageUrl: null });
+        }
+
+        // Lire seulement les premiers 50 Ko pour ne pas charger de gros fichiers
+        const reader = response.body.getReader();
+        let html = '';
+        let bytesRead = 0;
+        const MAX_BYTES = 50000;
+        while (bytesRead < MAX_BYTES) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            html += new TextDecoder().decode(value);
+            bytesRead += value.byteLength;
+        }
+        reader.cancel();
+
+        // Chercher og:image (les deux ordres d'attributs possibles)
+        const ogPatterns = [
+            /<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i,
+            /<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image["']/i,
+            /<meta[^>]+name=["']twitter:image["'][^>]+content=["']([^"']+)["']/i,
+            /<meta[^>]+content=["']([^"']+)["'][^>]+name=["']twitter:image["']/i
+        ];
+
+        let imageUrl = null;
+        for (const pattern of ogPatterns) {
+            const match = html.match(pattern);
+            if (match?.[1]) {
+                imageUrl = match[1].trim();
+                // Résoudre les URL relatives
+                if (imageUrl.startsWith('//')) imageUrl = targetUrl.protocol + imageUrl;
+                else if (imageUrl.startsWith('/')) imageUrl = `${targetUrl.protocol}//${targetUrl.host}${imageUrl}`;
+                break;
+            }
+        }
+
+        console.log(`🖼️ og-image pour ${targetUrl.hostname}: ${imageUrl ?? 'aucune'}`);
+        res.json({ imageUrl });
+
+    } catch (error) {
+        console.error(`❌ og-image erreur pour ${url}:`, error.message);
+        res.json({ imageUrl: null });
+    }
+});
+
+/**
  * GET /api/favorites
  * Récupère les favoris d'un utilisateur avec les détails des activités
  */

@@ -516,11 +516,8 @@ async function loadAndShowActivityDetails(activityId, marker) {
             setupPopupEventListeners(details);
         }, 10);
 
-        // Enrichissement asynchrone : image Wikidata (fire & forget)
-        console.log(`🏷️ Wikidata: code = ${details.wikidata ?? 'aucun'} pour #${activityId}`);
-        if (details.wikidata) {
-            enrichPopupWithWikidataImage(details.id, details.wikidata);
-        }
+        // Enrichissement asynchrone : image (Wikidata → og:image) — fire & forget
+        enrichPopupWithImage(details.id, details);
         
     } catch (error) {
         console.error(`❌ Erreur popup #${activityId}:`, error);
@@ -572,18 +569,37 @@ function getIconConfig(category) {
  * @param {number} activityId
  * @param {string} wikidataId
  */
-async function enrichPopupWithWikidataImage(activityId, wikidataId) {
-    console.log(`🖼️ Enrichissement popup #${activityId} avec Wikidata ${wikidataId}...`);
-    const imageUrl = await getWikidataImage(wikidataId);
+/**
+ * Enrichit le header du popup avec une image.
+ * Stratégie : Wikidata (P18) en premier, puis og:image du site web en fallback.
+ * @param {number} activityId
+ * @param {Object} details - Données complètes de l'activité (wikidata, website, …)
+ */
+async function enrichPopupWithImage(activityId, details) {
+    console.log(`🖼️ Enrichissement image popup #${activityId} — wikidata=${details.wikidata ?? 'aucun'}, website=${details.website ?? 'aucun'}`);
+
+    let imageUrl = null;
+
+    // 1. Essayer l'image Wikidata (propriété P18)
+    if (details.wikidata) {
+        imageUrl = await getWikidataImage(details.wikidata);
+    }
+
+    // 2. Fallback : og:image depuis le site web de l'activité
+    if (!imageUrl && details.website) {
+        console.log(`🌐 Fallback og:image pour popup #${activityId}: ${details.website}`);
+        imageUrl = await getOgImage(details.website);
+    }
+
     if (!imageUrl) {
-        console.log(`🖼️ Aucune image Wikidata → popup #${activityId} garde le gradient`);
+        console.log(`🖼️ Aucune image trouvée pour popup #${activityId} → gradient conservé`);
         return;
     }
 
     const img = document.getElementById(`popup-header-img-${activityId}`);
     const header = document.getElementById(`popup-header-${activityId}`);
     if (!img || !header) {
-        console.warn(`⚠️ Éléments DOM introuvables pour popup #${activityId} (popup fermé ?)`);
+        console.warn(`⚠️ Éléments DOM introuvables pour popup #${activityId} (popup déjà fermé ?)`);
         return;
     }
 
@@ -591,10 +607,10 @@ async function enrichPopupWithWikidataImage(activityId, wikidataId) {
         console.log(`✅ Image chargée dans popup #${activityId}`);
         header.classList.add('has-image');
     };
-    img.onerror = (e) => {
-        console.warn(`⚠️ Échec chargement image pour popup #${activityId}`, e);
+    img.onerror = () => {
+        console.warn(`⚠️ Échec chargement image pour popup #${activityId} (${imageUrl})`);
     };
-    console.log(`⏳ Chargement image popup #${activityId}:`, imageUrl);
+    console.log(`⏳ Injection image popup #${activityId}:`, imageUrl);
     img.src = imageUrl;
 }
 

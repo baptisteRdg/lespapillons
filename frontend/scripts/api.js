@@ -202,6 +202,30 @@ async function addToFavoritesAPI(activityId) {
  * @param {string} wikidataId - Code Wikidata (ex: "Q12345")
  * @returns {Promise<string|null>} URL de l'image (Commons Special:FilePath) ou null
  */
+/**
+ * Récupère l'og:image (ou twitter:image) d'un site web via le proxy backend
+ * @param {string} websiteUrl - URL du site de l'activité
+ * @returns {Promise<string|null>} URL de l'image ou null
+ */
+async function getOgImage(websiteUrl) {
+    console.log(`🌐 og-image: requête pour ${websiteUrl}`);
+    try {
+        const proxyUrl = `${API_BASE_URL}/og-image?url=${encodeURIComponent(websiteUrl)}`;
+        const response = await fetch(proxyUrl);
+        if (!response.ok) return null;
+        const data = await response.json();
+        if (data.imageUrl) {
+            console.log(`✅ og-image trouvée: ${data.imageUrl}`);
+        } else {
+            console.log(`ℹ️ Pas d'og:image pour ${websiteUrl}`);
+        }
+        return data.imageUrl || null;
+    } catch (err) {
+        console.error(`❌ og-image erreur pour ${websiteUrl}`, err);
+        return null;
+    }
+}
+
 async function getWikidataImage(wikidataId) {
     console.log(`🌐 Wikidata: requête image pour ${wikidataId}`);
     try {
