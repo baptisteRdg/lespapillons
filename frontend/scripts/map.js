@@ -431,10 +431,14 @@ function createMarker(activity) {
         ? `<img src="${iconConfig.svg}" alt="" style="width:20px;height:20px;filter:invert(1);" onerror="this.style.display='none';this.nextElementSibling.style.display='inline';"><i class="fas fa-${fallbackIcon}" style="display:none"></i>`
         : `<i class="fas fa-${iconConfig.icon}"></i>`;
 
+    const MARKER_COLORS = {
+        blue: '#3b82f6', gray: '#6b7280', green: '#22c55e',
+        red: '#ef4444', yellow: '#eab308', purple: '#a855f7', orange: '#f97316'
+    };
+    const bgColor = MARKER_COLORS[iconConfig.color] || MARKER_COLORS.blue;
+
     const customIcon = L.divIcon({
-        html: `<div class="flex items-center justify-center w-10 h-10 bg-${iconConfig.color}-500 rounded-full shadow-lg text-white text-xl border-4 border-white">
-                ${iconHtml}
-               </div>`,
+        html: `<div class="activity-marker-pin" style="background-color:${bgColor}">${iconHtml}</div>`,
         className: 'custom-marker',
         iconSize: [40, 40],
         iconAnchor: [20, 20],
@@ -477,11 +481,11 @@ async function loadAndShowActivityDetails(activityId, marker) {
         if (!existingPopup) {
             console.log('🆕 Création nouveau popup');
             const loadingPopup = L.popup()
-                .setContent('<div class="p-4 text-center"><i class="fas fa-spinner fa-spin text-2xl text-blue-500"></i><p class="mt-2">Chargement...</p></div>');
+                .setContent('<div class="popup-loading"><i class="fas fa-spinner fa-spin popup-loading-spinner"></i><p class="popup-loading-text">Chargement...</p></div>');
             marker.bindPopup(loadingPopup);
         } else {
             console.log('♻️ Réutilisation popup existant');
-            marker.setPopupContent('<div class="p-4 text-center"><i class="fas fa-spinner fa-spin text-2xl text-blue-500"></i><p class="mt-2">Chargement...</p></div>');
+            marker.setPopupContent('<div class="popup-loading"><i class="fas fa-spinner fa-spin popup-loading-spinner"></i><p class="popup-loading-text">Chargement...</p></div>');
         }
         
         // IMPORTANT: Toujours ouvrir le popup
@@ -493,7 +497,7 @@ async function loadAndShowActivityDetails(activityId, marker) {
         
         if (!details) {
             console.error(`❌ Impossible de charger #${activityId}`);
-            marker.setPopupContent('<div class="p-4 text-center text-red-500">Erreur lors du chargement</div>');
+            marker.setPopupContent('<div class="popup-error">Erreur lors du chargement</div>');
             return;
         }
         
@@ -522,7 +526,7 @@ async function loadAndShowActivityDetails(activityId, marker) {
     } catch (error) {
         console.error(`❌ Erreur popup #${activityId}:`, error);
         if (marker.getPopup()) {
-            marker.setPopupContent('<div class="p-4 text-center text-red-500">Erreur lors du chargement</div>');
+            marker.setPopupContent('<div class="popup-error">Erreur lors du chargement</div>');
         }
     }
 }
@@ -636,36 +640,35 @@ function createPopupContent(activity) {
             <div class="popup-header" id="popup-header-${activity.id}">
                 <img class="popup-header-img" id="popup-header-img-${activity.id}" alt="" aria-hidden="true">
                 <div class="popup-header-text">
-                    <h3 class="text-xl font-bold mb-1">${activity.title}</h3>
+                    <h3 class="popup-title">${activity.title}</h3>
                     <span class="category-badge category-${categoryClass}">${activity.category || 'Autre'}</span>
                 </div>
             </div>
-            
+
             <div class="popup-body">
                 ${activity.address || activity.description ? `
-                    <div class="mb-3">
+                    <div class="popup-info-block">
                         ${activity.address ? `
-                            <p class="text-gray-600 text-sm mb-2">
-                                <i class="fas fa-map-marker-alt text-blue-600 mr-2"></i>${activity.address}
+                            <p class="popup-address">
+                                <i class="fas fa-map-marker-alt popup-address-icon"></i>${activity.address}
                             </p>
                         ` : ''}
                         ${activity.description ? `
-                            <p class="text-gray-700 text-sm">${activity.description}</p>
+                            <p class="popup-description">${activity.description}</p>
                         ` : ''}
                     </div>
                 ` : ''}
-                
+
                 ${activity.website || activity.phone ? `
-                    <div class="space-y-2 text-sm">
+                    <div class="popup-links">
                         ${activity.website ? `
-                            <a href="${activity.website}" target="_blank" class="text-blue-600 hover:text-blue-800 flex items-center gap-2">
+                            <a href="${activity.website}" target="_blank" class="popup-link">
                                 <i class="fas fa-globe"></i>
-                                <span class="underline">Visiter le site web</span>
+                                <span class="popup-link-label">Visiter le site web</span>
                             </a>
                         ` : ''}
-                        
                         ${activity.phone ? `
-                            <a href="tel:${activity.phone}" class="text-blue-600 hover:text-blue-800 flex items-center gap-2">
+                            <a href="tel:${activity.phone}" class="popup-link">
                                 <i class="fas fa-phone"></i>
                                 <span>${activity.phone}</span>
                             </a>
@@ -673,21 +676,21 @@ function createPopupContent(activity) {
                     </div>
                 ` : ''}
             </div>
-            
+
             <div class="popup-footer">
                 <button class="popup-btn btn-favorite ${favoriteClass}" data-action="favorite" data-id="${activity.id}">
                     <i class="${favoriteIcon} fa-heart"></i>
-                    <span class="hidden sm:inline">${isFavorite ? 'Favori' : 'Ajouter'}</span>
+                    <span>${isFavorite ? 'Favori' : 'Ajouter'}</span>
                 </button>
-                
+
                 <button class="popup-btn btn-itinerary" data-action="itinerary" data-id="${activity.id}">
                     <i class="fas fa-route"></i>
-                    <span class="hidden sm:inline">Itinéraire</span>
+                    <span>Itinéraire</span>
                 </button>
-                
+
                 <button class="popup-btn btn-similar" data-action="similar" data-id="${activity.id}">
                     <i class="fas fa-search"></i>
-                    <span class="hidden sm:inline">Similaires</span>
+                    <span>Similaires</span>
                 </button>
             </div>
         </div>
@@ -828,13 +831,13 @@ async function showFavoritesSidebar() {
     const favorites = getFavorites();
     
     if (favorites.length === 0) {
-        content.innerHTML = '<p class="text-gray-500 text-center py-8">Aucun favori pour le moment</p>';
+        content.innerHTML = '<p class="fav-empty">Aucun favori pour le moment</p>';
     } else {
         content.innerHTML = favorites.map(fav => `
-            <div class="mb-4 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition cursor-pointer" data-lat="${fav.lat}" data-lng="${fav.lng}" data-id="${fav.id}">
-                <div class="flex justify-between items-start mb-2">
-                    <h3 class="font-bold text-gray-800">${fav.name}</h3>
-                    <button class="text-red-500 hover:text-red-700 remove-favorite" data-id="${fav.id}">
+            <div class="fav-item" data-lat="${fav.lat}" data-lng="${fav.lng}" data-id="${fav.id}">
+                <div class="fav-item-header">
+                    <h3 class="fav-item-name">${fav.name}</h3>
+                    <button class="remove-favorite" data-id="${fav.id}">
                         <i class="fas fa-heart"></i>
                     </button>
                 </div>
@@ -912,24 +915,18 @@ function hideFavoritesSidebar() {
 function showToast(message, type = 'success') {
     const toast = document.getElementById('toast');
     const toastMessage = document.getElementById('toastMessage');
-    
-    const colors = {
-        success: 'bg-green-500',
-        error: 'bg-red-500',
-        info: 'bg-blue-500'
-    };
-    
+
     const icons = {
         success: 'fa-check-circle',
         error: 'fa-exclamation-circle',
         info: 'fa-info-circle'
     };
-    
-    toast.className = `fixed bottom-8 right-8 z-[1001] ${colors[type]} text-white px-6 py-3 rounded-lg shadow-lg transform transition-transform duration-300`;
-    toastMessage.innerHTML = `<i class="fas ${icons[type]} mr-2"></i>${message}`;
-    
+
+    toast.className = `toast-${type}`;
+    toastMessage.innerHTML = `<i class="fas ${icons[type]}"></i>${message}`;
+
     toast.style.transform = 'translateY(0)';
-    
+
     setTimeout(() => {
         toast.style.transform = 'translateY(200px)';
     }, 3000);

@@ -1,140 +1,329 @@
-/* Styles personnalisés pour BeOut */
+/* ================================================
+   BeOut — Styles (source unique, sans Tailwind)
+   ================================================ */
 
-/* Polices Google Fonts : DM Serif Text partout (fiches, header, sidebar, etc.) */
-html,
+/* ===== RESET MINIMAL ===== */
+*, *::before, *::after { box-sizing: border-box; }
+a    { text-decoration: none; }
+button { cursor: pointer; }
+h1, h2, h3, h4, p { margin: 0; }
+ul { margin: 0; padding: 0; list-style: none; }
+
+
+/* ===== LAYOUT ===== */
 body {
-    font-family: "DM Serif Text", serif !important;
-    font-weight: 400;
-}
-/* Fiches (popups Leaflet) et tout contenu injecté */
-.leaflet-popup-content-wrapper,
-.leaflet-popup-content,
-.popup-content,
-.popup-header,
-.popup-body,
-.popup-footer,
-#favoritesSidebar,
-#favoritesContent {
-    font-family: "DM Serif Text", serif !important;
-}
-.dm-serif {
-    font-family: "DM Serif Text", serif;
-}
-.idiqlat-extralight {
-    font-family: "Idiqlat", serif;
-    font-weight: 200;
-    font-style: normal;
-}
-.idiqlat-light {
-    font-family: "Idiqlat", serif;
-    font-weight: 300;
-    font-style: normal;
-}
-.idiqlat-regular {
-    font-family: "Idiqlat", serif;
-    font-weight: 400;
-    font-style: normal;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    overflow: hidden;
 }
 
-/* Ombres subtiles pour donner du volume */
-.header-shadow {
+#map {
+    width: 100%;
+    height: 100%;
+}
+
+/* ===== HEADER ===== */
+header {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    z-index: 1000;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(80px);
+    -webkit-backdrop-filter: blur(80px);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
-/* Effet Glass Morphism moderne pour le header */
-header {
-    background: rgba(255, 255, 255, 0.7) !important;
-    backdrop-filter: blur(12px) saturate(180%);
-    -webkit-backdrop-filter: blur(12px) saturate(180%);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+@supports not (backdrop-filter: blur(80px)) {
+    header { background: rgba(255, 255, 255, 0.2); }
 }
 
-/* Support pour les navigateurs qui ne supportent pas backdrop-filter */
-@supports not (backdrop-filter: blur(12px)) {
-    header {
-        background: rgba(255, 255, 255, 0.95) !important;
-    }
+.header-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
 }
 
-.sidebar-shadow {
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+.header-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-shrink: 0;
 }
 
-/* Effet Glass Morphism pour la sidebar */
+.header-logo-icon {
+    font-size: 1.875rem;
+    color: #3b82f6;
+}
+
+.header-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1f2937;
+}
+
+.header-search {
+    flex: 1;
+    max-width: 42rem;
+}
+
+.search-wrapper {
+    position: relative;
+}
+
+.search-input {
+    width: 100%;
+    padding: 0.5rem 1rem 0.5rem 2.5rem;
+    border-radius: 0.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    font-size: 0.9375rem;
+}
+
+.search-input:focus {
+    background: rgba(255, 255, 255, 0.8);
+    border-color: #60a5fa;
+    box-shadow: 0 0 0 2px rgba(147, 197, 253, 0.4);
+}
+
+.search-icon {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9ca3af;
+    pointer-events: none;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-shrink: 0;
+}
+
+/* Bouton Mes Favoris */
+#favoritesBtn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    background: rgba(239, 246, 255, 0.6);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    color: #2563eb;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+    transition: background 0.2s;
+    font-size: 0.9375rem;
+}
+
+#favoritesBtn:hover {
+    background: rgba(219, 234, 254, 0.7);
+}
+
+/* Compteur de favoris */
+#favCount {
+    background-color: #3b82f6;
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border-radius: 9999px;
+    padding: 0.125rem 0.5rem;
+    line-height: 1.4;
+}
+
+/* Texte masqué sur mobile */
+.hide-mobile { display: inline; }
+
+/* ===== SIDEBAR FAVORIS ===== */
 #favoritesSidebar {
-    background: rgba(255, 255, 255, 0.75) !important;
+    position: absolute;
+    top: 5rem;
+    right: 1rem;
+    z-index: 1000;
+    width: 20rem;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    transform: translateX(400px);
+    transition: transform 0.3s;
+    background: rgba(255, 255, 255, 0.75);
     backdrop-filter: blur(20px) saturate(180%);
     -webkit-backdrop-filter: blur(20px) saturate(180%);
     border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 }
 
 @supports not (backdrop-filter: blur(20px)) {
-    #favoritesSidebar {
-        background: rgba(255, 255, 255, 0.98) !important;
-    }
+    #favoritesSidebar { background: rgba(255, 255, 255, 0.98); }
 }
 
-/* Effet glass sur le header de la sidebar */
-#favoritesSidebar > div:first-child {
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.85) 0%, rgba(96, 165, 250, 0.85) 100%) !important;
+.sidebar-header {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.85) 0%, rgba(96, 165, 250, 0.85) 100%);
     backdrop-filter: blur(12px) saturate(150%);
     -webkit-backdrop-filter: blur(12px) saturate(150%);
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-/* Effet glass sur le contenu des favoris */
+.sidebar-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+#closeSidebar {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.25rem;
+    padding: 0.25rem;
+    line-height: 1;
+    transition: color 0.2s;
+}
+
+#closeSidebar:hover { color: #d1d5db; }
+
 #favoritesContent {
+    padding: 1rem;
+    max-height: 70vh;
+    overflow-y: auto;
     background: rgba(255, 255, 255, 0.2);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
 }
 
-#favoritesContent > div {
-    background: rgba(249, 250, 251, 0.5) !important;
+/* Item favori */
+.fav-item {
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    background: rgba(249, 250, 251, 0.5);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: background 0.2s;
 }
 
-#favoritesContent > div:hover {
-    background: rgba(243, 244, 246, 0.6) !important;
+.fav-item:hover { background: rgba(243, 244, 246, 0.6); }
+
+.fav-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.5rem;
 }
 
-.button-shadow {
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+.fav-item-name {
+    font-weight: 700;
+    color: #1f2937;
 }
 
-.search-input {
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-    background: rgba(255, 255, 255, 0.6) !important;
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 255, 255, 0.4) !important;
+.remove-favorite {
+    background: none;
+    border: none;
+    color: #ef4444;
+    padding: 0.25rem;
+    line-height: 1;
+    transition: color 0.2s;
+    flex-shrink: 0;
 }
 
-.search-input:focus {
-    background: rgba(255, 255, 255, 0.8) !important;
+.remove-favorite:hover { color: #b91c1c; }
+
+.fav-empty {
+    color: #6b7280;
+    text-align: center;
+    padding: 2rem 0;
 }
 
-/* Effet glass sur le bouton favoris */
-#favoritesBtn {
-    background: rgba(239, 246, 255, 0.6) !important;
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 255, 255, 0.4);
+/* Scrollbar sidebar */
+#favoritesContent::-webkit-scrollbar { width: 6px; }
+#favoritesContent::-webkit-scrollbar-track { background: #f1f1f1; }
+#favoritesContent::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 3px; }
+#favoritesContent::-webkit-scrollbar-thumb:hover { background: #2563eb; }
+
+/* ===== TOAST ===== */
+#toast {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 1001;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    transform: translateY(8rem);
+    transition: transform 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: #22c55e;
 }
 
-#favoritesBtn:hover {
-    background: rgba(219, 234, 254, 0.7) !important;
+#toast.toast-success { background-color: #22c55e; }
+#toast.toast-error   { background-color: #ef4444; }
+#toast.toast-info    { background-color: #3b82f6; }
+
+/* ===== MARQUEUR UTILISATEUR ===== */
+.user-marker-container { z-index: 1000; }
+
+.user-marker {
+    width: 36px;
+    height: 36px;
+    background: #FACC15;
+    border: 3px solid #EAB308;
+    border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    cursor: move;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-/* Cacher l'attribution Leaflet et les contrôles de zoom */
-.leaflet-control-attribution,
-.leaflet-control-zoom {
-    display: none !important;
+.user-marker-icon {
+    width: 22px;
+    height: 22px;
+    object-fit: contain;
 }
 
-/* Style pour le cercle de rayon utilisateur */
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50%       { transform: scale(1.1); }
+}
+
+.marker-active { animation: pulse 2s infinite; }
+
+/* ===== MARQUEUR ACTIVITÉ ===== */
+.activity-marker-pin {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    border: 4px solid white;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    color: white;
+    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #3b82f6; /* couleur par défaut */
+}
+
+/* ===== CERCLE DE RAYON ===== */
 .user-radius-circle {
     fill: rgba(59, 130, 246, 0.08);
     stroke: rgba(59, 130, 246, 0.4);
@@ -142,7 +331,6 @@ header {
     cursor: default;
 }
 
-/* Infobulle pour le rayon */
 .radius-tooltip {
     background: rgba(59, 130, 246, 0.95) !important;
     border: none !important;
@@ -158,360 +346,7 @@ header {
     border-top-color: rgba(59, 130, 246, 0.95) !important;
 }
 
-/* Style pour le marqueur utilisateur (you.svg, jaune, au premier plan des points) */
-.user-marker-container {
-    z-index: 1000;
-}
-.user-marker {
-    width: 36px;
-    height: 36px;
-    background: #FACC15;
-    border: 3px solid #EAB308;
-    border-radius: 50%;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    cursor: move;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.user-marker-icon {
-    width: 22px;
-    height: 22px;
-    object-fit: contain;
-}
-
-/* Animation pour le marker actif */
-@keyframes pulse {
-    0%, 100% {
-        transform: scale(1);
-    }
-    50% {
-        transform: scale(1.1);
-    }
-}
-
-.marker-active {
-    animation: pulse 2s infinite;
-}
-
-/* Style pour les popups Leaflet avec effet Glass Morphism */
-.leaflet-popup-content-wrapper {
-    border-radius: 12px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
-    background: rgba(255, 255, 255, 0.75) !important;
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-}
-
-.leaflet-popup-tip {
-    background: rgba(255, 255, 255, 0.75) !important;
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-}
-
-@supports not (backdrop-filter: blur(20px)) {
-    .leaflet-popup-content-wrapper {
-        background: rgba(255, 255, 255, 1) !important;
-    }
-    .leaflet-popup-tip {
-        background: rgba(255, 255, 255, 1) !important;
-    }
-}
-
-.leaflet-popup-content {
-    margin: 0;
-    padding: 0;
-    min-width: 280px;
-}
-
-/* Style personnalisé pour le contenu du popup */
-.popup-header {
-    position: relative;
-    overflow: hidden;
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.95) 0%, rgba(96, 165, 250, 0.95) 100%);
-    color: white;
-    padding: 1rem;
-    border-radius: 12px 12px 0 0;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-}
-
-/* Image Wikidata : couvre le rectangle, invisible par défaut */
-.popup-header-img {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center;
-    opacity: 0;
-    transition: opacity 0.4s ease;
-    pointer-events: none;
-}
-
-/* Texte au-dessus de l'image */
-.popup-header-text {
-    position: relative;
-    z-index: 2;
-}
-
-/* Quand l'image est chargée */
-.popup-header.has-image .popup-header-img {
-    opacity: 1;
-}
-
-/* Overlay sombre pour lisibilité du texte sur l'image */
-.popup-header.has-image::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.1) 100%);
-    z-index: 1;
-    pointer-events: none;
-}
-
-.popup-body {
-    padding: 1rem;
-    background: rgba(255, 255, 255, 0.3);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-}
-
-.popup-footer {
-    padding: 0 1rem 1rem 1rem;
-    display: flex;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-}
-
-/* Boutons du popup */
-.popup-btn {
-    flex: 1;
-    min-width: 120px;
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    font-size: 0.875rem;
-    font-weight: 500;
-    transition: all 0.2s;
-    cursor: pointer;
-    border: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-}
-
-.popup-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.btn-favorite {
-    background-color: #fef3c7;
-    color: #92400e;
-}
-
-.btn-favorite:hover {
-    background-color: #fde68a;
-}
-
-.btn-favorite.active {
-    background-color: #fbbf24;
-    color: white;
-}
-
-.btn-itinerary {
-    background-color: #dbeafe;
-    color: #1e40af;
-}
-
-.btn-itinerary:hover {
-    background-color: #bfdbfe;
-}
-
-.btn-similar {
-    background-color: #e9d5ff;
-    color: #6b21a8;
-}
-
-.btn-similar:hover {
-    background-color: #d8b4fe;
-}
-
-/* Badge catégorie */
-.category-badge {
-    display: inline-block;
-    padding: 0.25rem 0.75rem;
-    border-radius: 9999px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: capitalize;
-    background-color: #e5e7eb;
-    color: #374151;
-}
-
-.category-musee,
-.category-musée {
-    background-color: #dbeafe;
-    color: #1e40af;
-}
-
-.category-parc {
-    background-color: #d1fae5;
-    color: #065f46;
-}
-
-.category-cinema,
-.category-cinéma {
-    background-color: #e0e7ff;
-    color: #4338ca;
-}
-
-.category-vie-nocturne,
-.category-nightclub {
-    background-color: #f3e8ff;
-    color: #6b21a8;
-}
-
-.category-restaurant {
-    background-color: #fed7aa;
-    color: #9a3412;
-}
-
-.category-golf {
-    background-color: #d1fae5;
-    color: #065f46;
-}
-
-/* Scrollbar personnalisée pour la sidebar */
-#favoritesContent::-webkit-scrollbar {
-    width: 6px;
-}
-
-#favoritesContent::-webkit-scrollbar-track {
-    background: #f1f1f1;
-}
-
-#favoritesContent::-webkit-scrollbar-thumb {
-    background: #3b82f6;
-    border-radius: 3px;
-}
-
-#favoritesContent::-webkit-scrollbar-thumb:hover {
-    background: #2563eb;
-}
-
-/* Responsive Mobile */
-@media (max-width: 640px) {
-    /* Header mobile : logo seul ligne 1, recherche + favoris ligne 2 */
-    header .container {
-        flex-wrap: wrap;
-        gap: 0.5rem;
-        padding: 0.6rem 1rem;
-    }
-
-    /* Logo prend toute la largeur → force un retour à la ligne */
-    header .container > div:first-child {
-        flex: 0 0 100%;
-    }
-
-    /* Barre de recherche prend l'espace restant */
-    header .flex-1 {
-        flex: 1;
-        min-width: 0;
-        max-width: none;
-    }
-
-    #searchInput {
-        font-size: 14px;
-        padding: 0.5rem 0.75rem 0.5rem 2rem;
-    }
-
-    /* Bouton favoris compact (icône + compteur) */
-    #favoritesBtn {
-        width: auto;
-        flex-shrink: 0;
-        padding: 0.5rem 0.65rem;
-    }
-    
-    /* Sidebar mobile */
-    #favoritesSidebar {
-        width: calc(100% - 2rem);
-        right: 1rem;
-        left: 1rem;
-        max-height: 70vh;
-    }
-    
-    /* Popup mobile */
-    .leaflet-popup-content-wrapper {
-        max-width: calc(100vw - 4rem) !important;
-    }
-    
-    .popup-content {
-        max-width: 280px;
-    }
-    
-    .popup-header h3 {
-        font-size: 1.125rem;
-    }
-    
-    .popup-footer {
-        flex-direction: column;
-        gap: 0.5rem;
-    }
-    
-    .popup-btn {
-        width: 100%;
-        justify-content: center;
-    }
-    
-    /* Handle de redimensionnement mobile */
-    .resize-handle {
-        width: 40px;
-        height: 26px;
-    }
-    
-    .resize-handle-inner {
-        width: 36px;
-        height: 22px;
-    }
-    
-    .resize-handle-inner::before {
-        font-size: 14px;
-    }
-    
-    /* User marker sur mobile */
-    .user-marker {
-        width: 32px;
-        height: 32px;
-    }
-    .user-marker-icon {
-        width: 20px;
-        height: 20px;
-    }
-}
-
-/* Animation d'entrée pour les éléments */
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.fade-in-up {
-    animation: fadeInUp 0.5s ease-out;
-}
-
-/* Handle de redimensionnement du rayon */
+/* ===== HANDLE DE REDIMENSIONNEMENT ===== */
 .resize-handle-container {
     cursor: ew-resize !important;
     z-index: 3000;
@@ -538,7 +373,6 @@ header {
     position: relative;
 }
 
-/* Flèche double sens à l'intérieur */
 .resize-handle-inner::before {
     content: '⇔';
     font-size: 18px;
@@ -547,19 +381,275 @@ header {
     line-height: 1;
 }
 
-.resize-handle:hover .resize-handle-inner {
-    background: #6b7280;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+.resize-handle:hover .resize-handle-inner { background: #6b7280; box-shadow: 0 4px 12px rgba(0,0,0,0.35); }
+.resize-handle:hover .resize-handle-inner::before { color: #1f2937; }
+.resize-handle:active .resize-handle-inner { background: #4b5563; }
+.resize-handle:active .resize-handle-inner::before { color: #111827; }
+
+/* ===== POPUPS LEAFLET ===== */
+.leaflet-control-attribution,
+.leaflet-control-zoom { display: none !important; }
+
+.leaflet-popup-content-wrapper {
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+    background: rgba(255, 255, 255, 0.75) !important;
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
-.resize-handle:hover .resize-handle-inner::before {
-    color: #1f2937;
+.leaflet-popup-tip {
+    background: rgba(255, 255, 255, 0.75) !important;
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
 }
 
-.resize-handle:active .resize-handle-inner {
-    background: #4b5563;
+@supports not (backdrop-filter: blur(20px)) {
+    .leaflet-popup-content-wrapper { background: rgba(255, 255, 255, 1) !important; }
+    .leaflet-popup-tip             { background: rgba(255, 255, 255, 1) !important; }
 }
 
-.resize-handle:active .resize-handle-inner::before {
-    color: #111827;
+.leaflet-popup-content {
+    margin: 0;
+    padding: 0;
+    min-width: 280px;
+}
+
+/* ===== POPUP LOADING / ERREUR ===== */
+.popup-loading {
+    padding: 1rem;
+    text-align: center;
+}
+
+.popup-loading-spinner {
+    font-size: 1.5rem;
+    color: #3b82f6;
+}
+
+.popup-loading-text {
+    margin-top: 0.5rem;
+    color: #6b7280;
+}
+
+.popup-error {
+    padding: 1rem;
+    text-align: center;
+    color: #ef4444;
+}
+
+/* ===== POPUP CONTENU ===== */
+.popup-header {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.95) 0%, rgba(96, 165, 250, 0.95) 100%);
+    color: white;
+    padding: 1rem;
+    border-radius: 12px 12px 0 0;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+/* Image (Wikidata / og:image) — couvre le rectangle, invisible par défaut */
+.popup-header-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+}
+
+.popup-header-text { position: relative; z-index: 2; }
+
+.popup-header.has-image .popup-header-img { opacity: 1; }
+
+.popup-header.has-image::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.1) 100%);
+    z-index: 1;
+    pointer-events: none;
+}
+
+.popup-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+}
+
+.popup-body {
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.popup-info-block { margin-bottom: 0.75rem; }
+
+.popup-address {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #4b5563;
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
+}
+
+.popup-address-icon { color: #2563eb; flex-shrink: 0; }
+
+.popup-description {
+    color: #374151;
+    font-size: 0.875rem;
+}
+
+.popup-links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.popup-link {
+    color: #2563eb;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: color 0.2s;
+}
+
+.popup-link:hover { color: #1e40af; }
+.popup-link-label { text-decoration: underline; }
+
+.popup-footer {
+    padding: 0 1rem 1rem 1rem;
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+/* Boutons du popup */
+.popup-btn {
+    flex: 1;
+    min-width: 120px;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.popup-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn-favorite        { background-color: #fef3c7; color: #92400e; }
+.btn-favorite:hover  { background-color: #fde68a; }
+.btn-favorite.active { background-color: #fbbf24; color: white; }
+
+.btn-itinerary       { background-color: #dbeafe; color: #1e40af; }
+.btn-itinerary:hover { background-color: #bfdbfe; }
+
+.btn-similar         { background-color: #e9d5ff; color: #6b21a8; }
+.btn-similar:hover   { background-color: #d8b4fe; }
+
+/* Badge catégorie */
+.category-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: capitalize;
+    background-color: #e5e7eb;
+    color: #374151;
+}
+
+.category-musee,
+.category-musée     { background-color: #dbeafe; color: #1e40af; }
+.category-parc      { background-color: #d1fae5; color: #065f46; }
+.category-cinema,
+.category-cinéma    { background-color: #e0e7ff; color: #4338ca; }
+.category-vie-nocturne,
+.category-nightclub { background-color: #f3e8ff; color: #6b21a8; }
+.category-restaurant{ background-color: #fed7aa; color: #9a3412; }
+.category-golf      { background-color: #d1fae5; color: #065f46; }
+
+/* ===== ANIMATION ===== */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+.fade-in-up { animation: fadeInUp 0.5s ease-out; }
+
+/* ===== RESPONSIVE MOBILE ===== */
+@media (max-width: 640px) {
+    /* Header : logo sur ligne 1, recherche + favoris sur ligne 2 */
+    .header-container {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        padding: 0.6rem 1rem;
+    }
+
+    .header-logo { flex: 0 0 100%; }
+
+    .header-search {
+        flex: 1;
+        min-width: 0;
+        max-width: none;
+    }
+
+    .search-input { font-size: 14px; }
+
+    .hide-mobile { display: none; }
+
+    #favoritesBtn {
+        flex-shrink: 0;
+        padding: 0.5rem 0.65rem;
+    }
+
+    /* Sidebar pleine largeur */
+    #favoritesSidebar {
+        width: calc(100% - 2rem);
+        right: 1rem;
+        left: 1rem;
+        max-height: 70vh;
+    }
+
+    /* Popup */
+    .leaflet-popup-content-wrapper {
+        max-width: calc(100vw - 4rem) !important;
+    }
+
+    .popup-content { max-width: 280px; }
+    .popup-title   { font-size: 1.125rem; }
+
+    .popup-footer {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .popup-btn { width: 100%; justify-content: center; }
+
+    /* Handle resize */
+    .resize-handle       { width: 40px; height: 26px; }
+    .resize-handle-inner { width: 36px; height: 22px; }
+    .resize-handle-inner::before { font-size: 14px; }
+
+    /* Marqueur utilisateur */
+    .user-marker      { width: 32px; height: 32px; }
+    .user-marker-icon { width: 20px; height: 20px; }
 }

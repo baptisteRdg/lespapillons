@@ -4,86 +4,82 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BeOut - Découvrez Paris</title>
-    
-    <!-- Idiqlat (Google Fonts) -->
+
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Text:ital@0;1&family=Idiqlat:wght@200;300;400&display=swap" rel="stylesheet">
-    
-    <!-- TailwindCSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
+
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    
-    <!-- Font Awesome pour les icônes -->
+
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    
+
     <link rel="stylesheet" href="styles/main.css">
 </head>
-<body class="m-0 p-0 h-screen overflow-hidden">
-    
+<body>
+
     <!-- Header -->
-    <header class="absolute top-0 left-0 right-0 z-[1000] header-shadow">
-        <div class="container mx-auto px-4 py-3 flex items-center gap-4">
-            <!-- Logo et titre -->
-            <div class="flex items-center gap-2 flex-shrink-0">
-                <i class="fas fa-butterfly text-3xl text-blue-500"></i>
-                <h1 class="text-2xl font-bold text-gray-800 idiqlat-regular">BeOut</h1>
+    <header>
+        <div class="header-container">
+            <!-- Logo -->
+            <div class="header-logo">
+                <i class="fas fa-butterfly header-logo-icon"></i>
+                <h1 class="header-title idiqlat-regular">BeOut</h1>
             </div>
-            
+
             <!-- Barre de recherche -->
-            <div class="flex-1 max-w-2xl">
-                <div class="relative">
-                    <input 
-                        type="text" 
-                        id="searchInput" 
-                        placeholder="Rechercher par nom, type ou ville (ex: Louvre, musée, Paris)..." 
-                        class="w-full px-4 py-2 pl-10 pr-4 rounded-lg border border-gray-200 focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition search-input"
+            <div class="header-search">
+                <div class="search-wrapper">
+                    <input
+                        type="text"
+                        id="searchInput"
+                        placeholder="Rechercher par nom, type ou ville (ex: Louvre, musée, Paris)..."
+                        class="search-input"
                     >
-                    <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    <i class="fas fa-search search-icon"></i>
                 </div>
             </div>
-            
+
             <!-- Bouton favoris -->
-            <div class="flex items-center gap-4 flex-shrink-0">
-                <button id="favoritesBtn" class="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition button-shadow">
+            <div class="header-actions">
+                <button id="favoritesBtn">
                     <i class="fas fa-heart"></i>
-                    <span class="hidden sm:inline">Mes Favoris</span>
-                    <span id="favCount" class="bg-blue-500 text-white text-xs rounded-full px-2 py-0.5">0</span>
+                    <span class="hide-mobile">Mes Favoris</span>
+                    <span id="favCount">0</span>
                 </button>
             </div>
         </div>
     </header>
 
     <!-- Carte -->
-    <div id="map" class="w-full h-full"></div>
+    <div id="map"></div>
 
-    <!-- Sidebar pour les favoris (cachée par défaut) -->
-    <aside id="favoritesSidebar" class="absolute top-20 right-4 z-[1000] w-80 rounded-lg sidebar-shadow overflow-hidden transform translate-x-[400px] transition-transform duration-300">
-        <div class="bg-gradient-to-r from-blue-500 to-blue-400 text-white p-4 flex justify-between items-center">
-            <h2 class="text-xl font-bold">
-                <i class="fas fa-heart mr-2"></i>Mes Favoris
+    <!-- Sidebar favoris -->
+    <aside id="favoritesSidebar">
+        <div class="sidebar-header">
+            <h2 class="sidebar-title">
+                <i class="fas fa-heart"></i>Mes Favoris
             </h2>
-            <button id="closeSidebar" class="text-white hover:text-gray-200">
-                <i class="fas fa-times text-xl"></i>
+            <button id="closeSidebar">
+                <i class="fas fa-times"></i>
             </button>
         </div>
-        <div id="favoritesContent" class="p-4 max-h-[70vh] overflow-y-auto">
-            <p class="text-gray-500 text-center py-8">Aucun favori pour le moment</p>
+        <div id="favoritesContent">
+            <p class="fav-empty">Aucun favori pour le moment</p>
         </div>
     </aside>
 
     <!-- Toast notification -->
-    <div id="toast" class="fixed bottom-8 right-8 z-[1001] bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transform translate-y-32 transition-transform duration-300">
-        <i class="fas fa-check-circle mr-2"></i>
+    <div id="toast">
         <span id="toastMessage">Action réussie !</span>
     </div>
 
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    
-    <!-- Scripts de l'application -->
+
+    <!-- Scripts -->
     <script src="scripts/api.js"></script>
     <script src="scripts/map.js"></script>
 </body>
