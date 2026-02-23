@@ -234,6 +234,42 @@ async function getWikidataImage(wikidataId) {
 }
 
 /**
+ * Récupère les activités dans le viewport visible de la carte
+ * @param {L.LatLngBounds} bounds - Bounds Leaflet du viewport
+ * @param {number} limitPerType - Nombre max d'activités par type
+ * @returns {Promise<Array>} Liste d'activités légères
+ */
+async function getActivitiesByBbox(bounds, limitPerType) {
+    try {
+        const sw = bounds.getSouthWest();
+        const ne = bounds.getNorthEast();
+        const bbox = `${sw.lat},${sw.lng},${ne.lat},${ne.lng}`;
+        const params = new URLSearchParams({ bbox, limitPerType });
+        const url = `${API_BASE_URL}/activities?${params}`;
+
+        console.log(`🗺️ API: bbox viewport, limitPerType=${limitPerType}`);
+
+        const response = await fetch(url);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const result = await response.json();
+        const data = result.data || result;
+
+        console.log(`✅ API: ${data.length} activités dans le viewport`);
+
+        return data.map(a => ({
+            id: a.id,
+            title: a.name,
+            lat: a.latitude,
+            lng: a.longitude,
+            category: a.type
+        }));
+    } catch (error) {
+        console.error('❌ API: Erreur chargement viewport', error);
+        return [];
+    }
+}
+
+/**
  * Récupère une activité légère par son ID (DEPRECATED - ne plus utiliser)
  * @param {number} activityId - ID de l'activité
  * @returns {Object|null} L'activité trouvée ou null
