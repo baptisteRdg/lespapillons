@@ -131,12 +131,12 @@ async function getActivityDetails(activityId) {
         return {
             id: activity.id,
             title: activity.name,
-            address: activity.address || 'Adresse non disponible',
+            address: activity.address || null,
             lat: activity.latitude,
             lng: activity.longitude,
             website: activity.website,
             phone: activity.phone,
-            description: activity.description || 'Description non disponible',
+            description: activity.description || null,
             category: activity.type,
             openingHours: activity.openingHours,
             wikidata
