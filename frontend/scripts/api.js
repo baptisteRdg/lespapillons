@@ -118,12 +118,14 @@ async function getActivityDetails(activityId) {
         
         console.log(`✅ API: Détails activité #${activityId} reçus`);
         
-        // Extraire wikidata depuis le champ properties (JSON sérialisé)
+        // Extraire wikidata et image depuis le champ properties (JSON sérialisé)
         let wikidata = null;
+        let image = null;
         if (activity.properties) {
             try {
                 const props = JSON.parse(activity.properties);
                 wikidata = props.wikidata || null;
+                image = props.image || null;
             } catch {}
         }
 
@@ -139,7 +141,8 @@ async function getActivityDetails(activityId) {
             description: activity.description || null,
             category: activity.type,
             openingHours: activity.openingHours,
-            wikidata
+            wikidata,
+            image
         };
         
     } catch (error) {
@@ -197,63 +200,112 @@ async function addToFavoritesAPI(activityId) {
     return { success: true, message: "Favori géré localement" };
 }
 
-/**
- * Récupère l'URL d'une image depuis Wikidata (propriété P18 = image principale)
- * @param {string} wikidataId - Code Wikidata (ex: "Q12345")
- * @returns {Promise<string|null>} URL de l'image (Commons Special:FilePath) ou null
- */
+// Cache mémoire pour les données Wikidata et og:image (durée de la session)
+const _wikidataCache = new Map();
+const _ogImageCache  = new Map();
+
 /**
  * Récupère l'og:image (ou twitter:image) d'un site web via le proxy backend
  * @param {string} websiteUrl - URL du site de l'activité
  * @returns {Promise<string|null>} URL de l'image ou null
  */
 async function getOgImage(websiteUrl) {
+    if (_ogImageCache.has(websiteUrl)) {
+        console.log(`⚡ og-image: cache hit pour ${websiteUrl}`);
+        return _ogImageCache.get(websiteUrl);
+    }
     console.log(`🌐 og-image: requête pour ${websiteUrl}`);
     try {
         const proxyUrl = `${API_BASE_URL}/og-image?url=${encodeURIComponent(websiteUrl)}`;
         const response = await fetch(proxyUrl);
         if (!response.ok) return null;
         const data = await response.json();
-        if (data.imageUrl) {
-            console.log(`✅ og-image trouvée: ${data.imageUrl}`);
+        const imageUrl = data.imageUrl || null;
+        if (imageUrl) {
+            console.log(`✅ og-image trouvée: ${imageUrl}`);
         } else {
             console.log(`ℹ️ Pas d'og:image pour ${websiteUrl}`);
         }
-        return data.imageUrl || null;
+        _ogImageCache.set(websiteUrl, imageUrl);
+        return imageUrl;
     } catch (err) {
         console.error(`❌ og-image erreur pour ${websiteUrl}`, err);
         return null;
     }
 }
 
-async function getWikidataImage(wikidataId) {
-    console.log(`🌐 Wikidata: requête image pour ${wikidataId}`);
+/**
+ * Récupère en un seul appel toutes les données Wikidata utiles pour enrichir une fiche :
+ * image (P18), description, site web (P856), téléphone (P1329), adresse (P6375/P969)
+ * Les résultats sont mis en cache pour la durée de la session.
+ * @param {string} wikidataId - Code Wikidata (ex: "Q12345")
+ * @returns {Promise<{imageUrl, description, website, phone, address}>}
+ */
+async function getWikidataData(wikidataId) {
+    if (_wikidataCache.has(wikidataId)) {
+        console.log(`⚡ Wikidata: cache hit pour ${wikidataId}`);
+        return _wikidataCache.get(wikidataId);
+    }
+    console.log(`🌐 Wikidata: requête données pour ${wikidataId}`);
     try {
-        const apiUrl = `https://www.wikidata.org/w/api.php?action=wbgetentities&ids=${encodeURIComponent(wikidataId)}&props=claims&format=json&origin=*`;
+        const apiUrl = `https://www.wikidata.org/w/api.php?action=wbgetentities&ids=${encodeURIComponent(wikidataId)}&props=claims%7Cdescriptions&languages=fr%7Cen&format=json&origin=*`;
         const response = await fetch(apiUrl);
         if (!response.ok) {
-            console.warn(`⚠️ Wikidata: réponse HTTP ${response.status} pour ${wikidataId}`);
-            return null;
+            console.warn(`⚠️ Wikidata: HTTP ${response.status} pour ${wikidataId}`);
+            return {};
         }
         const data = await response.json();
         const entity = data.entities?.[wikidataId];
-        const imageList = entity?.claims?.P18;
-        if (!imageList?.length) {
-            console.log(`ℹ️ Wikidata: pas d'image (P18) pour ${wikidataId}`);
-            return null;
+        if (!entity) return {};
+
+        // Image : P18
+        let imageUrl = null;
+        const imageClaims = entity.claims?.P18;
+        if (imageClaims?.length) {
+            const imageName = imageClaims[0]?.mainsnak?.datavalue?.value;
+            if (imageName) {
+                const encoded = encodeURIComponent(imageName.replace(/ /g, '_'));
+                imageUrl = `https://commons.wikimedia.org/wiki/Special:FilePath/${encoded}?width=500`;
+            }
         }
-        const imageName = imageList[0]?.mainsnak?.datavalue?.value;
-        if (!imageName) {
-            console.warn(`⚠️ Wikidata: nom de fichier vide pour ${wikidataId}`);
-            return null;
+
+        // Description : champ natif Wikidata (fr en priorité, puis en)
+        const description = entity.descriptions?.fr?.value
+            || entity.descriptions?.en?.value
+            || null;
+
+        // Site web : P856
+        let website = null;
+        const webClaims = entity.claims?.P856;
+        if (webClaims?.length) {
+            website = webClaims[0]?.mainsnak?.datavalue?.value || null;
         }
-        const encoded = encodeURIComponent(imageName.replace(/ /g, '_'));
-        const imageUrl = `https://commons.wikimedia.org/wiki/Special:FilePath/${encoded}?width=500`;
-        console.log(`✅ Wikidata: image trouvée pour ${wikidataId} →`, imageUrl);
-        return imageUrl;
+
+        // Téléphone : P1329
+        let phone = null;
+        const phoneClaims = entity.claims?.P1329;
+        if (phoneClaims?.length) {
+            phone = phoneClaims[0]?.mainsnak?.datavalue?.value || null;
+        }
+
+        // Adresse : P6375 (monolingual text) ou P969 (string)
+        let address = null;
+        const addrClaims = entity.claims?.P6375 || entity.claims?.P969;
+        if (addrClaims?.length) {
+            const val = addrClaims[0]?.mainsnak?.datavalue?.value;
+            address = typeof val === 'string' ? val : (val?.text || null);
+        }
+
+        console.log(`✅ Wikidata données pour ${wikidataId}:`, {
+            image: !!imageUrl, description: !!description,
+            website: !!website, phone: !!phone, address: !!address
+        });
+        const result = { imageUrl, description, website, phone, address };
+        _wikidataCache.set(wikidataId, result);
+        return result;
     } catch (err) {
         console.error(`❌ Wikidata: erreur pour ${wikidataId}`, err);
-        return null;
+        return {};
     }
 }
 

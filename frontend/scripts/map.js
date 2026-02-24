@@ -432,8 +432,15 @@ function createMarker(activity) {
         : `<i class="fas fa-${iconConfig.icon}"></i>`;
 
     const MARKER_COLORS = {
-        blue: '#3b82f6', gray: '#6b7280', green: '#22c55e',
-        red: '#ef4444', yellow: '#eab308', purple: '#a855f7', orange: '#f97316'
+        blue:   '#3b82f6',
+        gray:   '#6b7280',
+        green:  '#22c55e',
+        red:    '#ef4444',
+        yellow: '#eab308',
+        purple: '#a855f7',
+        orange: '#f97316',
+        pink:   '#ec4899',
+        cyan:   '#06b6d4',
     };
     const bgColor = MARKER_COLORS[iconConfig.color] || MARKER_COLORS.blue;
 
@@ -520,8 +527,8 @@ async function loadAndShowActivityDetails(activityId, marker) {
             setupPopupEventListeners(details);
         }, 10);
 
-        // Enrichissement asynchrone : image (Wikidata → og:image) — fire & forget
-        enrichPopupWithImage(details.id, details);
+        // Enrichissement asynchrone depuis Wikidata (image + texte) — fire & forget
+        enrichPopupAsync(details.id, details);
         
     } catch (error) {
         console.error(`❌ Erreur popup #${activityId}:`, error);
@@ -544,27 +551,70 @@ function typeToIconFilename(type) {
 }
 
 /**
- * Retourne la configuration d'icône selon la catégorie.
- * Par défaut : type "nightclub" → assets/icon/nightclub.svg (même nom que le type).
- * Overrides possibles ci-dessous pour couleurs ou icônes Font Awesome.
+ * Couleurs des marqueurs par type d'activité.
+ * Modifier ici pour changer la couleur d'un type (valeur = clé de MARKER_COLORS dans createMarker).
+ * Types sans entrée utilisent la couleur 'blue' par défaut.
+ */
+const ICON_COLORS = {
+    // Parcs & nature
+    'parc':            'green',
+    'golf':            'green',
+    'accrobranche':    'green',
+    'escalade':        'green',
+    'randonnee':       'green',
+
+    // Culture
+    'musee':           'blue',
+    'musée':           'blue',
+    'castle':          'orange',
+    'chateau':         'orange',
+
+    // Sorties / loisirs
+    'cinema':          'purple',
+    'cinéma':          'purple',
+    'escapegame':      'purple',
+    'lasergame':       'purple',
+    'bowling':         'purple',
+
+    // Vie nocturne
+    'nightclub':       'purple',
+    'bar':             'purple',
+    'queen':           'pink',
+
+    // Sport & patinoire
+    'iceskating':      'cyan',
+    'piscine':         'cyan',
+
+    // Autre
+    'autre':           'gray',
+};
+
+/**
+ * Retourne la configuration d'icône (svg + couleur) selon la catégorie.
+ *
+ * Convention SVG : assets/icon/<type-sans-accents>.svg
+ * Pour changer la couleur d'un type → modifier ICON_COLORS ci-dessus.
+ * Pour utiliser une icône Font Awesome au lieu d'un SVG → ajouter une entrée dans ICON_OVERRIDES.
  */
 function getIconConfig(category) {
     const key = category?.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
     const fileBase = typeToIconFilename(category);
 
-    // Overrides : types qui n'utilisent pas un SVG au même nom, ou Font Awesome uniquement
-    const overrides = {
-        'autre': { icon: 'map-marker-alt', color: 'gray' }
+    // Overrides : types qui utilisent une icône Font Awesome au lieu d'un SVG
+    const ICON_OVERRIDES = {
+        'autre': { icon: 'map-marker-alt', color: ICON_COLORS['autre'] || 'gray' }
     };
-    const overrideKey = Object.keys(overrides).find(k =>
+    const overrideKey = Object.keys(ICON_OVERRIDES).find(k =>
         k.normalize('NFD').replace(/[\u0300-\u036f]/g, '') === key
     );
-    if (overrideKey) return overrides[overrideKey];
+    if (overrideKey) return ICON_OVERRIDES[overrideKey];
 
-    // Par défaut : type → assets/icon/<type>.svg (ex. nightclub → nightclub.svg)
+    // Couleur depuis la table, 'blue' par défaut
+    const color = ICON_COLORS[key] || 'blue';
+
     return {
         svg: `assets/icon/${fileBase}.svg`,
-        color: 'blue'
+        color
     };
 }
 
@@ -574,48 +624,91 @@ function getIconConfig(category) {
  * @param {string} wikidataId
  */
 /**
- * Enrichit le header du popup avec une image.
- * Stratégie : Wikidata (P18) en premier, puis og:image du site web en fallback.
+ * Enrichit un popup de manière asynchrone avec les données Wikidata :
+ * - Image (P18), avec fallback og:image sur le site web
+ * - Description, adresse, téléphone, site web (si absents de la fiche)
  * @param {number} activityId
- * @param {Object} details - Données complètes de l'activité (wikidata, website, …)
+ * @param {Object} details - Données complètes de l'activité
  */
-async function enrichPopupWithImage(activityId, details) {
-    console.log(`🖼️ Enrichissement image popup #${activityId} — wikidata=${details.wikidata ?? 'aucun'}, website=${details.website ?? 'aucun'}`);
+async function enrichPopupAsync(activityId, details) {
+    console.log(`✨ Enrichissement popup #${activityId} — wikidata=${details.wikidata ?? 'aucun'}`);
 
-    let imageUrl = null;
-
-    // 1. Essayer l'image Wikidata (propriété P18)
+    // 1. Récupérer toutes les données Wikidata en un seul appel
+    let wikidataData = {};
     if (details.wikidata) {
-        imageUrl = await getWikidataImage(details.wikidata);
+        wikidataData = await getWikidataData(details.wikidata);
     }
 
-    // 2. Fallback : og:image depuis le site web de l'activité
+    // 2. Image : priorité → champ image natif → Wikidata P18 → og:image
+    let imageUrl = details.image || wikidataData.imageUrl || null;
     if (!imageUrl && details.website) {
-        console.log(`🌐 Fallback og:image pour popup #${activityId}: ${details.website}`);
+        console.log(`🌐 Fallback og:image pour popup #${activityId}`);
         imageUrl = await getOgImage(details.website);
     }
 
-    if (!imageUrl) {
-        console.log(`🖼️ Aucune image trouvée pour popup #${activityId} → gradient conservé`);
-        return;
+    if (imageUrl) {
+        const img = document.getElementById(`popup-header-img-${activityId}`);
+        const header = document.getElementById(`popup-header-${activityId}`);
+        // Guard : ne pas écraser une image déjà affichée (race condition entre deux enrichissements concurrents)
+        if (img && header && !header.classList.contains('has-image') && !img.src) {
+            img.onload = () => header.classList.add('has-image');
+            img.onerror = () => console.warn(`⚠️ Image non chargeable pour popup #${activityId}`);
+            img.src = imageUrl;
+        }
     }
 
-    const img = document.getElementById(`popup-header-img-${activityId}`);
-    const header = document.getElementById(`popup-header-${activityId}`);
-    if (!img || !header) {
-        console.warn(`⚠️ Éléments DOM introuvables pour popup #${activityId} (popup déjà fermé ?)`);
-        return;
+    // 3. Champs texte : n'enrichir que les champs absents de la fiche originale
+
+    // Description
+    if (!details.description && wikidataData.description) {
+        const el = document.getElementById(`popup-desc-${activityId}`);
+        const block = document.getElementById(`popup-info-${activityId}`);
+        if (el) {
+            el.textContent = wikidataData.description;
+            el.style.display = '';
+            if (block) block.style.display = '';
+            console.log(`📝 Description Wikidata injectée dans popup #${activityId}`);
+        }
     }
 
-    img.onload = () => {
-        console.log(`✅ Image chargée dans popup #${activityId}`);
-        header.classList.add('has-image');
-    };
-    img.onerror = () => {
-        console.warn(`⚠️ Échec chargement image pour popup #${activityId} (${imageUrl})`);
-    };
-    console.log(`⏳ Injection image popup #${activityId}:`, imageUrl);
-    img.src = imageUrl;
+    // Adresse
+    if (!details.address && wikidataData.address) {
+        const el = document.getElementById(`popup-addr-${activityId}`);
+        const block = document.getElementById(`popup-info-${activityId}`);
+        if (el) {
+            const span = el.querySelector('span');
+            if (span) span.textContent = wikidataData.address;
+            el.style.display = '';
+            if (block) block.style.display = '';
+            console.log(`📍 Adresse Wikidata injectée dans popup #${activityId}`);
+        }
+    }
+
+    // Site web
+    if (!details.website && wikidataData.website) {
+        const el = document.getElementById(`popup-web-${activityId}`);
+        const block = document.getElementById(`popup-links-${activityId}`);
+        if (el) {
+            el.href = wikidataData.website;
+            el.style.display = '';
+            if (block) block.style.display = '';
+            console.log(`🌐 Site web Wikidata injecté dans popup #${activityId}`);
+        }
+    }
+
+    // Téléphone
+    if (!details.phone && wikidataData.phone) {
+        const el = document.getElementById(`popup-phone-${activityId}`);
+        const block = document.getElementById(`popup-links-${activityId}`);
+        if (el) {
+            el.href = `tel:${wikidataData.phone}`;
+            const span = el.querySelector('span');
+            if (span) span.textContent = wikidataData.phone;
+            el.style.display = '';
+            if (block) block.style.display = '';
+            console.log(`📞 Téléphone Wikidata injecté dans popup #${activityId}`);
+        }
+    }
 }
 
 /**
@@ -646,35 +739,26 @@ function createPopupContent(activity) {
             </div>
 
             <div class="popup-body">
-                ${activity.address || activity.description ? `
-                    <div class="popup-info-block">
-                        ${activity.address ? `
-                            <p class="popup-address">
-                                <i class="fas fa-map-marker-alt popup-address-icon"></i>${activity.address}
-                            </p>
-                        ` : ''}
-                        ${activity.description ? `
-                            <p class="popup-description">${activity.description}</p>
-                        ` : ''}
-                    </div>
-                ` : ''}
+                <!-- Bloc adresse + description (toujours présent pour enrichissement dynamique) -->
+                <div class="popup-info-block" id="popup-info-${activity.id}"${!activity.address && !activity.description ? ' style="display:none"' : ''}>
+                    <p class="popup-address" id="popup-addr-${activity.id}"${!activity.address ? ' style="display:none"' : ''}>
+                        <i class="fas fa-map-marker-alt popup-address-icon"></i>
+                        <span>${activity.address || ''}</span>
+                    </p>
+                    <p class="popup-description" id="popup-desc-${activity.id}"${!activity.description ? ' style="display:none"' : ''}>${activity.description || ''}</p>
+                </div>
 
-                ${activity.website || activity.phone ? `
-                    <div class="popup-links">
-                        ${activity.website ? `
-                            <a href="${activity.website}" target="_blank" class="popup-link">
-                                <i class="fas fa-globe"></i>
-                                <span class="popup-link-label">Visiter le site web</span>
-                            </a>
-                        ` : ''}
-                        ${activity.phone ? `
-                            <a href="tel:${activity.phone}" class="popup-link">
-                                <i class="fas fa-phone"></i>
-                                <span>${activity.phone}</span>
-                            </a>
-                        ` : ''}
-                    </div>
-                ` : ''}
+                <!-- Bloc liens (toujours présent pour enrichissement dynamique) -->
+                <div class="popup-links" id="popup-links-${activity.id}"${!activity.website && !activity.phone ? ' style="display:none"' : ''}>
+                    <a href="${activity.website || '#'}" target="_blank" class="popup-link" id="popup-web-${activity.id}"${!activity.website ? ' style="display:none"' : ''}>
+                        <i class="fas fa-globe"></i>
+                        <span class="popup-link-label">Visiter le site web</span>
+                    </a>
+                    <a href="tel:${activity.phone || ''}" class="popup-link" id="popup-phone-${activity.id}"${!activity.phone ? ' style="display:none"' : ''}>
+                        <i class="fas fa-phone"></i>
+                        <span>${activity.phone || ''}</span>
+                    </a>
+                </div>
             </div>
 
             <div class="popup-footer">

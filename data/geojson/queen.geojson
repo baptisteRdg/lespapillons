@@ -1,0 +1,24 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "relation/-1",
+        "leisure": "Queen",
+        "name": "Madame soleil 🌻",
+        "description": "Un sacré bazar.. ",
+        "operator:type": "public",
+        "image": "assets/img/emma.png"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.4629377,
+          48.8507355
+        ]
+      },
+      "id": "relation/-1"
+    }
+  ]
+}
