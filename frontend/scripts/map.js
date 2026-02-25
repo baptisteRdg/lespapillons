@@ -30,10 +30,13 @@ const MAP_CONFIG = {
 
 // Variables globales
 let map;
-const activityPool = new Map(); // id → { activity, marker } — pool des activités chargées
-const MAX_POOL = 400;           // Taille max du pool avant éviction
-let searchMarkers = [];         // { marker, activity } temporaires pour la recherche
-let isSearchMode = false;       // true quand une recherche est active
+const activityPool = new Map();           // id → { activity, marker }
+const categoryClusterGroups = new Map();  // category → MarkerClusterGroup
+const MAX_POOL = 400;
+let searchMarkers = [];
+let isSearchMode = false;
+let lastLoadedBounds = null;  // Bounds lors du dernier chargement (avec padding)
+let lastLoadedZoom = null;    // Zoom lors du dernier chargement
 let viewportLoadTimeout = null; // Debounce du rechargement viewport
 let userMarker;
 let userCircle;
@@ -355,12 +358,38 @@ function getLimitPerType(zoom) {
 /**
  * Charge les activités visibles dans le viewport courant et les fusionne dans le pool
  */
+/**
+ * Affiche ou cache le loader de carte
+ */
+function showMapLoader() { document.getElementById('map-loader')?.classList.add('visible'); }
+function hideMapLoader() { document.getElementById('map-loader')?.classList.remove('visible'); }
+
+/**
+ * Détermine si un rechargement est nécessaire selon les bounds et le zoom actuels.
+ * Évite les appels serveur inutiles lors de micro-déplacements.
+ */
+function needsReload() {
+    if (!lastLoadedBounds || lastLoadedZoom === null) return true;
+    const zoom = map.getZoom();
+    if (Math.abs(zoom - lastLoadedZoom) >= 1) return true; // Changement de zoom significatif
+    return !lastLoadedBounds.contains(map.getBounds());    // Viewport sorti de la zone chargée
+}
+
 async function loadActivitiesInViewport() {
     if (isSearchMode) return;
+    if (!needsReload()) {
+        console.log('⏭️ Viewport inchangé, pas de rechargement');
+        return;
+    }
     try {
+        showMapLoader();
         const bounds = map.getBounds();
         const zoom = map.getZoom();
         const limitPerType = getLimitPerType(zoom);
+
+        // Mémoriser les bounds avec 50% de padding pour éviter les rechargements trop fréquents
+        lastLoadedBounds = bounds.pad(0.5);
+        lastLoadedZoom = zoom;
 
         const newActivities = await getActivitiesByBbox(bounds, limitPerType);
         mergeIntoPool(newActivities);
@@ -370,6 +399,8 @@ async function loadActivitiesInViewport() {
         console.log(`🗺️ Pool: ${activityPool.size} activités chargées (zoom=${zoom}, limitPerType=${limitPerType})`);
     } catch (error) {
         console.error('Erreur lors du chargement du viewport:', error);
+    } finally {
+        hideMapLoader();
     }
 }
 
@@ -410,7 +441,9 @@ function cleanupPool() {
 
     const toEvict = entries.slice(0, activityPool.size - MAX_POOL);
     toEvict.forEach(({ id, entry }) => {
-        map.removeLayer(entry.marker);
+        const group = categoryClusterGroups.get(entry.activity.category || 'autre');
+        if (group) group.removeLayer(entry.marker);
+        else map.removeLayer(entry.marker);
         activityPool.delete(id);
     });
 
@@ -418,11 +451,62 @@ function cleanupPool() {
 }
 
 /**
+ * Retourne (ou crée) le MarkerClusterGroup associé à une catégorie
+ * @param {string} category
+ * @returns {L.MarkerClusterGroup}
+ */
+function getOrCreateClusterGroup(category) {
+    const key = category || 'autre';
+    if (!categoryClusterGroups.has(key)) {
+        const iconConfig = getIconConfig(key);
+        const group = L.markerClusterGroup({
+            maxClusterRadius: 60,
+            disableClusteringAtZoom: 16,
+            spiderfyOnMaxZoom: true,
+            showCoverageOnHover: false,
+            zoomToBoundsOnClick: true,
+            iconCreateFunction: (cluster) => createClusterIcon(cluster, iconConfig)
+        });
+        group.addTo(map);
+        categoryClusterGroups.set(key, group);
+    }
+    return categoryClusterGroups.get(key);
+}
+
+/**
+ * Crée l'icône d'un cluster (même style que le marker individuel + compteur)
+ */
+function createClusterIcon(cluster, iconConfig) {
+    const count = cluster.getChildCount();
+    const fallbackIcon = iconConfig.icon || 'map-marker-alt';
+    const iconHtml = iconConfig.svg
+        ? `<img src="${iconConfig.svg}" alt="" style="width:18px;height:18px;filter:invert(1);">`
+        : `<i class="fas fa-${fallbackIcon}" style="font-size:15px"></i>`;
+
+    const COLORS = {
+        blue:'#3b82f6', gray:'#6b7280', green:'#22c55e', red:'#ef4444',
+        yellow:'#eab308', purple:'#a855f7', orange:'#f97316', pink:'#ec4899', cyan:'#06b6d4'
+    };
+    const bg = COLORS[iconConfig.color] || COLORS.blue;
+
+    return L.divIcon({
+        html: `<div class="activity-cluster-pin" style="background-color:${bg}">
+                 ${iconHtml}
+                 <span class="cluster-count">${count}</span>
+               </div>`,
+        className: 'custom-cluster',
+        iconSize: [48, 48],
+        iconAnchor: [24, 24]
+    });
+}
+
+/**
  * Crée un marker pour une activité (version légère)
  * @param {Object} activity - Données de l'activité (version légère)
+ * @param {boolean} addToCluster - Si false, ajoute directement à la carte (ex: search, favoris)
  * @returns {L.Marker} Le marker créé
  */
-function createMarker(activity) {
+function createMarker(activity, addToCluster = true) {
     // Icône personnalisée selon la catégorie
     const iconConfig = getIconConfig(activity.category);
     
@@ -452,10 +536,13 @@ function createMarker(activity) {
         popupAnchor: [0, -20]
     });
     
-    // Création du marker
-    const marker = L.marker([activity.lat, activity.lng], {
-        icon: customIcon
-    }).addTo(map);
+    const marker = L.marker([activity.lat, activity.lng], { icon: customIcon });
+
+    if (addToCluster) {
+        getOrCreateClusterGroup(activity.category).addLayer(marker);
+    } else {
+        marker.addTo(map);
+    }
     
     // Au clic sur le marker, charger et afficher les détails
     marker.on('click', async () => {
@@ -716,6 +803,19 @@ async function enrichPopupAsync(activityId, details) {
  * @param {Object} activity - Données complètes de l'activité
  * @returns {string} HTML du popup
  */
+/**
+ * Échappe les caractères HTML dangereux pour prévenir les injections XSS
+ */
+function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
 function createPopupContent(activity) {
     const isFavorite = isActivityFavorite(activity.id);
     const favoriteClass = isFavorite ? 'active' : '';
@@ -728,35 +828,42 @@ function createPopupContent(activity) {
         .replace(/[\u0300-\u036f]/g, '') // Retirer les accents
         .replace(/\s+/g, '-'); // Remplacer les espaces par des tirets
     
+    const safeTitle    = escapeHtml(activity.title);
+    const safeCategory = escapeHtml(activity.category || 'Autre');
+    const safeAddress  = escapeHtml(activity.address || '');
+    const safeDesc     = escapeHtml(activity.description || '');
+    const safePhone    = escapeHtml(activity.phone || '');
+    // website : on vérifie que c'est bien une URL http(s) avant de l'utiliser
+    const safeWebsite  = activity.website && /^https?:\/\//i.test(activity.website)
+        ? escapeHtml(activity.website) : '';
+
     return `
         <div class="popup-content">
             <div class="popup-header" id="popup-header-${activity.id}">
                 <img class="popup-header-img" id="popup-header-img-${activity.id}" alt="" aria-hidden="true">
                 <div class="popup-header-text">
-                    <h3 class="popup-title">${activity.title}</h3>
-                    <span class="category-badge category-${categoryClass}">${activity.category || 'Autre'}</span>
+                    <h3 class="popup-title">${safeTitle}</h3>
+                    <span class="category-badge category-${categoryClass}">${safeCategory}</span>
                 </div>
             </div>
 
             <div class="popup-body">
-                <!-- Bloc adresse + description (toujours présent pour enrichissement dynamique) -->
                 <div class="popup-info-block" id="popup-info-${activity.id}"${!activity.address && !activity.description ? ' style="display:none"' : ''}>
                     <p class="popup-address" id="popup-addr-${activity.id}"${!activity.address ? ' style="display:none"' : ''}>
                         <i class="fas fa-map-marker-alt popup-address-icon"></i>
-                        <span>${activity.address || ''}</span>
+                        <span>${safeAddress}</span>
                     </p>
-                    <p class="popup-description" id="popup-desc-${activity.id}"${!activity.description ? ' style="display:none"' : ''}>${activity.description || ''}</p>
+                    <p class="popup-description" id="popup-desc-${activity.id}"${!activity.description ? ' style="display:none"' : ''}>${safeDesc}</p>
                 </div>
 
-                <!-- Bloc liens (toujours présent pour enrichissement dynamique) -->
                 <div class="popup-links" id="popup-links-${activity.id}"${!activity.website && !activity.phone ? ' style="display:none"' : ''}>
-                    <a href="${activity.website || '#'}" target="_blank" class="popup-link" id="popup-web-${activity.id}"${!activity.website ? ' style="display:none"' : ''}>
+                    <a href="${safeWebsite || '#'}" target="_blank" rel="noopener noreferrer" class="popup-link" id="popup-web-${activity.id}"${!safeWebsite ? ' style="display:none"' : ''}>
                         <i class="fas fa-globe"></i>
                         <span class="popup-link-label">Visiter le site web</span>
                     </a>
-                    <a href="tel:${activity.phone || ''}" class="popup-link" id="popup-phone-${activity.id}"${!activity.phone ? ' style="display:none"' : ''}>
+                    <a href="tel:${safePhone}" class="popup-link" id="popup-phone-${activity.id}"${!activity.phone ? ' style="display:none"' : ''}>
                         <i class="fas fa-phone"></i>
-                        <span>${activity.phone || ''}</span>
+                        <span>${safePhone}</span>
                     </a>
                 </div>
             </div>
@@ -873,7 +980,7 @@ function openItinerary(destLat, destLng) {
  * @param {string} category - Catégorie de l'activité
  */
 function showSimilarActivities(category) {
-    showToast('Fonctionnalité en développement', 'info');
+    showToast('Bientôt disponible — restez connectés !', 'info');
 }
 
 /**
@@ -953,13 +1060,12 @@ async function showFavoritesSidebar() {
 
                 if (poolEntry) {
                     marker = poolEntry.marker;
-                    if (!map.hasLayer(marker)) marker.addTo(map);
                 } else {
-                    // Pas encore dans le pool → créer un marker temporaire et l'ajouter au pool
+                    // Pas encore dans le pool → créer un marker temporaire directement sur la carte
                     console.log(`📍 Marker #${id} absent du pool, création d'un marker temporaire`);
                     const fav = getFavorites().find(f => f.id === id);
                     const activity = { id, lat, lng, category: fav ? fav.type : 'autre' };
-                    marker = createMarker(activity);
+                    marker = createMarker(activity, false);
                     activityPool.set(id, { activity, marker });
                 }
                 
@@ -1026,16 +1132,14 @@ function showToast(message, type = 'success') {
  */
 function enterSearchMode(results) {
     isSearchMode = true;
-    // Masquer tous les markers du pool
-    activityPool.forEach(({ marker }) => {
-        if (map.hasLayer(marker)) map.removeLayer(marker);
-    });
+    // Masquer tous les cluster groups
+    categoryClusterGroups.forEach(group => { if (map.hasLayer(group)) map.removeLayer(group); });
     // Supprimer les anciens markers de recherche
     searchMarkers.forEach(({ marker }) => map.removeLayer(marker));
     searchMarkers = [];
-    // Créer les markers pour les résultats
+    // Créer les markers de recherche directement sur la carte (sans clustering)
     results.forEach(activity => {
-        const marker = createMarker(activity);
+        const marker = createMarker(activity, false);
         searchMarkers.push({ marker, activity });
     });
 }
@@ -1047,10 +1151,8 @@ function exitSearchMode() {
     isSearchMode = false;
     searchMarkers.forEach(({ marker }) => map.removeLayer(marker));
     searchMarkers = [];
-    // Réafficher les markers du pool
-    activityPool.forEach(({ marker }) => {
-        if (!map.hasLayer(marker)) marker.addTo(map);
-    });
+    // Réafficher tous les cluster groups
+    categoryClusterGroups.forEach(group => { if (!map.hasLayer(group)) group.addTo(map); });
     loadActivitiesInViewport();
 }
 
@@ -1164,5 +1266,51 @@ document.addEventListener('DOMContentLoaded', () => {
         const sidebarEl = document.getElementById('favoritesSidebar');
         const isOpen = sidebarEl.dataset.open === 'true';
         if (isOpen) hideFavoritesSidebar();
+    });
+
+    // ── Raccourcis clavier ────────────────────────────────────────────
+    // Ne pas déclencher si l'utilisateur est dans un champ de saisie
+    document.addEventListener('keydown', (e) => {
+        const tag = document.activeElement?.tagName;
+        const isTyping = tag === 'INPUT' || tag === 'TEXTAREA' || document.activeElement?.isContentEditable;
+
+        // / → focus barre de recherche
+        if (e.key === '/' && !isTyping) {
+            e.preventDefault();
+            searchInput?.focus();
+            searchInput?.select();
+            return;
+        }
+
+        // Échap → fermer popup ou sidebar (dans cet ordre de priorité)
+        if (e.key === 'Escape') {
+            // Fermer un popup Leaflet ouvert
+            if (map) {
+                map.closePopup();
+            }
+            // Fermer la sidebar si ouverte
+            const sidebarEl = document.getElementById('favoritesSidebar');
+            if (sidebarEl?.dataset.open === 'true') {
+                hideFavoritesSidebar();
+            }
+            // Vider la recherche si active
+            if (isSearchMode && searchInput) {
+                searchInput.value = '';
+                exitSearchMode();
+            }
+            return;
+        }
+
+        // F → ouvrir / fermer la sidebar des favoris
+        if ((e.key === 'f' || e.key === 'F') && !isTyping) {
+            const sidebarEl = document.getElementById('favoritesSidebar');
+            if (sidebarEl?.dataset.open === 'true') {
+                hideFavoritesSidebar();
+            } else {
+                showFavoritesSidebar();
+                sidebarOpenedAt = Date.now();
+            }
+            return;
+        }
     });
 });

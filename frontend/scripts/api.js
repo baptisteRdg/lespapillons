@@ -242,6 +242,11 @@ async function getOgImage(websiteUrl) {
  * @returns {Promise<{imageUrl, description, website, phone, address}>}
  */
 async function getWikidataData(wikidataId) {
+    // Validation stricte du format Wikidata (Q suivi de chiffres uniquement)
+    if (!wikidataId || !/^Q\d+$/.test(wikidataId)) {
+        console.warn(`⚠️ Wikidata: ID invalide "${wikidataId}", requête annulée`);
+        return {};
+    }
     if (_wikidataCache.has(wikidataId)) {
         console.log(`⚡ Wikidata: cache hit pour ${wikidataId}`);
         return _wikidataCache.get(wikidataId);
@@ -345,12 +350,3 @@ async function getActivitiesByBbox(bounds, limitPerType) {
     }
 }
 
-/**
- * Récupère une activité légère par son ID (DEPRECATED - ne plus utiliser)
- * @param {number} activityId - ID de l'activité
- * @returns {Object|null} L'activité trouvée ou null
- */
-function getActivityLightById(activityId) {
-    // Chercher dans les activités chargées actuellement
-    return activities.find(a => a.id === activityId) || null;
-}
