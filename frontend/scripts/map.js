@@ -13,9 +13,62 @@ function checkStorageVersion() {
     if (stored !== STORAGE_VERSION) {
         console.warn(`🗑️ LocalStorage obsolète (v${stored} → v${STORAGE_VERSION}), purge...`);
         localStorage.removeItem('favorites');
+        localStorage.removeItem('user_position');
         localStorage.setItem('storage_version', STORAGE_VERSION);
     }
 }
+
+/**
+ * Sauvegarde la position du marqueur utilisateur dans localStorage
+ */
+function saveUserPosition(lat, lng) {
+    localStorage.setItem('user_position', JSON.stringify({ lat, lng }));
+}
+
+/**
+ * Récupère la dernière position sauvegardée, ou null si aucune
+ */
+function getSavedPosition() {
+    try {
+        const raw = localStorage.getItem('user_position');
+        return raw ? JSON.parse(raw) : null;
+    } catch {
+        return null;
+    }
+}
+
+// ── Token Jawg (nécessaire pour les styles "Simple" et "Propre") ──────────────
+// Créer un compte gratuit sur https://www.jawg.io pour obtenir un token
+const JAWG_TOKEN = 'q8ENjbC5b2HaKNzPYe09LRKGCNFudkoHzE5iHznAfmXmBwohhWjfKj1wuFMDNn3H';
+
+// Styles de carte disponibles
+const MAP_STYLES = {
+    papillon: {
+        label: 'Papillon',
+        url: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}{r}.png',
+        options: { subdomains: 'abcd' }
+    },
+    satellite: {
+        label: 'Satellite',
+        url: 'https://tiles.stadiamaps.com/tiles/alidade_satellite/{z}/{x}/{y}{r}.jpg',
+        options: {}
+    },
+    nuit: {
+        label: 'Nuit',
+        url: 'https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png',
+        options: {}
+    },
+    simple: {
+        label: 'Simple',
+        url: `https://tile.jawg.io/jawg-streets/{z}/{x}/{y}{r}.png?access-token=${JAWG_TOKEN}`,
+        options: {}
+    },
+    propre: {
+        label: 'Propre',
+        url: `https://tile.jawg.io/jawg-lagoon/{z}/{x}/{y}{r}.png?access-token=${JAWG_TOKEN}`,
+        options: {}
+    }
+};
 
 // Configuration de la carte
 const MAP_CONFIG = {
@@ -30,6 +83,8 @@ const MAP_CONFIG = {
 
 // Variables globales
 let map;
+let currentTileLayer = null;
+let currentStyleKey = 'papillon';
 const activityPool = new Map();           // id → { activity, marker }
 const categoryClusterGroups = new Map();  // category → MarkerClusterGroup
 const MAX_POOL = 400;
@@ -50,35 +105,104 @@ let radiusTooltip;
 /**
  * Initialise la carte Leaflet
  */
+/**
+ * Change le style de la carte
+ * @param {string} styleKey - Clé dans MAP_STYLES
+ * @param {boolean} save - Sauvegarder dans localStorage (défaut: true)
+ */
+function setMapStyle(styleKey, save = true) {
+    const style = MAP_STYLES[styleKey];
+    if (!style) return;
+
+    // Vérifier le token Jawg si nécessaire
+    if ((styleKey === 'simple' || styleKey === 'propre') && !JAWG_TOKEN) {
+        showToast('Ajoutez votre token Jawg dans map.js (JAWG_TOKEN)', 'info');
+        return;
+    }
+
+    // Retirer le tile layer actuel
+    if (currentTileLayer) map.removeLayer(currentTileLayer);
+
+    // Ajouter le nouveau
+    currentTileLayer = L.tileLayer(style.url, {
+        minZoom: MAP_CONFIG.minZoom,
+        maxZoom: MAP_CONFIG.maxZoom,
+        ...style.options
+    }).addTo(map);
+
+    currentStyleKey = styleKey;
+    if (save) localStorage.setItem('map_style', styleKey);
+
+    // Mettre à jour l'UI du picker
+    document.querySelectorAll('.style-option').forEach(el => {
+        el.classList.toggle('active', el.dataset.style === styleKey);
+    });
+}
+
+/**
+ * Initialise le sélecteur de style de carte
+ */
+function initStylePicker() {
+    const toggle = document.getElementById('style-picker-toggle');
+    const panel  = document.getElementById('style-picker-panel');
+    if (!toggle || !panel) return;
+
+    // Marquer le style actif au chargement
+    document.querySelectorAll('.style-option').forEach(el => {
+        el.classList.toggle('active', el.dataset.style === currentStyleKey);
+    });
+
+    toggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        panel.classList.toggle('open');
+    });
+
+    // Clic sur une option
+    panel.addEventListener('click', (e) => {
+        const option = e.target.closest('.style-option');
+        if (!option) return;
+        setMapStyle(option.dataset.style);
+        panel.classList.remove('open');
+    });
+
+    // Fermer en cliquant ailleurs
+    document.addEventListener('click', () => panel.classList.remove('open'));
+    panel.addEventListener('click', (e) => e.stopPropagation());
+}
+
 function initMap() {
-    // Création de la carte centrée sur Paris
+    // Utiliser la position sauvegardée si disponible, sinon Paris par défaut
+    const saved = getSavedPosition();
+    if (saved) {
+        userPosition = [saved.lat, saved.lng];
+        console.log(`📍 Position restaurée depuis localStorage: ${saved.lat.toFixed(4)}, ${saved.lng.toFixed(4)}`);
+    }
+
     map = L.map('map', {
         zoomControl: false,
         attributionControl: false
-    }).setView(MAP_CONFIG.center, MAP_CONFIG.zoom);
+    }).setView(userPosition, MAP_CONFIG.zoom);
+
+    // Appliquer le style sauvegardé (ou papillon par défaut)
+    const savedStyle = localStorage.getItem('map_style') || 'papillon';
+    setMapStyle(savedStyle, false);
     
-    // Utilisation du style Carto Light
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-        minZoom: MAP_CONFIG.minZoom,
-        maxZoom: MAP_CONFIG.maxZoom,
-        subdomains: 'abcd'
-    }).addTo(map);
-    
-    // Création du marqueur utilisateur et du cercle
     createUserMarker();
-    
-    // Création de l'infobulle pour le rayon
     createRadiusTooltip();
 
-    // Rechargement debouncé du viewport à chaque déplacement/zoom
     map.on('moveend', () => {
         if (isSearchMode) return;
         clearTimeout(viewportLoadTimeout);
         viewportLoadTimeout = setTimeout(loadActivitiesInViewport, 400);
     });
     
-    // Un seul chargement des activités : après la géoloc (ou sur Paris si refus/erreur)
-    trySetUserPositionFromBrowser();
+    // Si position sauvegardée : chargement direct, pas besoin de géolocalisation
+    // Sinon : tentative de géolocalisation (premier visit)
+    if (saved) {
+        loadActivitiesInViewport();
+    } else {
+        trySetUserPositionFromBrowser();
+    }
 }
 
 /**
@@ -95,18 +219,15 @@ function trySetUserPositionFromBrowser() {
             const lat = pos.coords.latitude;
             const lng = pos.coords.longitude;
             userPosition = [lat, lng];
+            saveUserPosition(lat, lng); // Sauvegarder pour les prochaines visites
             map.setView(userPosition, MAP_CONFIG.zoom);
             userMarker.setLatLng(userPosition);
-            if (userCircle) {
-                userCircle.setLatLng(userPosition);
-            }
-            if (resizeHandle) {
-                updateHandlePosition();
-            }
+            if (userCircle) userCircle.setLatLng(userPosition);
+            if (resizeHandle) updateHandlePosition();
             loadActivitiesInViewport();
         },
         () => {
-            // Refus ou erreur : on garde Paris et on charge une seule fois
+            // Refus ou erreur : on charge depuis Paris sans sauvegarder
             loadActivitiesInViewport();
         },
         { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
@@ -176,7 +297,7 @@ function createUserMarker() {
     userMarker.on('dragend', function(e) {
         const newPos = e.target.getLatLng();
         userPosition = [newPos.lat, newPos.lng];
-        // Le chargement se fait via moveend si la vue a bougé
+        saveUserPosition(newPos.lat, newPos.lng); // Mémoriser la nouvelle position
     });
     
     // Événement de clic sur le marqueur : toggle du cercle
@@ -1213,6 +1334,7 @@ async function centerOnSearchResults(results) {
 document.addEventListener('DOMContentLoaded', () => {
     checkStorageVersion();
     initMap();
+    initStylePicker();
     
     // Timestamp pour éviter la fermeture immédiate sur mobile (stopPropagation peu fiable sur iOS)
     let sidebarOpenedAt = 0;

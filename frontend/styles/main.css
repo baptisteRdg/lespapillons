@@ -367,6 +367,110 @@ header {
     transition: transform 0.3s ease-out, opacity 0.3s ease-in;
 }
 
+/* ===== SÉLECTEUR DE STYLE DE CARTE ===== */
+#style-picker {
+    position: absolute;
+    bottom: 28px;
+    right: 16px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+}
+
+#style-picker-toggle {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
+    color: #374151;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s, transform 0.2s;
+}
+
+#style-picker-toggle:hover {
+    background: rgba(255, 255, 255, 1);
+    transform: scale(1.05);
+}
+
+#style-picker-panel {
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+    border-radius: 14px;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 140px;
+    /* Masqué par défaut */
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(8px) scale(0.97);
+    transform-origin: bottom right;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+#style-picker-panel.open {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0) scale(1);
+}
+
+.style-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.style-option:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.style-option.active {
+    background: rgba(59, 130, 246, 0.1);
+}
+
+.style-option.active .style-label {
+    color: #2563eb;
+    font-weight: 600;
+}
+
+.style-preview {
+    width: 28px;
+    height: 20px;
+    border-radius: 5px;
+    flex-shrink: 0;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.style-preview--papillon { background: linear-gradient(135deg, #e8f0de, #c8ddc8); }
+.style-preview--satellite { background: linear-gradient(135deg, #2d4a1e, #5a8a3a); }
+.style-preview--nuit      { background: linear-gradient(135deg, #1a1a2e, #16213e); }
+.style-preview--simple    { background: linear-gradient(135deg, #f0f4f8, #b8d4e8); }
+.style-preview--propre    { background: linear-gradient(135deg, #006994, #00b8d4); }
+
+.style-label {
+    font-size: 13px;
+    color: #374151;
+    user-select: none;
+}
+
 /* ===== LOADER CARTE ===== */
 #map-loader {
     position: absolute;
