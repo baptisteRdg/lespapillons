@@ -1004,6 +1004,11 @@ function createPopupContent(activity) {
                     <i class="fas fa-search"></i>
                     <span>Similaires</span>
                 </button>
+
+                <button class="popup-btn btn-share" data-action="share" data-id="${activity.id}" data-title="${escapeHtml(activity.title)}">
+                    <i class="fas fa-share-nodes"></i>
+                    <span>Partager</span>
+                </button>
             </div>
         </div>
     `;
@@ -1044,6 +1049,12 @@ function setupPopupEventListeners(activity) {
     const similarBtn = document.querySelector('[data-action="similar"]');
     if (similarBtn) {
         similarBtn.addEventListener('click', () => showSimilarActivities(activity.category));
+    }
+
+    // Bouton partager
+    const shareBtn = document.querySelector('[data-action="share"]');
+    if (shareBtn) {
+        shareBtn.addEventListener('click', () => shareActivity(activity.id, activity.title));
     }
 }
 
@@ -1102,6 +1113,70 @@ function openItinerary(destLat, destLng) {
  */
 function showSimilarActivities(category) {
     showToast('Bientôt disponible — restez connectés !', 'info');
+}
+
+/**
+ * Partage une activité via Web Share API ou copie le lien dans le presse-papier
+ * @param {number} activityId
+ * @param {string} title
+ */
+async function shareActivity(activityId, title) {
+    const url = `${window.location.origin}${window.location.pathname}?activity=${activityId}`;
+    if (navigator.share) {
+        try {
+            await navigator.share({ title, url });
+        } catch (e) {
+            // Annulation silencieuse (l'utilisateur a fermé le menu de partage)
+        }
+    } else {
+        try {
+            await navigator.clipboard.writeText(url);
+            showToast('Lien copié dans le presse-papier !', 'success');
+        } catch {
+            // Fallback si clipboard indisponible
+            showToast(`Lien : ${url}`, 'info');
+        }
+    }
+}
+
+/**
+ * Gère l'ouverture directe d'une activité via l'URL ?activity=ID
+ * Appelé au chargement de la page.
+ */
+async function handleDeepLink() {
+    const params = new URLSearchParams(window.location.search);
+    const activityId = parseInt(params.get('activity'));
+    if (!activityId) return;
+
+    // Nettoyer l'URL sans recharger la page
+    history.replaceState({}, '', window.location.pathname);
+
+    console.log(`🔗 Deep link détecté : activité #${activityId}`);
+
+    const details = await getActivityDetails(activityId);
+    if (!details || !details.lat) {
+        showToast('Activité introuvable ou inaccessible', 'info');
+        return;
+    }
+
+    // Créer ou récupérer le marker
+    let poolEntry = activityPool.get(activityId);
+    let marker;
+    if (poolEntry) {
+        marker = poolEntry.marker;
+    } else {
+        const activity = { id: activityId, lat: details.lat, lng: details.lng, category: details.category };
+        marker = createMarker(activity, false);
+        activityPool.set(activityId, { activity, marker });
+    }
+
+    // Centrer la carte avec offset pour que le popup soit visible
+    const zoom = Math.max(map.getZoom(), 15);
+    const markerPoint = map.project([details.lat, details.lng], zoom);
+    const offsetLatLng = map.unproject(markerPoint.subtract([0, 150]), zoom);
+    map.setView(offsetLatLng, zoom);
+
+    await loadAndShowActivityDetails(activityId, marker);
 }
 
 /**
@@ -1335,6 +1410,7 @@ document.addEventListener('DOMContentLoaded', () => {
     checkStorageVersion();
     initMap();
     initStylePicker();
+    handleDeepLink();
     
     // Timestamp pour éviter la fermeture immédiate sur mobile (stopPropagation peu fiable sur iOS)
     let sidebarOpenedAt = 0;
