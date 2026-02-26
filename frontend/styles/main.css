@@ -5,9 +5,14 @@
 /* ===== RESET MINIMAL ===== */
 *, *::before, *::after { box-sizing: border-box; }
 a    { text-decoration: none; }
-button { cursor: pointer; }
+button { cursor: pointer; touch-action: manipulation; }
 h1, h2, h3, h4, p { margin: 0; }
 ul { margin: 0; padding: 0; list-style: none; }
+
+/* Supprime le délai 300ms sur tous les éléments tactiles */
+a, button, input, select, textarea, .style-option, .fav-item {
+    touch-action: manipulation;
+}
 
 
 /* ===== LAYOUT ===== */
@@ -15,12 +20,14 @@ body {
     margin: 0;
     padding: 0;
     height: 100vh;
+    height: 100dvh; /* iOS Safari : exclut la barre d'URL */
     overflow: hidden;
 }
 
 #map {
     width: 100%;
     height: 100%;
+    touch-action: none; /* laisser Leaflet gérer tous les gestes tactiles */
 }
 
 /* ===== HEADER ===== */
@@ -28,14 +35,14 @@ header {
     position: absolute;
     top: 0; left: 0; right: 0;
     z-index: 1000;
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(80px);
-    -webkit-backdrop-filter: blur(80px);
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
-@supports not (backdrop-filter: blur(80px)) {
-    header { background: rgba(255, 255, 255, 0.2); }
+@supports not (backdrop-filter: blur(12px)) {
+    header { background: rgba(255, 255, 255, 0.95); }
 }
 
 .header-container {
@@ -154,21 +161,19 @@ header {
     overflow: hidden;
     transform: translateX(400px);
     transition: transform 0.3s;
-    background: rgba(255, 255, 255, 0.75);
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     border: 1px solid rgba(255, 255, 255, 0.3);
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 }
 
-@supports not (backdrop-filter: blur(20px)) {
+@supports not (backdrop-filter: blur(12px)) {
     #favoritesSidebar { background: rgba(255, 255, 255, 0.98); }
 }
 
 .sidebar-header {
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.85) 0%, rgba(96, 165, 250, 0.85) 100%);
-    backdrop-filter: blur(12px) saturate(150%);
-    -webkit-backdrop-filter: blur(12px) saturate(150%);
+    background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
     color: white;
     padding: 1rem;
@@ -201,19 +206,15 @@ header {
     padding: 1rem;
     max-height: 70vh;
     overflow-y: auto;
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.4);
 }
 
 /* Item favori */
 .fav-item {
     margin-bottom: 1rem;
     padding: 0.75rem;
-    background: rgba(249, 250, 251, 0.5);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 255, 255, 0.5);
+    background: rgba(249, 250, 251, 0.9);
+    border: 1px solid rgba(0, 0, 0, 0.06);
     border-radius: 0.5rem;
     cursor: pointer;
     transition: background 0.2s;
@@ -580,21 +581,12 @@ header {
 .leaflet-popup-content-wrapper {
     border-radius: 12px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
-    background: rgba(255, 255, 255, 0.75) !important;
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    background: rgba(255, 255, 255, 0.96) !important;
     border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .leaflet-popup-tip {
-    background: rgba(255, 255, 255, 0.75) !important;
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-}
-
-@supports not (backdrop-filter: blur(20px)) {
-    .leaflet-popup-content-wrapper { background: rgba(255, 255, 255, 1) !important; }
-    .leaflet-popup-tip             { background: rgba(255, 255, 255, 1) !important; }
+    background: rgba(255, 255, 255, 0.96) !important;
 }
 
 .leaflet-popup-content {
@@ -629,12 +621,10 @@ header {
 .popup-header {
     position: relative;
     overflow: hidden;
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.95) 0%, rgba(96, 165, 250, 0.95) 100%);
+    background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
     color: white;
     padding: 1rem;
     border-radius: 12px 12px 0 0;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
 }
 
 /* Image (Wikidata / og:image) — couvre le rectangle, invisible par défaut */
@@ -671,9 +661,7 @@ header {
 
 .popup-body {
     padding: 1rem;
-    background: rgba(255, 255, 255, 0.3);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.6);
 }
 
 .popup-info-block { margin-bottom: 0.75rem; }
@@ -717,9 +705,7 @@ header {
     display: flex;
     gap: 0.5rem;
     flex-wrap: wrap;
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.4);
 }
 
 /* Boutons du popup */

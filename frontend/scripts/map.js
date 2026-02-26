@@ -180,7 +180,10 @@ function initMap() {
 
     map = L.map('map', {
         zoomControl: false,
-        attributionControl: false
+        attributionControl: false,
+        tap: false,              // Désactive le tap handler Leaflet (conflits avec le navigateur mobile)
+        tapTolerance: 15,        // Tolérance du tap sur mobile
+        bounceAtZoomLimits: false // Supprime l'animation de rebond aux limites de zoom
     }).setView(userPosition, MAP_CONFIG.zoom);
 
     // Appliquer le style sauvegardé (ou papillon par défaut)
@@ -328,8 +331,8 @@ function createResizeHandle() {
         zIndexOffset: 3000
     }).addTo(map);
     
-    // Désactiver les interactions avec la carte pendant le drag
-    resizeHandle.on('mousedown', function(e) {
+    // Désactiver les interactions avec la carte au début du drag (dragstart = sûr sur mobile aussi)
+    resizeHandle.on('dragstart', function(e) {
         L.DomEvent.stopPropagation(e);
         map.dragging.disable();
         map.doubleClickZoom.disable();
