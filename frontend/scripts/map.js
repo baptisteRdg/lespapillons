@@ -50,13 +50,13 @@ const MAP_STYLES = {
     },
     satellite: {
         label: 'Satellite',
-        url: 'https://tiles.stadiamaps.com/tiles/alidade_satellite/{z}/{x}/{y}{r}.jpg',
-        options: {}
+        url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+        options: { maxZoom: 19 }
     },
     nuit: {
         label: 'Nuit',
-        url: 'https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png',
-        options: {}
+        url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+        options: { subdomains: 'abcd' }
     },
     simple: {
         label: 'Simple',
