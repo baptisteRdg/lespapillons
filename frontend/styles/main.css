@@ -371,7 +371,7 @@ header {
 /* ===== SÉLECTEUR DE STYLE DE CARTE ===== */
 #style-picker {
     position: fixed;
-    bottom: 24px;
+    top: calc(var(--header-h, 60px) + 10px);
     right: 16px;
     z-index: 1000;
     display: flex;
@@ -422,11 +422,11 @@ header {
     flex-direction: column;
     gap: 4px;
     min-width: 140px;
-    /* Masqué par défaut */
+    /* Masqué par défaut — s'ouvre vers le bas */
     opacity: 0;
     pointer-events: none;
-    transform: translateY(8px) scale(0.97);
-    transform-origin: bottom right;
+    transform: translateY(-8px) scale(0.97);
+    transform-origin: top right;
     transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
@@ -890,24 +890,12 @@ header {
 
     .header-logo {
         flex-shrink: 0;
-        transition: opacity 0.2s ease, max-width 0.25s ease, margin 0.25s ease;
-        max-width: 120px;
-        overflow: hidden;
-    }
-
-    /* Quand la recherche est active : logo masqué */
-    .header-container.search-focused .header-logo {
-        opacity: 0;
-        max-width: 0;
-        margin: 0;
-        pointer-events: none;
     }
 
     .header-search {
         flex: 1;
         min-width: 0;
         max-width: none;
-        transition: flex 0.25s ease;
     }
 
     .search-input { font-size: 14px; }

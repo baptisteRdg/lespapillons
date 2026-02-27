@@ -143,10 +143,18 @@ function setMapStyle(styleKey, save = true) {
 /**
  * Initialise le sélecteur de style de carte
  */
+function syncHeaderHeight() {
+    const h = document.querySelector('header')?.offsetHeight ?? 60;
+    document.documentElement.style.setProperty('--header-h', h + 'px');
+}
+
 function initStylePicker() {
     const toggle = document.getElementById('style-picker-toggle');
     const panel  = document.getElementById('style-picker-panel');
     if (!toggle || !panel) return;
+
+    syncHeaderHeight();
+    window.addEventListener('resize', syncHeaderHeight);
 
     // Marquer le style actif au chargement
     document.querySelectorAll('.style-option').forEach(el => {
@@ -1506,18 +1514,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // Sur mobile : élargir la barre de recherche au focus (logo disparaît)
-        const headerContainer = document.querySelector('.header-container');
-        if (headerContainer) {
-            searchInput.addEventListener('focus', () => {
-                if (window.innerWidth <= 640) {
-                    headerContainer.classList.add('search-focused');
-                }
-            });
-            searchInput.addEventListener('blur', () => {
-                headerContainer.classList.remove('search-focused');
-            });
-        }
     }
     
     // Fermer la sidebar en cliquant/touchant en dehors
