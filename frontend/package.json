@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "Frontend BeOut - Découverte d'activités",
   "scripts": {
-    "start": "npx http-server -p 8080 -c-1 --proxy http://localhost:8080? -o",
-    "dev": "npx http-server -p 8080 -c-1 --cors -o"
+    "start": "node start.js",
+    "dev": "npx http-server -p 8080 -c-1 --proxy http://localhost:3000? -o"
   },
   "keywords": [
     "frontend",

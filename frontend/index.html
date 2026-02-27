@@ -5,11 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BeOut - Découvrez Paris</title>
 
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Text:ital@0;1&family=Idiqlat:wght@200;300;400&display=swap" rel="stylesheet">
-
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
@@ -56,6 +51,12 @@
     <!-- Carte -->
     <div id="map"></div>
 
+    <!-- Loader carte (non bloquant) -->
+    <div id="map-loader">
+        <div class="map-loader-spinner"></div>
+        <span>Chargement…</span>
+    </div>
+
     <!-- Sidebar favoris -->
     <aside id="favoritesSidebar">
         <div class="sidebar-header">
@@ -71,6 +72,35 @@
         </div>
     </aside>
 
+    <!-- Sélecteur de style de carte -->
+    <div id="style-picker">
+        <button id="style-picker-toggle" title="Changer le style de la carte">
+            <i class="fas fa-layer-group"></i>
+        </button>
+        <div id="style-picker-panel">
+            <div class="style-option" data-style="papillon">
+                <span class="style-preview style-preview--papillon"></span>
+                <span class="style-label">Papillon</span>
+            </div>
+            <div class="style-option" data-style="satellite">
+                <span class="style-preview style-preview--satellite"></span>
+                <span class="style-label">Satellite</span>
+            </div>
+            <div class="style-option" data-style="nuit">
+                <span class="style-preview style-preview--nuit"></span>
+                <span class="style-label">Nuit</span>
+            </div>
+            <div class="style-option" data-style="simple">
+                <span class="style-preview style-preview--simple"></span>
+                <span class="style-label">Simple</span>
+            </div>
+            <div class="style-option" data-style="propre">
+                <span class="style-preview style-preview--propre"></span>
+                <span class="style-label">Propre</span>
+            </div>
+        </div>
+    </div>
+
     <!-- Toast notification -->
     <div id="toast">
         <span id="toastMessage">Action réussie !</span>
@@ -78,6 +108,11 @@
 
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- Leaflet MarkerCluster -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
 
     <!-- Scripts -->
     <script src="scripts/api.js"></script>

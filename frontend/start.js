@@ -131,7 +131,7 @@ async function startServer() {
     console.log('🚀 Démarrage de http-server...\n');
     
     // Démarrer http-server
-    const server = spawn('npx', ['http-server', '-p', '8080', '-c-1', '--proxy', 'http://localhost:8080?', '-o'], {
+    const server = spawn('npx', ['http-server', '-p', '8080', '-c-1', '--proxy', 'http://localhost:3000?'], {
         stdio: 'inherit',
         shell: true
     });
