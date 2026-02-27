@@ -1505,6 +1505,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 searchActivities(e.target.value);
             }
         });
+
+        // Sur mobile : élargir la barre de recherche au focus (logo disparaît)
+        const headerContainer = document.querySelector('.header-container');
+        if (headerContainer) {
+            searchInput.addEventListener('focus', () => {
+                if (window.innerWidth <= 640) {
+                    headerContainer.classList.add('search-focused');
+                }
+            });
+            searchInput.addEventListener('blur', () => {
+                headerContainer.classList.remove('search-focused');
+            });
+        }
     }
     
     // Fermer la sidebar en cliquant/touchant en dehors

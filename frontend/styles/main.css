@@ -370,8 +370,8 @@ header {
 
 /* ===== SÉLECTEUR DE STYLE DE CARTE ===== */
 #style-picker {
-    position: absolute;
-    bottom: 28px;
+    position: fixed;
+    bottom: 24px;
     right: 16px;
     z-index: 1000;
     display: flex;
@@ -665,6 +665,18 @@ header {
     box-sizing: border-box;
 }
 
+/* Image de la fiche : hauteur réduite */
+#panel-content .popup-header {
+    min-height: 72px;
+    padding: 0.65rem 1rem;
+}
+
+#panel-content .popup-header.has-image {
+    min-height: 100px;
+    max-height: 100px;
+    overflow: hidden;
+}
+
 /* Sur desktop → panneau latéral gauche */
 @media (min-width: 768px) {
     #activity-panel {
@@ -869,19 +881,33 @@ header {
 
 /* ===== RESPONSIVE MOBILE ===== */
 @media (max-width: 640px) {
-    /* Header : logo sur ligne 1, recherche + favoris sur ligne 2 */
+    /* Header : tout sur une seule ligne */
     .header-container {
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
         gap: 0.5rem;
-        padding: 0.6rem 1rem;
+        padding: 0.55rem 0.75rem;
     }
 
-    .header-logo { flex: 0 0 100%; }
+    .header-logo {
+        flex-shrink: 0;
+        transition: opacity 0.2s ease, max-width 0.25s ease, margin 0.25s ease;
+        max-width: 120px;
+        overflow: hidden;
+    }
+
+    /* Quand la recherche est active : logo masqué */
+    .header-container.search-focused .header-logo {
+        opacity: 0;
+        max-width: 0;
+        margin: 0;
+        pointer-events: none;
+    }
 
     .header-search {
         flex: 1;
         min-width: 0;
         max-width: none;
+        transition: flex 0.25s ease;
     }
 
     .search-input { font-size: 14px; }
