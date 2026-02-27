@@ -378,6 +378,13 @@ header {
     flex-direction: column;
     align-items: flex-end;
     gap: 8px;
+    /* Ne pas bloquer les clics sur la carte quand le panel est fermé */
+    pointer-events: none;
+}
+
+#style-picker-toggle,
+#style-picker-panel.open {
+    pointer-events: auto;
 }
 
 #style-picker-toggle {
@@ -644,6 +651,20 @@ header {
     -webkit-overflow-scrolling: touch;
 }
 
+/* Le contenu du panel prend toujours toute la largeur disponible */
+#panel-content .popup-content {
+    width: 100%;
+    max-width: none;
+    box-sizing: border-box;
+}
+
+#panel-content .popup-header,
+#panel-content .popup-body,
+#panel-content .popup-footer {
+    width: 100%;
+    box-sizing: border-box;
+}
+
 /* Sur desktop → panneau latéral gauche */
 @media (min-width: 768px) {
     #activity-panel {
@@ -885,7 +906,8 @@ header {
         max-width: calc(100vw - 4rem) !important;
     }
 
-    .popup-content { max-width: 280px; }
+    /* max-width uniquement pour le popup Leaflet flottant, pas pour le panel plein écran */
+    .leaflet-popup .popup-content { max-width: 280px; }
     .popup-title   { font-size: 1.125rem; }
 
     .popup-footer {
