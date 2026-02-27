@@ -1461,10 +1461,30 @@ async function centerOnSearchResults(results) {
 }
 
 /**
+ * Bloque le zoom natif du navigateur (pinch, double-tap) et tout scroll
+ * de page hors de la carte Leaflet. Recentre immédiatement si le scroll
+ * s'échappe (comportement type CityMapper).
+ */
+function lockViewport() {
+    // Empêche le pinch-to-zoom multi-touch
+    document.addEventListener('touchstart', (e) => {
+        if (e.touches.length > 1) e.preventDefault();
+    }, { passive: false });
+
+    // Empêche les gestes Safari (gesturestart / gesturechange)
+    document.addEventListener('gesturestart',  (e) => e.preventDefault(), { passive: false });
+    document.addEventListener('gesturechange', (e) => e.preventDefault(), { passive: false });
+
+    // Si le scroll s'échappe malgré tout, on recentre immédiatement
+    window.addEventListener('scroll', () => window.scrollTo(0, 0), { passive: true });
+}
+
+/**
  * Initialisation de l'application au chargement de la page
  */
 document.addEventListener('DOMContentLoaded', () => {
     checkStorageVersion();
+    lockViewport();
     initMap();
     initStylePicker();
     initActivityPanel();

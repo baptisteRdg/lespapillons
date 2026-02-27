@@ -898,7 +898,8 @@ header {
         max-width: none;
     }
 
-    .search-input { font-size: 14px; }
+    /* 16px minimum pour éviter le zoom automatique iOS sur focus */
+    .search-input { font-size: 16px; }
 
     .hide-mobile { display: none; }
 
