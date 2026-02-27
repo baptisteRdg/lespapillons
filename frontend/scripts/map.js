@@ -161,7 +161,7 @@ function computeMarkerOffset() {
         const headerH  = document.querySelector('header')?.offsetHeight ?? 60;
         const panelH   = window.innerHeight * 0.38; // panel ouvert = 38vh
         const visibleH = window.innerHeight - headerH - panelH;
-        const targetY  = headerH + visibleH * 0.28; // 28 % depuis le haut de la zone libre
+        const targetY  = headerH + visibleH * 0.18; // 18 % depuis le haut de la zone libre
         return window.innerHeight / 2 - targetY;    // >0 : centre sous le marker
     }
     // Desktop : marker légèrement sous le centre (zone visible côté droit du panel)
@@ -700,9 +700,13 @@ function createMarker(activity, addToCluster = true) {
         marker.addTo(map);
     }
     
-    // Au clic sur le marker, charger et afficher les détails
+    // Au clic sur le marker : centrer la carte puis afficher la fiche
     marker.on('click', async (e) => {
         L.DomEvent.stopPropagation(e);
+        const zoom = Math.max(map.getZoom(), 15);
+        const markerPoint = map.project([activity.lat, activity.lng], zoom);
+        const offsetLatLng = map.unproject(markerPoint.add([0, computeMarkerOffset()]), zoom);
+        map.setView(offsetLatLng, zoom);
         await loadAndShowActivityDetails(activity.id, marker);
     });
     
