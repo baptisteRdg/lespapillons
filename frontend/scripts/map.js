@@ -161,7 +161,7 @@ function computeMarkerOffset() {
         const headerH  = document.querySelector('header')?.offsetHeight ?? 60;
         const panelH   = window.innerHeight * 0.38; // panel ouvert = 38vh
         const visibleH = window.innerHeight - headerH - panelH;
-        const targetY  = headerH + visibleH * 0.18; // 18 % depuis le haut de la zone libre
+        const targetY  = headerH + visibleH * 0.3; // 30 % depuis le haut de la zone libre
         return window.innerHeight / 2 - targetY;    // >0 : centre sous le marker
     }
     // Desktop : marker légèrement sous le centre (zone visible côté droit du panel)
