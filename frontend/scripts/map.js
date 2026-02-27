@@ -148,6 +148,26 @@ function syncHeaderHeight() {
     document.documentElement.style.setProperty('--header-h', h + 'px');
 }
 
+/**
+ * Calcule l'offset vertical (px) à appliquer au point projeté pour positionner
+ * le marker dans la zone visible optimale :
+ *  - Mobile  : tiers supérieur de la zone libre (entre header et panel bas)
+ *  - Desktop : léger décalage neutre (panel latéral gauche)
+ * Valeur positive → le centre carte se place EN DESSOUS du marker → marker monte.
+ * Valeur négative → le centre se place AU-DESSUS → marker descend.
+ */
+function computeMarkerOffset() {
+    if (window.innerWidth < 768) {
+        const headerH  = document.querySelector('header')?.offsetHeight ?? 60;
+        const panelH   = window.innerHeight * 0.38; // panel ouvert = 38vh
+        const visibleH = window.innerHeight - headerH - panelH;
+        const targetY  = headerH + visibleH * 0.28; // 28 % depuis le haut de la zone libre
+        return window.innerHeight / 2 - targetY;    // >0 : centre sous le marker
+    }
+    // Desktop : marker légèrement sous le centre (zone visible côté droit du panel)
+    return -100;
+}
+
 function initStylePicker() {
     const toggle = document.getElementById('style-picker-toggle');
     const panel  = document.getElementById('style-picker-panel');
@@ -1227,10 +1247,10 @@ async function handleDeepLink() {
         activityPool.set(activityId, { activity, marker });
     }
 
-    // Centrer la carte avec offset pour que le popup soit visible
+    // Centrer la carte : marker dans la zone visible optimale (haut sur mobile)
     const zoom = Math.max(map.getZoom(), 15);
     const markerPoint = map.project([details.lat, details.lng], zoom);
-    const offsetLatLng = map.unproject(markerPoint.subtract([0, 150]), zoom);
+    const offsetLatLng = map.unproject(markerPoint.add([0, computeMarkerOffset()]), zoom);
     map.setView(offsetLatLng, zoom);
 
     await loadAndShowActivityDetails(activityId, marker);
@@ -1300,11 +1320,10 @@ async function showFavoritesSidebar() {
                 
                 hideFavoritesSidebar();
                 
-                // Centrer la carte en décalant vers le bas pour que le popup soit centré
+                // Centrer la carte : marker dans la zone visible optimale (haut sur mobile)
                 const zoom = Math.max(map.getZoom(), 15);
-                // Le popup s'affiche ~150px au-dessus du marker → on décale le centre vers le nord
                 const markerPoint = map.project([lat, lng], zoom);
-                const offsetLatLng = map.unproject(markerPoint.subtract([0, 150]), zoom);
+                const offsetLatLng = map.unproject(markerPoint.add([0, computeMarkerOffset()]), zoom);
                 map.setView(offsetLatLng, zoom);
                 
                 // Chercher le marker dans le pool
@@ -1441,7 +1460,7 @@ async function centerOnSearchResults(results) {
         const activity = results[0];
         const zoom = Math.max(map.getZoom(), 15);
         const markerPoint = map.project([activity.lat, activity.lng], zoom);
-        const offsetLatLng = map.unproject(markerPoint.subtract([0, 150]), zoom);
+        const offsetLatLng = map.unproject(markerPoint.add([0, computeMarkerOffset()]), zoom);
         map.setView(offsetLatLng, zoom);
 
         const entry = searchMarkers.find(e =>
