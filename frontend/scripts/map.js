@@ -100,6 +100,7 @@ let userPosition = MAP_CONFIG.center;
 let currentRadius = MAP_CONFIG.defaultRadiusMeters;
 let circleEnabled = false;
 let isResizingCircle = false;
+let currentPanelActivityId = null; // ID de l'activité actuellement affichée dans le panel
 let radiusTooltip;
 
 /**
@@ -142,10 +143,38 @@ function setMapStyle(styleKey, save = true) {
 /**
  * Initialise le sélecteur de style de carte
  */
+function syncHeaderHeight() {
+    const h = document.querySelector('header')?.offsetHeight ?? 60;
+    document.documentElement.style.setProperty('--header-h', h + 'px');
+}
+
+/**
+ * Calcule l'offset vertical (px) à appliquer au point projeté pour positionner
+ * le marker dans la zone visible optimale :
+ *  - Mobile  : tiers supérieur de la zone libre (entre header et panel bas)
+ *  - Desktop : léger décalage neutre (panel latéral gauche)
+ * Valeur positive → le centre carte se place EN DESSOUS du marker → marker monte.
+ * Valeur négative → le centre se place AU-DESSUS → marker descend.
+ */
+function computeMarkerOffset() {
+    if (window.innerWidth < 768) {
+        const headerH  = document.querySelector('header')?.offsetHeight ?? 60;
+        const panelH   = window.innerHeight * 0.38; // panel ouvert = 38vh
+        const visibleH = window.innerHeight - headerH - panelH;
+        const targetY  = headerH + visibleH * 0.3; // 30 % depuis le haut de la zone libre
+        return window.innerHeight / 2 - targetY;    // >0 : centre sous le marker
+    }
+    // Desktop : marker légèrement sous le centre (zone visible côté droit du panel)
+    return -100;
+}
+
 function initStylePicker() {
     const toggle = document.getElementById('style-picker-toggle');
     const panel  = document.getElementById('style-picker-panel');
     if (!toggle || !panel) return;
+
+    syncHeaderHeight();
+    window.addEventListener('resize', syncHeaderHeight);
 
     // Marquer le style actif au chargement
     document.querySelectorAll('.style-option').forEach(el => {
@@ -198,6 +227,9 @@ function initMap() {
         clearTimeout(viewportLoadTimeout);
         viewportLoadTimeout = setTimeout(loadActivitiesInViewport, 400);
     });
+
+    // Fermer le panel en cliquant sur la carte (mais pas sur un marker)
+    map.on('click', () => hideActivityPanel());
     
     // Si position sauvegardée : chargement direct, pas besoin de géolocalisation
     // Sinon : tentative de géolocalisation (premier visit)
@@ -668,8 +700,13 @@ function createMarker(activity, addToCluster = true) {
         marker.addTo(map);
     }
     
-    // Au clic sur le marker, charger et afficher les détails
-    marker.on('click', async () => {
+    // Au clic sur le marker : centrer la carte puis afficher la fiche
+    marker.on('click', async (e) => {
+        L.DomEvent.stopPropagation(e);
+        const zoom = Math.max(map.getZoom(), 15);
+        const markerPoint = map.project([activity.lat, activity.lng], zoom);
+        const offsetLatLng = map.unproject(markerPoint.add([0, computeMarkerOffset()]), zoom);
+        map.setView(offsetLatLng, zoom);
         await loadAndShowActivityDetails(activity.id, marker);
     });
     
@@ -681,71 +718,112 @@ function createMarker(activity, addToCluster = true) {
  * @param {number} activityId - ID de l'activité
  * @param {L.Marker} marker - Marker Leaflet
  */
+/**
+ * Affiche le panel activité avec le contenu HTML fourni
+ * @param {string} html - Contenu HTML à injecter
+ * @param {number} activityId - ID de l'activité affichée
+ */
+function showActivityPanel(html, activityId) {
+    const panel   = document.getElementById('activity-panel');
+    const content = document.getElementById('panel-content');
+    if (!panel || !content) return;
+
+    content.innerHTML = html;
+    currentPanelActivityId = activityId;
+
+    // Remettre en état compact à chaque nouvelle ouverture
+    panel.classList.remove('panel-expanded');
+    panel.classList.add('panel-open');
+}
+
+/**
+ * Cache le panel activité
+ */
+function hideActivityPanel() {
+    const panel = document.getElementById('activity-panel');
+    if (!panel) return;
+    panel.classList.remove('panel-open', 'panel-expanded');
+    currentPanelActivityId = null;
+}
+
+/**
+ * Initialise le drag handle du panel (toggle compact ↔ étendu)
+ */
+function initActivityPanel() {
+    const panel  = document.getElementById('activity-panel');
+    const handle = document.getElementById('panel-drag-handle');
+    const close  = document.getElementById('panel-close');
+    if (!panel) return;
+
+    // Bouton fermer
+    close?.addEventListener('click', hideActivityPanel);
+
+    if (!handle) return;
+
+    // ── Touch drag : glisser vers le haut pour étendre, vers le bas pour fermer ──
+    let touchStartY = 0;
+    let startExpanded = false;
+
+    handle.addEventListener('touchstart', (e) => {
+        touchStartY = e.touches[0].clientY;
+        startExpanded = panel.classList.contains('panel-expanded');
+    }, { passive: true });
+
+    handle.addEventListener('touchend', (e) => {
+        const delta = touchStartY - e.changedTouches[0].clientY; // positif = glisse vers le haut
+        if (delta > 40) {
+            panel.classList.add('panel-expanded');
+        } else if (delta < -40) {
+            if (startExpanded) {
+                panel.classList.remove('panel-expanded');
+            } else {
+                hideActivityPanel();
+            }
+        }
+    }, { passive: true });
+
+    // Clic sur le handle = toggle compact / étendu (fallback desktop & tap rapide)
+    handle.addEventListener('click', () => {
+        panel.classList.toggle('panel-expanded');
+    });
+}
+
 async function loadAndShowActivityDetails(activityId, marker) {
     try {
-        console.log(`📄 Ouverture popup activité #${activityId}`);
-        
-        // Si le popup est déjà ouvert, ne rien faire
-        if (marker.isPopupOpen()) {
-            console.log('✋ Popup déjà ouvert, on ne fait rien');
+        console.log(`📄 Ouverture fiche activité #${activityId}`);
+
+        // Si la fiche de cette activité est déjà ouverte, ne rien faire
+        if (currentPanelActivityId === activityId) {
+            console.log('✋ Fiche déjà ouverte, on ne fait rien');
             return;
         }
-        
-        // Vérifier si le popup existe déjà
-        const existingPopup = marker.getPopup();
-        console.log(`🔍 Popup existant: ${existingPopup ? 'OUI' : 'NON'}`);
-        
-        // Créer ou récupérer le popup
-        if (!existingPopup) {
-            console.log('🆕 Création nouveau popup');
-            const loadingPopup = L.popup()
-                .setContent('<div class="popup-loading"><i class="fas fa-spinner fa-spin popup-loading-spinner"></i><p class="popup-loading-text">Chargement...</p></div>');
-            marker.bindPopup(loadingPopup);
-        } else {
-            console.log('♻️ Réutilisation popup existant');
-            marker.setPopupContent('<div class="popup-loading"><i class="fas fa-spinner fa-spin popup-loading-spinner"></i><p class="popup-loading-text">Chargement...</p></div>');
-        }
-        
-        // IMPORTANT: Toujours ouvrir le popup
-        marker.openPopup();
-        console.log('👁️ Popup ouvert');
-        
+
+        // Afficher le loader dans le panel
+        showActivityPanel('<div class="popup-loading"><i class="fas fa-spinner fa-spin popup-loading-spinner"></i><p class="popup-loading-text">Chargement…</p></div>', activityId);
+
         // Charger les détails depuis l'API
         const details = await getActivityDetails(activityId);
-        
+
         if (!details) {
             console.error(`❌ Impossible de charger #${activityId}`);
-            marker.setPopupContent('<div class="popup-error">Erreur lors du chargement</div>');
+            showActivityPanel('<div class="popup-error">Erreur lors du chargement</div>', activityId);
             return;
         }
-        
-        console.log(`✅ Popup #${activityId} prêt`);
-        
-        // Créer le contenu du popup avec les détails
-        const popupContent = createPopupContent(details);
-        
-        // Mettre à jour le popup avec le contenu complet
-        marker.setPopupContent(popupContent);
-        
-        // Vérifier si le popup est toujours ouvert
-        if (!marker.isPopupOpen()) {
-            console.warn('⚠️ Popup fermé, réouverture...');
-            marker.openPopup();
-        }
-        
-        // Configurer les événements des boutons
-        setTimeout(() => {
-            setupPopupEventListeners(details);
-        }, 10);
 
-        // Enrichissement asynchrone depuis Wikidata (image + texte) — fire & forget
+        console.log(`✅ Fiche #${activityId} prête`);
+
+        // Rendre le contenu complet dans le panel
+        showActivityPanel(createPopupContent(details), activityId);
+
+        // Configurer les événements des boutons
+        setTimeout(() => setupPopupEventListeners(details), 10);
+
+        // Enrichissement asynchrone Wikidata — fire & forget
         enrichPopupAsync(details.id, details);
-        
+
     } catch (error) {
-        console.error(`❌ Erreur popup #${activityId}:`, error);
-        if (marker.getPopup()) {
-            marker.setPopupContent('<div class="popup-error">Erreur lors du chargement</div>');
-        }
+        console.error(`❌ Erreur fiche #${activityId}:`, error);
+        showActivityPanel('<div class="popup-error">Erreur lors du chargement</div>', activityId);
     }
 }
 
@@ -1173,10 +1251,10 @@ async function handleDeepLink() {
         activityPool.set(activityId, { activity, marker });
     }
 
-    // Centrer la carte avec offset pour que le popup soit visible
+    // Centrer la carte : marker dans la zone visible optimale (haut sur mobile)
     const zoom = Math.max(map.getZoom(), 15);
     const markerPoint = map.project([details.lat, details.lng], zoom);
-    const offsetLatLng = map.unproject(markerPoint.subtract([0, 150]), zoom);
+    const offsetLatLng = map.unproject(markerPoint.add([0, computeMarkerOffset()]), zoom);
     map.setView(offsetLatLng, zoom);
 
     await loadAndShowActivityDetails(activityId, marker);
@@ -1246,11 +1324,10 @@ async function showFavoritesSidebar() {
                 
                 hideFavoritesSidebar();
                 
-                // Centrer la carte en décalant vers le bas pour que le popup soit centré
+                // Centrer la carte : marker dans la zone visible optimale (haut sur mobile)
                 const zoom = Math.max(map.getZoom(), 15);
-                // Le popup s'affiche ~150px au-dessus du marker → on décale le centre vers le nord
                 const markerPoint = map.project([lat, lng], zoom);
-                const offsetLatLng = map.unproject(markerPoint.subtract([0, 150]), zoom);
+                const offsetLatLng = map.unproject(markerPoint.add([0, computeMarkerOffset()]), zoom);
                 map.setView(offsetLatLng, zoom);
                 
                 // Chercher le marker dans le pool
@@ -1387,7 +1464,7 @@ async function centerOnSearchResults(results) {
         const activity = results[0];
         const zoom = Math.max(map.getZoom(), 15);
         const markerPoint = map.project([activity.lat, activity.lng], zoom);
-        const offsetLatLng = map.unproject(markerPoint.subtract([0, 150]), zoom);
+        const offsetLatLng = map.unproject(markerPoint.add([0, computeMarkerOffset()]), zoom);
         map.setView(offsetLatLng, zoom);
 
         const entry = searchMarkers.find(e =>
@@ -1407,12 +1484,33 @@ async function centerOnSearchResults(results) {
 }
 
 /**
+ * Bloque le zoom natif du navigateur (pinch, double-tap) et tout scroll
+ * de page hors de la carte Leaflet. Recentre immédiatement si le scroll
+ * s'échappe (comportement type CityMapper).
+ */
+function lockViewport() {
+    // Empêche le pinch-to-zoom multi-touch
+    document.addEventListener('touchstart', (e) => {
+        if (e.touches.length > 1) e.preventDefault();
+    }, { passive: false });
+
+    // Empêche les gestes Safari (gesturestart / gesturechange)
+    document.addEventListener('gesturestart',  (e) => e.preventDefault(), { passive: false });
+    document.addEventListener('gesturechange', (e) => e.preventDefault(), { passive: false });
+
+    // Si le scroll s'échappe malgré tout, on recentre immédiatement
+    window.addEventListener('scroll', () => window.scrollTo(0, 0), { passive: true });
+}
+
+/**
  * Initialisation de l'application au chargement de la page
  */
 document.addEventListener('DOMContentLoaded', () => {
     checkStorageVersion();
+    lockViewport();
     initMap();
     initStylePicker();
+    initActivityPanel();
     handleDeepLink();
     
     // Timestamp pour éviter la fermeture immédiate sur mobile (stopPropagation peu fiable sur iOS)
@@ -1458,6 +1556,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 searchActivities(e.target.value);
             }
         });
+
     }
     
     // Fermer la sidebar en cliquant/touchant en dehors
@@ -1483,21 +1582,18 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Échap → fermer popup ou sidebar (dans cet ordre de priorité)
+        // Échap → fermer fiche, puis sidebar, puis recherche (ordre de priorité)
         if (e.key === 'Escape') {
-            // Fermer un popup Leaflet ouvert
-            if (map) {
-                map.closePopup();
-            }
-            // Fermer la sidebar si ouverte
-            const sidebarEl = document.getElementById('favoritesSidebar');
-            if (sidebarEl?.dataset.open === 'true') {
-                hideFavoritesSidebar();
-            }
-            // Vider la recherche si active
-            if (isSearchMode && searchInput) {
-                searchInput.value = '';
-                exitSearchMode();
+            if (currentPanelActivityId !== null) {
+                hideActivityPanel();
+            } else {
+                const sidebarEl = document.getElementById('favoritesSidebar');
+                if (sidebarEl?.dataset.open === 'true') {
+                    hideFavoritesSidebar();
+                } else if (isSearchMode && searchInput) {
+                    searchInput.value = '';
+                    exitSearchMode();
+                }
             }
             return;
         }

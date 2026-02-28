@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>BeOut - Découvrez Paris</title>
 
     <!-- Leaflet CSS -->
@@ -55,6 +55,17 @@
     <div id="map-loader">
         <div class="map-loader-spinner"></div>
         <span>Chargement…</span>
+    </div>
+
+    <!-- Fiche activité (bottom sheet mobile / panneau gauche desktop) -->
+    <div id="activity-panel">
+        <div id="panel-drag-handle"></div>
+        <button id="panel-close" aria-label="Fermer">
+            <i class="fas fa-times"></i>
+        </button>
+        <div id="panel-content">
+            <!-- rempli dynamiquement -->
+        </div>
     </div>
 
     <!-- Sidebar favoris -->

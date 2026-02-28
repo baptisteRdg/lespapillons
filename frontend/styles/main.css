@@ -370,14 +370,21 @@ header {
 
 /* ===== SÉLECTEUR DE STYLE DE CARTE ===== */
 #style-picker {
-    position: absolute;
-    bottom: 28px;
+    position: fixed;
+    top: calc(var(--header-h, 60px) + 10px);
     right: 16px;
     z-index: 1000;
     display: flex;
     flex-direction: column;
     align-items: flex-end;
     gap: 8px;
+    /* Ne pas bloquer les clics sur la carte quand le panel est fermé */
+    pointer-events: none;
+}
+
+#style-picker-toggle,
+#style-picker-panel.open {
+    pointer-events: auto;
 }
 
 #style-picker-toggle {
@@ -415,11 +422,11 @@ header {
     flex-direction: column;
     gap: 4px;
     min-width: 140px;
-    /* Masqué par défaut */
+    /* Masqué par défaut — s'ouvre vers le bas */
     opacity: 0;
     pointer-events: none;
-    transform: translateY(8px) scale(0.97);
-    transform-origin: bottom right;
+    transform: translateY(-8px) scale(0.97);
+    transform-origin: top right;
     transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
@@ -574,25 +581,129 @@ header {
 .resize-handle:active .resize-handle-inner { background: #4b5563; }
 .resize-handle:active .resize-handle-inner::before { color: #111827; }
 
-/* ===== POPUPS LEAFLET ===== */
+/* ===== LEAFLET ===== */
 .leaflet-control-attribution,
 .leaflet-control-zoom { display: none !important; }
 
-.leaflet-popup-content-wrapper {
-    border-radius: 12px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
-    background: rgba(255, 255, 255, 0.96) !important;
-    border: 1px solid rgba(255, 255, 255, 0.3);
+/* ===== ACTIVITY PANEL — bottom sheet mobile / side panel desktop ===== */
+#activity-panel {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 2000;
+    background: #fff;
+    border-radius: 16px 16px 0 0;
+    box-shadow: 0 -4px 32px rgba(0, 0, 0, 0.14);
+    height: 38vh;
+    display: flex;
+    flex-direction: column;
+    transform: translateY(102%);
+    transition: transform 0.38s cubic-bezier(0.32, 0.72, 0, 1),
+                height 0.28s ease;
+    overflow: hidden;
+    will-change: transform;
 }
 
-.leaflet-popup-tip {
-    background: rgba(255, 255, 255, 0.96) !important;
+#activity-panel.panel-open {
+    transform: translateY(0);
 }
 
-.leaflet-popup-content {
-    margin: 0;
-    padding: 0;
-    min-width: 280px;
+#activity-panel.panel-expanded {
+    height: 56vh;
+}
+
+#panel-drag-handle {
+    width: 36px;
+    height: 4px;
+    background: #d1d5db;
+    border-radius: 2px;
+    margin: 10px auto 4px;
+    flex-shrink: 0;
+    cursor: pointer;
+    touch-action: none;
+}
+
+#panel-close {
+    position: absolute;
+    top: 10px;
+    right: 14px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #f3f4f6;
+    border: none;
+    color: #6b7280;
+    font-size: 13px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s;
+    z-index: 10;
+}
+
+#panel-close:hover { background: #e5e7eb; }
+
+#panel-content {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Le contenu du panel prend toujours toute la largeur disponible */
+#panel-content .popup-content {
+    width: 100%;
+    max-width: none;
+    box-sizing: border-box;
+}
+
+#panel-content .popup-header,
+#panel-content .popup-body,
+#panel-content .popup-footer {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Image de la fiche : hauteur réduite */
+#panel-content .popup-header {
+    min-height: 72px;
+    padding: 0.65rem 1rem;
+}
+
+#panel-content .popup-header.has-image {
+    min-height: 100px;
+    max-height: 100px;
+    overflow: hidden;
+}
+
+/* Sur desktop → panneau latéral gauche */
+@media (min-width: 768px) {
+    #activity-panel {
+        top: 64px; /* hauteur du header */
+        bottom: 0;
+        left: 0;
+        right: auto;
+        width: 380px;
+        height: auto;
+        border-radius: 0;
+        box-shadow: 4px 0 24px rgba(0, 0, 0, 0.10);
+        transform: translateX(-100%);
+        transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+    }
+
+    #activity-panel.panel-open  { transform: translateX(0); }
+    #activity-panel.panel-expanded { height: auto; } /* pas de snap sur desktop */
+
+    #panel-drag-handle { display: none; }
+
+    /* Le popup-header n'a plus de coins arrondis sur desktop */
+    #activity-panel .popup-header { border-radius: 0; }
+}
+
+/* Ajustement du popup-header à l'intérieur du panel */
+#activity-panel .popup-header {
+    border-radius: 0;
 }
 
 /* ===== POPUP LOADING / ERREUR ===== */
@@ -770,14 +881,16 @@ header {
 
 /* ===== RESPONSIVE MOBILE ===== */
 @media (max-width: 640px) {
-    /* Header : logo sur ligne 1, recherche + favoris sur ligne 2 */
+    /* Header : tout sur une seule ligne */
     .header-container {
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
         gap: 0.5rem;
-        padding: 0.6rem 1rem;
+        padding: 0.55rem 0.75rem;
     }
 
-    .header-logo { flex: 0 0 100%; }
+    .header-logo {
+        flex-shrink: 0;
+    }
 
     .header-search {
         flex: 1;
@@ -785,7 +898,8 @@ header {
         max-width: none;
     }
 
-    .search-input { font-size: 14px; }
+    /* 16px minimum pour éviter le zoom automatique iOS sur focus */
+    .search-input { font-size: 16px; }
 
     .hide-mobile { display: none; }
 
@@ -807,7 +921,8 @@ header {
         max-width: calc(100vw - 4rem) !important;
     }
 
-    .popup-content { max-width: 280px; }
+    /* max-width uniquement pour le popup Leaflet flottant, pas pour le panel plein écran */
+    .leaflet-popup .popup-content { max-width: 280px; }
     .popup-title   { font-size: 1.125rem; }
 
     .popup-footer {
