@@ -21,9 +21,12 @@
   "author": "Baptiste Rodrigues",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.18.2",
-    "cors": "^2.8.5",
     "@prisma/client": "^5.20.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.3.1",
+    "express": "^4.18.2",
+    "firebase-admin": "^13.7.0",
+    "jsonwebtoken": "^9.0.3",
     "swagger-ui-express": "^5.0.0"
   },
   "devDependencies": {

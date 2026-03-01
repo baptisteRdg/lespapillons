@@ -1018,26 +1018,58 @@ function escapeHtml(str) {
         .replace(/'/g, '&#039;');
 }
 
+/**
+ * Retourne le HTML du badge de note moyenne (coloré selon la valeur)
+ * @param {number|null} avg
+ * @param {number} total
+ */
+function _ratingBadgeHtml(avg, total) {
+    if (!avg || total === 0) return '';
+    const cls = avg >= 4 ? 'rating-badge-green' : avg >= 3 ? 'rating-badge-orange' : 'rating-badge-red';
+    return `<span class="rating-badge ${cls}" title="${total} avis">★ ${avg}</span>`;
+}
+
+/**
+ * Retourne le HTML de la section notation (5 boutons rectangulaires)
+ * @param {number|null} userRating — note actuelle de l'utilisateur (ou null)
+ * @param {number} activityId
+ */
+function _ratingBarHtml(userRating, activityId) {
+    const LABELS = [
+        { v: 1, label: 'Déconseille', cls: 'rating-btn-1' },
+        { v: 2, label: 'Pas fan',     cls: 'rating-btn-2' },
+        { v: 3, label: 'Normal',      cls: 'rating-btn-3' },
+        { v: 4, label: 'Bien',        cls: 'rating-btn-4' },
+        { v: 5, label: 'Recommande',  cls: 'rating-btn-5' }
+    ];
+    const buttons = LABELS.map(({ v, label, cls }) => {
+        const active = userRating === v ? ' rating-btn-active' : '';
+        return `<button class="rating-btn ${cls}${active}" data-action="rate" data-id="${activityId}" data-value="${v}">${label}</button>`;
+    }).join('');
+    return `<div class="rating-bar" id="rating-bar-${activityId}">${buttons}</div>`;
+}
+
 function createPopupContent(activity) {
     const isFavorite = isActivityFavorite(activity.id);
     const favoriteClass = isFavorite ? 'active' : '';
-    const favoriteIcon = isFavorite ? 'fa-solid' : 'fa-regular';
+    const favoriteIcon  = isFavorite ? 'fa-solid' : 'fa-regular';
     
-    // Nettoyer le nom de catégorie pour créer une classe CSS valide
     const categoryClass = (activity.category || 'autre')
         .toLowerCase()
         .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '') // Retirer les accents
-        .replace(/\s+/g, '-'); // Remplacer les espaces par des tirets
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/\s+/g, '-');
     
     const safeTitle    = escapeHtml(activity.title);
     const safeCategory = escapeHtml(activity.category || 'Autre');
     const safeAddress  = escapeHtml(activity.address || '');
     const safeDesc     = escapeHtml(activity.description || '');
     const safePhone    = escapeHtml(activity.phone || '');
-    // website : on vérifie que c'est bien une URL http(s) avant de l'utiliser
     const safeWebsite  = activity.website && /^https?:\/\//i.test(activity.website)
         ? escapeHtml(activity.website) : '';
+
+    // Badge note moyenne (sera rechargé de façon async après)
+    const avgBadge = _ratingBadgeHtml(activity.avgRating, activity.totalRatings || 0);
 
     return `
         <div class="popup-content">
@@ -1045,7 +1077,10 @@ function createPopupContent(activity) {
                 <img class="popup-header-img" id="popup-header-img-${activity.id}" alt="" aria-hidden="true">
                 <div class="popup-header-text">
                     <h3 class="popup-title">${safeTitle}</h3>
-                    <span class="category-badge category-${categoryClass}">${safeCategory}</span>
+                    <div class="popup-header-meta">
+                        <span class="category-badge category-${categoryClass}">${safeCategory}</span>
+                        <span id="rating-avg-badge-${activity.id}">${avgBadge}</span>
+                    </div>
                 </div>
             </div>
 
@@ -1068,6 +1103,11 @@ function createPopupContent(activity) {
                         <span>${safePhone}</span>
                     </a>
                 </div>
+            </div>
+
+            <!-- Notation -->
+            <div class="rating-section">
+                ${_ratingBarHtml(null, activity.id)}
             </div>
 
             <div class="popup-footer">
@@ -1111,7 +1151,6 @@ function setupPopupEventListeners(activity) {
                 lng: activity.lng,
                 type: activity.category
             });
-            // Mettre à jour le bouton sans recharger toute la fiche
             const isFav = isActivityFavorite(activity.id);
             favoriteBtn.classList.toggle('active', isFav);
             favoriteBtn.querySelector('i').className = `${isFav ? 'fa-solid' : 'fa-regular'} fa-heart`;
@@ -1137,6 +1176,89 @@ function setupPopupEventListeners(activity) {
     if (shareBtn) {
         shareBtn.addEventListener('click', () => shareActivity(activity.id, activity.title));
     }
+
+    // Boutons notation
+    document.querySelectorAll(`[data-action="rate"][data-id="${activity.id}"]`).forEach(btn => {
+        btn.addEventListener('click', () => {
+            const value = parseInt(btn.dataset.value);
+            onAuthRequired(() => submitRating(activity.id, value));
+        });
+    });
+
+    // Charger la note actuelle de l'utilisateur en async
+    loadUserRating(activity.id);
+}
+
+/**
+ * Charge la note de l'utilisateur pour une activité et met à jour l'UI
+ */
+async function loadUserRating(activityId) {
+    try {
+        const token  = typeof getAuthToken === 'function' ? getAuthToken() : null;
+        const headers = token ? { Authorization: `Bearer ${token}` } : {};
+        const res    = await fetch(`${API_BASE_URL}/ratings/activity/${activityId}`, { headers });
+        if (!res.ok) return;
+        const data = await res.json();
+
+        // Mettre à jour le badge de note moyenne
+        if (data.average) {
+            const badgeEl = document.getElementById(`rating-avg-badge-${activityId}`);
+            if (badgeEl) {
+                const cls = data.average >= 4 ? 'rating-badge-green' : data.average >= 3 ? 'rating-badge-orange' : 'rating-badge-red';
+                badgeEl.innerHTML = `<span class="rating-badge ${cls}" title="${data.totalVotes} avis">★ ${data.average}</span>`;
+            }
+        }
+
+        // Marquer le bouton actif selon la note de l'utilisateur
+        if (data.userRating) {
+            _updateRatingBar(activityId, data.userRating);
+        }
+    } catch {}
+}
+
+/**
+ * Envoie une note au serveur et met à jour l'UI
+ */
+async function submitRating(activityId, value) {
+    try {
+        const token = typeof getAuthToken === 'function' ? getAuthToken() : null;
+        if (!token) return;
+
+        const res  = await fetch(`${API_BASE_URL}/ratings`, {
+            method:  'POST',
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+            body:    JSON.stringify({ activityId, value })
+        });
+        const data = await res.json();
+        if (!data.success) { showToast(data.message || 'Erreur', 'error'); return; }
+
+        _updateRatingBar(activityId, value);
+
+        // Mettre à jour le badge moyenne
+        if (data.average) {
+            const badgeEl = document.getElementById(`rating-avg-badge-${activityId}`);
+            if (badgeEl) {
+                const cls = data.average >= 4 ? 'rating-badge-green' : data.average >= 3 ? 'rating-badge-orange' : 'rating-badge-red';
+                badgeEl.innerHTML = `<span class="rating-badge ${cls}" title="${data.totalVotes} avis">★ ${data.average}</span>`;
+            }
+        }
+
+        const LABELS = ['', 'Déconseille', 'Pas fan', 'Normal', 'Bien', 'Recommande'];
+        showToast(`Note : ${LABELS[value]}`, 'success');
+    } catch {
+        showToast('Erreur réseau', 'error');
+    }
+}
+
+/**
+ * Met à jour visuellement la barre de notation
+ */
+function _updateRatingBar(activityId, selectedValue) {
+    const bar = document.getElementById(`rating-bar-${activityId}`);
+    if (!bar) return;
+    bar.querySelectorAll('.rating-btn').forEach(btn => {
+        btn.classList.toggle('rating-btn-active', parseInt(btn.dataset.value) === selectedValue);
+    });
 }
 
 /**
