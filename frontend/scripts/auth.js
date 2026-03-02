@@ -238,6 +238,8 @@ async function verifyOtp(code) {
 function showLoginPopup() {
     const popup = document.getElementById('login-popup');
     if (!popup) return;
+    // Bloquer le scroll du body pour éviter le décalage du header au clavier
+    document.body.style.overflow = 'hidden';
     popup.classList.add('open');
     // Réinitialiser l'état
     _showLoginStep('phone');
@@ -249,6 +251,9 @@ function hideLoginPopup() {
     popup?.classList.remove('open');
     const modal = popup?.querySelector('.login-modal');
     if (modal) modal.style.transform = '';
+    // Restaurer le scroll et remettre la page en haut
+    document.body.style.overflow = '';
+    window.scrollTo(0, 0);
     _pendingAuthCallback = null;
 }
 
