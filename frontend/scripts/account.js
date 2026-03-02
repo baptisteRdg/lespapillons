@@ -33,27 +33,11 @@ async function _loadAccountData() {
     ]);
 }
 
-/**
- * Résout l'URL d'un avatar local (/uploads/...) en préfixant l'hôte backend
- * quand le frontend tourne sur un port différent (dev).
- * En prod (même domaine), aucun préfixe n'est nécessaire.
- */
-function _resolveAvatarUrl(url) {
-    if (!url) return null;
-    if (url.startsWith('/uploads/')) {
-        // En dev le frontend est sur :8080, le backend sur :3000
-        const isLocalDev = window.location.hostname === 'localhost' ||
-                           window.location.hostname === '127.0.0.1';
-        return isLocalDev ? `http://localhost:3000${url}` : url;
-    }
-    return url; // URL externe ou déjà absolue
-}
-
 function _renderProfile(user) {
-    // Avatar
+    // Avatar — resolveAvatarUrl est défini dans api.js (chargé avant account.js)
     const avatarEl = document.getElementById('account-avatar-display');
     if (avatarEl) {
-        const avatarUrl = _resolveAvatarUrl(user.avatar);
+        const avatarUrl = resolveAvatarUrl(user.avatar);
         if (avatarUrl) {
             avatarEl.innerHTML = `<img src="${avatarUrl}" alt="Avatar" class="account-avatar-img">`;
         } else {
@@ -339,6 +323,14 @@ function _resetAvatarPreview() {
     if (fileInput) fileInput.value = '';
 }
 
+/** Détecte le MIME d'un fichier : priorité à file.type, fallback sur l'extension */
+function _detectMime(file) {
+    if (file.type) return file.type.toLowerCase();
+    const ext = file.name.split('.').pop().toLowerCase();
+    const map = { jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', webp: 'image/webp', gif: 'image/gif' };
+    return map[ext] || '';
+}
+
 function _onAvatarFileSelected(file) {
     if (!file) return;
 
@@ -348,9 +340,10 @@ function _onAvatarFileSelected(file) {
         return;
     }
 
-    // Vérification type côté client
-    const allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
-    if (!allowed.includes(file.type)) {
+    // Vérification type — par MIME déclaré ou par extension (cas Windows/.PNG)
+    const allowed = new Set(['image/jpeg', 'image/jpg', 'image/png', 'image/x-png', 'image/webp', 'image/gif']);
+    const mime = _detectMime(file);
+    if (!allowed.has(mime)) {
         showToast('Format non accepté. Utilise JPEG, PNG, WebP ou GIF', 'error');
         return;
     }

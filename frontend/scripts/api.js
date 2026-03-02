@@ -20,6 +20,22 @@ const API_BASE_URL = getApiBaseUrl();
 console.log('🌐 API URL:', API_BASE_URL);
 
 /**
+ * Résout l'URL d'un avatar local (/uploads/...) en préfixant l'hôte backend
+ * quand le frontend tourne sur un port différent du backend (développement).
+ * En production (même domaine, Nginx proxy /uploads), aucun préfixe.
+ * Utilisé par auth.js ET account.js — doit être dans api.js (chargé en premier).
+ */
+function resolveAvatarUrl(url) {
+    if (!url) return null;
+    if (url.startsWith('/uploads/')) {
+        const isLocalDev = window.location.hostname === 'localhost' ||
+                           window.location.hostname === '127.0.0.1';
+        return isLocalDev ? `http://localhost:3000${url}` : url;
+    }
+    return url; // URL externe ou déjà absolue
+}
+
+/**
  * Calcule la distance entre deux points géographiques (formule de Haversine)
  * @param {number} lat1 - Latitude du point 1
  * @param {number} lng1 - Longitude du point 1

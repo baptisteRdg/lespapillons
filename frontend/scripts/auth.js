@@ -340,8 +340,9 @@ function _updateAccountButton() {
     const btn = document.getElementById('accountBtn');
     if (!btn) return;
 
-    if (_currentUser?.avatar) {
-        btn.innerHTML = `<img src="${_currentUser.avatar}" alt="Profil" class="account-avatar-img">`;
+    const avatarUrl = typeof resolveAvatarUrl === 'function' ? resolveAvatarUrl(_currentUser?.avatar) : _currentUser?.avatar;
+    if (avatarUrl) {
+        btn.innerHTML = `<img src="${avatarUrl}" alt="Profil" class="account-avatar-img">`;
     } else if (_currentUser) {
         // Initiales du pseudo
         const initials = _currentUser.pseudo.slice(0, 2).toUpperCase();
