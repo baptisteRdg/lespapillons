@@ -3,7 +3,7 @@
  */
 
 // Version du localStorage — à incrémenter lors d'un changement de DB ou de format de données
-const STORAGE_VERSION = '1';
+const STORAGE_VERSION = '2';
 
 /**
  * Vérifie la version du localStorage et purge les données si obsolètes
@@ -14,6 +14,7 @@ function checkStorageVersion() {
         console.warn(`🗑️ LocalStorage obsolète (v${stored} → v${STORAGE_VERSION}), purge...`);
         localStorage.removeItem('favorites');
         localStorage.removeItem('user_position');
+        localStorage.removeItem('map_style');
         localStorage.setItem('storage_version', STORAGE_VERSION);
     }
 }
