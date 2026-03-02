@@ -264,7 +264,7 @@ header {
     top: calc(var(--header-h, 60px) + 0.75rem);
     left: 50%;
     transform: translateX(-50%) translateY(-8rem);
-    z-index: 9999;
+    z-index: 800;
     color: white;
     padding: 0.75rem 1.5rem;
     border-radius: 0.5rem;
