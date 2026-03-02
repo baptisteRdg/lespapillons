@@ -136,7 +136,7 @@ async function sendOtp(phone) {
 
     if (!_firebaseAuth) {
         console.error('❌ [sendOtp] Firebase Auth non initialisé');
-        throw new Error('Firebase non initialisé');
+        throw new Error('Service d\'authentification indisponible. Vérifiez votre connexion.');
     }
     console.log('✅ [sendOtp] Firebase Auth OK');
 
@@ -160,7 +160,14 @@ async function sendOtp(phone) {
         console.log('✅ [sendOtp] SMS envoyé avec succès à', phone, '— confirmationResult :', _confirmationResult);
     } catch (err) {
         console.error('❌ [sendOtp] Échec envoi SMS :', err.code, err.message);
-        throw err;
+        const messages = {
+            'auth/too-many-requests':     'Trop de tentatives. Réessayez plus tard.',
+            'auth/invalid-phone-number':  'Numéro de téléphone invalide.',
+            'auth/quota-exceeded':        'Quota SMS dépassé. Réessayez plus tard.',
+            'auth/captcha-check-failed':  'Vérification reCAPTCHA échouée. Rechargez la page.',
+            'auth/network-request-failed':'Erreur réseau. Vérifiez votre connexion.'
+        };
+        throw new Error(messages[err.code] || err.message || 'Erreur lors de l\'envoi du SMS');
     }
 }
 
@@ -309,7 +316,9 @@ function initLoginPopup() {
         }
 
         if (!/^\+[0-9]{8,15}$/.test(phone.replace(/\s/g, ''))) {
-            _setLoginError('Numéro invalide. Format : +33 6 XX XX XX XX ou 06 XX XX XX XX');
+            const msg = 'Numéro invalide. Format : 06 XX XX XX XX';
+            _setLoginError(msg);
+            if (typeof showToast === 'function') showToast(msg, 'error');
             return;
         }
 
@@ -321,7 +330,9 @@ function initLoginPopup() {
             _showLoginStep('otp');
             document.getElementById('login-otp-input')?.focus();
         } catch (err) {
-            _setLoginError(err.message || 'Erreur lors de l\'envoi du SMS');
+            const msg = err.message || 'Erreur lors de l\'envoi du SMS';
+            _setLoginError(msg);
+            if (typeof showToast === 'function') showToast(msg, 'error');
         } finally {
             _setLoginLoading(btn, false);
         }
@@ -343,7 +354,9 @@ function initLoginPopup() {
         try {
             await verifyOtp(code);
         } catch (err) {
-            _setLoginError(err.message || 'Code incorrect ou expiré');
+            const msg = err.message || 'Code incorrect ou expiré';
+            _setLoginError(msg);
+            if (typeof showToast === 'function') showToast(msg, 'error');
             _setLoginLoading(btn, false);
         }
     });

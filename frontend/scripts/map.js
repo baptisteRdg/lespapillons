@@ -1360,10 +1360,11 @@ function showToast(message, type = 'success') {
     toast.className = `toast-${type}`;
     toastMessage.innerHTML = `<i class="fas ${icons[type]}"></i>${message}`;
 
-    toast.style.transform = 'translateY(0)';
+    toast.style.transform = 'translateX(-50%) translateY(0)';
 
-    setTimeout(() => {
-        toast.style.transform = 'translateY(200px)';
+    clearTimeout(toast._hideTimer);
+    toast._hideTimer = setTimeout(() => {
+        toast.style.transform = 'translateX(-50%) translateY(-8rem)';
     }, 3000);
 }
 

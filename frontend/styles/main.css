@@ -261,19 +261,20 @@ header {
 /* ===== TOAST ===== */
 #toast {
     position: fixed;
-    bottom: 2rem;
-    right: 2rem;
-    z-index: 1001;
+    top: calc(var(--header-h, 60px) + 0.75rem);
+    left: 50%;
+    transform: translateX(-50%) translateY(-8rem);
+    z-index: 9999;
     color: white;
     padding: 0.75rem 1.5rem;
     border-radius: 0.5rem;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-    transform: translateY(8rem);
     transition: transform 0.3s;
     display: flex;
     align-items: center;
     gap: 0.5rem;
     background-color: var(--color-success);
+    max-width: calc(100vw - 2rem);
 }
 
 #toast.toast-success { background-color: var(--color-success); }
