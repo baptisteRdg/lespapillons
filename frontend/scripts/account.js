@@ -327,8 +327,8 @@ function _onAvatarFileSelected(file) {
     if (!file) return;
 
     // Seule vérification côté client : la taille (Sharp validera le vrai type côté serveur)
-    if (file.size > 5 * 1024 * 1024) {
-        showToast('Image trop volumineuse (max 5 Mo)', 'error');
+    if (file.size > 8 * 1024 * 1024) {
+        showToast('Image trop volumineuse (max 8 Mo)', 'error');
         return;
     }
 

@@ -277,6 +277,32 @@ function initLoginPopup() {
         const btn        = document.getElementById('login-send-btn');
         let   phone      = phoneInput?.value?.trim() || '';
 
+        // ── Mode test : taper "490" connecte directement sans Firebase ────
+        if (phone === '490') {
+            _setLoginLoading(btn, true);
+            document.getElementById('login-error')?.classList.add('hidden');
+            try {
+                const res = await fetch(`${getApiBaseUrl()}/auth/login`, {
+                    method:  'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body:    JSON.stringify({ testCode: '490' })
+                });
+                const data = await res.json();
+                if (!data.success) throw new Error(data.message);
+                localStorage.setItem('auth_token', data.token);
+                _currentUser = data.user;
+                _updateAccountButton();
+                hideLoginPopup();
+                showToast(`Connecté (test) : ${_currentUser.pseudo}`, 'success');
+                if (_pendingAuthCallback) { const cb = _pendingAuthCallback; _pendingAuthCallback = null; cb(); }
+            } catch (err) {
+                _setLoginError(err.message || 'Erreur connexion test');
+            } finally {
+                _setLoginLoading(btn, false);
+            }
+            return;
+        }
+
         // Normalisation basique du numéro français
         if (/^0[0-9]{9}$/.test(phone.replace(/\s/g, ''))) {
             phone = '+33' + phone.replace(/\s/g, '').slice(1);

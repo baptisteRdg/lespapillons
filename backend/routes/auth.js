@@ -30,21 +30,30 @@ async function generateDefaultPseudo() {
  */
 router.post('/login', async (req, res) => {
     try {
-        const { firebaseToken } = req.body;
-        if (!firebaseToken) {
-            return res.status(400).json({ success: false, message: 'firebaseToken requis' });
-        }
+        const { firebaseToken, testCode } = req.body;
 
-        // 1. Vérifier le token Firebase → extraire le numéro de téléphone
-        let firebaseUser;
-        try {
-            firebaseUser = await verifyFirebaseToken(firebaseToken);
-        } catch (err) {
-            console.error('❌ Erreur vérification Firebase:', err.message);
-            return res.status(401).json({ success: false, message: 'Token Firebase invalide : ' + err.message });
-        }
+        let phone;
 
-        const { phone_number: phone } = firebaseUser;
+        // ── Mode test : code 490 bypass Firebase ──────────────────────────
+        if (testCode === '490') {
+            phone = '+33000000490';
+            console.log('🧪 Connexion test via code 490');
+        } else {
+            // ── Mode normal : vérification Firebase ───────────────────────
+            if (!firebaseToken) {
+                return res.status(400).json({ success: false, message: 'firebaseToken requis' });
+            }
+
+            let firebaseUser;
+            try {
+                firebaseUser = await verifyFirebaseToken(firebaseToken);
+            } catch (err) {
+                console.error('❌ Erreur vérification Firebase:', err.message);
+                return res.status(401).json({ success: false, message: 'Token Firebase invalide : ' + err.message });
+            }
+
+            phone = firebaseUser.phone_number;
+        }
 
         // 2. Créer ou retrouver l'utilisateur dans la DB
         let isNewUser = false;

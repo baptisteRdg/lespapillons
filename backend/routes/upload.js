@@ -40,7 +40,7 @@ const ALLOWED_MIMES = new Set([
     'image/webp',
     'image/gif'
 ]);
-const MAX_SIZE_BYTES = 5 * 1024 * 1024; // 5 Mo
+const MAX_SIZE_BYTES = 8 * 1024 * 1024; // 8 Mo
 
 const upload = multer({
     storage: multer.memoryStorage(), // tout en RAM, rien sur le disque avant validation
