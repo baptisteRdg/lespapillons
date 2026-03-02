@@ -245,7 +245,10 @@ function showLoginPopup() {
 }
 
 function hideLoginPopup() {
-    document.getElementById('login-popup')?.classList.remove('open');
+    const popup = document.getElementById('login-popup');
+    popup?.classList.remove('open');
+    const modal = popup?.querySelector('.login-modal');
+    if (modal) modal.style.transform = '';
     _pendingAuthCallback = null;
 }
 
@@ -274,6 +277,26 @@ function initLoginPopup() {
     document.getElementById('login-popup')?.addEventListener('click', (e) => {
         if (e.target === document.getElementById('login-popup')) hideLoginPopup();
     });
+
+    // Remonter le modal quand le clavier s'ouvre (mobile)
+    if (window.visualViewport) {
+        const _adjustForKeyboard = () => {
+            const popup = document.getElementById('login-popup');
+            if (!popup?.classList.contains('open')) return;
+            const modal = popup.querySelector('.login-modal');
+            if (!modal) return;
+            const keyboardHeight = window.innerHeight - window.visualViewport.height;
+            if (keyboardHeight > 80) {
+                // Remonter le modal pour le garder visible au-dessus du clavier
+                const shift = Math.min(keyboardHeight, window.innerHeight * 0.45);
+                modal.style.transform = `translateY(-${shift}px)`;
+            } else {
+                modal.style.transform = '';
+            }
+        };
+        window.visualViewport.addEventListener('resize', _adjustForKeyboard);
+        window.visualViewport.addEventListener('scroll', _adjustForKeyboard);
+    }
 
     // Fermer avec la croix
     document.getElementById('login-close')?.addEventListener('click', hideLoginPopup);
