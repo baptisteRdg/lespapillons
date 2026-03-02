@@ -66,15 +66,13 @@ function calculateDistance(lat1, lng1, lat2, lng2) {
 }
 
 /**
- * Récupère les activités (version légère) dans un rayon donné
+ * Récupère les activités (version légère) autour d'un point
  * @param {number} centerLat - Latitude du centre
  * @param {number} centerLng - Longitude du centre
- * @param {number} radiusMeters - Rayon en mètres (null = pas de limite)
  * @returns {Promise<Array>} Liste des activités légères
  */
-async function getActivitiesInRadius(centerLat, centerLng, radiusMeters = null) {
+async function getActivitiesInRadius(centerLat, centerLng) {
     try {
-        // Construire l'URL avec les paramètres
         let url = `${API_BASE_URL}/activities`;
         const params = new URLSearchParams();
         
@@ -83,15 +81,11 @@ async function getActivitiesInRadius(centerLat, centerLng, radiusMeters = null) 
             params.append('lng', centerLng);
         }
         
-        if (radiusMeters !== null) {
-            params.append('radius', radiusMeters);
-        }
-        
         if (params.toString()) {
             url += `?${params.toString()}`;
         }
         
-        console.log('🔍 API: Chargement activités', { url, radius: radiusMeters });
+        console.log('🔍 API: Chargement activités', { url });
         
         // Appel API
         const response = await fetch(url);

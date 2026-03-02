@@ -76,15 +76,12 @@ const MAP_CONFIG = {
     zoom: 12,
     minZoom: 3,
     maxZoom: 18,
-    defaultRadiusMeters: 5000, // Rayon par défaut de 5km
-    minRadiusMeters: 500, // Rayon minimum de 500m
-    maxRadiusMeters: 50000 // Rayon maximum de 50km
 };
 
 // Variables globales
 let map;
 let currentTileLayer = null;
-let currentStyleKey = 'papillon';
+let currentStyleKey = 'propre';
 const activityPool = new Map();           // id → { activity, marker }
 const categoryClusterGroups = new Map();  // category → MarkerClusterGroup
 const MAX_POOL = 400;
@@ -94,14 +91,8 @@ let lastLoadedBounds = null;  // Bounds lors du dernier chargement (avec padding
 let lastLoadedZoom = null;    // Zoom lors du dernier chargement
 let viewportLoadTimeout = null; // Debounce du rechargement viewport
 let userMarker;
-let userCircle;
-let resizeHandle;
 let userPosition = MAP_CONFIG.center;
-let currentRadius = MAP_CONFIG.defaultRadiusMeters;
-let circleEnabled = false;
-let isResizingCircle = false;
 let currentPanelActivityId = null; // ID de l'activité actuellement affichée dans le panel
-let radiusTooltip;
 
 /**
  * Initialise la carte Leaflet
@@ -216,11 +207,10 @@ function initMap() {
     }).setView(userPosition, MAP_CONFIG.zoom);
 
     // Appliquer le style sauvegardé (ou papillon par défaut)
-    const savedStyle = localStorage.getItem('map_style') || 'papillon';
+    const savedStyle = localStorage.getItem('map_style') || 'propre';
     setMapStyle(savedStyle, false);
     
     createUserMarker();
-    createRadiusTooltip();
 
     map.on('moveend', () => {
         if (isSearchMode) return;
@@ -257,8 +247,6 @@ function trySetUserPositionFromBrowser() {
             saveUserPosition(lat, lng); // Sauvegarder pour les prochaines visites
             map.setView(userPosition, MAP_CONFIG.zoom);
             userMarker.setLatLng(userPosition);
-            if (userCircle) userCircle.setLatLng(userPosition);
-            if (resizeHandle) updateHandlePosition();
             loadActivitiesInViewport();
         },
         () => {
@@ -270,37 +258,9 @@ function trySetUserPositionFromBrowser() {
 }
 
 /**
- * Crée l'infobulle pour afficher la distance du rayon
- */
-function createRadiusTooltip() {
-    radiusTooltip = L.tooltip({
-        permanent: false,
-        direction: 'top',
-        className: 'radius-tooltip',
-        offset: [0, -10]
-    });
-}
-
-/**
- * Crée le marqueur de position utilisateur avec cercle de rayon
+ * Crée le marqueur de position utilisateur (draggable)
  */
 function createUserMarker() {
-    // Création du cercle de rayon (si activé)
-    if (circleEnabled) {
-        userCircle = L.circle(userPosition, {
-            color: 'rgba(59, 130, 246, 0.4)',
-            fillColor: 'rgba(59, 130, 246, 0.08)',
-            fillOpacity: 1,
-            radius: currentRadius,
-            weight: 2,
-            className: 'user-radius-circle'
-        }).addTo(map);
-        
-        // Créer le handle de redimensionnement
-        createResizeHandle();
-    }
-    
-    // Création du marqueur utilisateur draggable (you.svg, jaune, au-dessus des autres points)
     const userIcon = L.divIcon({
         html: '<div class="user-marker"><img src="assets/icon/you.svg" alt="" class="user-marker-icon"></div>',
         className: 'user-marker-container',
@@ -314,190 +274,18 @@ function createUserMarker() {
         zIndexOffset: 1000
     }).addTo(map);
     
-    // Événement de déplacement du marqueur
     userMarker.on('drag', function(e) {
         const newPos = e.target.getLatLng();
         userPosition = [newPos.lat, newPos.lng];
-        
-        // Mettre à jour la position du cercle ET du handle même si désactivé
-        if (userCircle) {
-            userCircle.setLatLng(newPos);
-        }
-        if (resizeHandle) {
-            updateHandlePosition();
-        }
     });
     
-    // Événement de fin de déplacement du marqueur utilisateur
     userMarker.on('dragend', function(e) {
         const newPos = e.target.getLatLng();
         userPosition = [newPos.lat, newPos.lng];
-        saveUserPosition(newPos.lat, newPos.lng); // Mémoriser la nouvelle position
-    });
-    
-    // Événement de clic sur le marqueur : toggle du cercle
-    userMarker.on('click', toggleCircle);
-}
-
-/**
- * Crée le handle (poignée) de redimensionnement du rayon
- */
-function createResizeHandle() {
-    if (!circleEnabled) return;
-    
-    // Calculer la position du handle (à droite du cercle)
-    const center = L.latLng(userPosition);
-    const handlePos = calculateHandlePosition(center, currentRadius);
-    
-    // Créer le handle avec une icône personnalisée
-    const handleIcon = L.divIcon({
-        html: '<div class="resize-handle"><div class="resize-handle-inner"></div></div>',
-        className: 'resize-handle-container',
-        iconSize: [50, 32],
-        iconAnchor: [25, 16]
-    });
-    
-    resizeHandle = L.marker(handlePos, {
-        icon: handleIcon,
-        draggable: true,
-        zIndexOffset: 3000
-    }).addTo(map);
-    
-    // Désactiver les interactions avec la carte au début du drag (dragstart = sûr sur mobile aussi)
-    resizeHandle.on('dragstart', function(e) {
-        L.DomEvent.stopPropagation(e);
-        map.dragging.disable();
-        map.doubleClickZoom.disable();
-        map.scrollWheelZoom.disable();
-        
-        // Afficher l'infobulle
-        const radiusKm = (currentRadius / 1000).toFixed(1);
-        radiusTooltip
-            .setLatLng(handlePos)
-            .setContent(`${radiusKm} km`)
-            .addTo(map);
-    });
-    
-    // Pendant le drag, mettre à jour le rayon
-    resizeHandle.on('drag', function(e) {
-        const handleLatLng = e.target.getLatLng();
-        const center = L.latLng(userPosition);
-        
-        // Calculer le nouveau rayon
-        const newRadius = calculateDistance(
-            center.lat, center.lng,
-            handleLatLng.lat, handleLatLng.lng
-        );
-        
-        // Limiter le rayon entre min et max
-        currentRadius = Math.max(
-            MAP_CONFIG.minRadiusMeters,
-            Math.min(MAP_CONFIG.maxRadiusMeters, newRadius)
-        );
-        
-        // Mettre à jour le cercle
-        if (userCircle) {
-            userCircle.setRadius(currentRadius);
-        }
-        
-        // Repositionner le handle exactement à droite
-        updateHandlePosition();
-        
-        // Mettre à jour l'infobulle
-        const radiusKm = (currentRadius / 1000).toFixed(1);
-        radiusTooltip.setContent(`${radiusKm} km`);
-    });
-    
-    // Fin du drag
-    resizeHandle.on('dragend', function(e) {
-        map.dragging.enable();
-        map.doubleClickZoom.enable();
-        map.scrollWheelZoom.enable();
-        
-        // Masquer l'infobulle
-        if (map.hasLayer(radiusTooltip)) {
-            map.removeLayer(radiusTooltip);
-        }
-        
-        // Le viewport ne change pas lors du resize du cercle, pas de rechargement
+        saveUserPosition(newPos.lat, newPos.lng);
     });
 }
 
-/**
- * Calcule la position du handle (sur la bordure droite du cercle)
- */
-function calculateHandlePosition(center, radius) {
-    // Calculer la position exacte sur la bordure du cercle à droite
-    // en utilisant la formule de conversion rayon -> degrés de longitude
-    const radiusInDegrees = (radius / 111320) / Math.cos(center.lat * Math.PI / 180);
-    return L.latLng(center.lat, center.lng + radiusInDegrees);
-}
-
-/**
- * Met à jour la position du handle
- */
-function updateHandlePosition() {
-    if (resizeHandle && userCircle) {
-        const center = L.latLng(userPosition);
-        const handlePos = calculateHandlePosition(center, currentRadius);
-        resizeHandle.setLatLng(handlePos);
-        
-        // Mettre à jour l'infobulle si elle est visible
-        if (map.hasLayer(radiusTooltip)) {
-            radiusTooltip.setLatLng(handlePos);
-        }
-    }
-}
-
-/**
- * Active/désactive le cercle de recherche au clic sur le marqueur
- */
-function toggleCircle(e) {
-    L.DomEvent.stopPropagation(e); // Empêcher la propagation du clic
-    
-    circleEnabled = !circleEnabled;
-    
-    if (circleEnabled) {
-        // Réactiver le cercle
-        if (!userCircle) {
-            userCircle = L.circle(userPosition, {
-                color: 'rgba(59, 130, 246, 0.4)',
-                fillColor: 'rgba(59, 130, 246, 0.08)',
-                fillOpacity: 1,
-                radius: currentRadius,
-                weight: 2,
-                className: 'user-radius-circle'
-            }).addTo(map);
-        } else {
-            // Mettre à jour la position avant de réafficher
-            userCircle.setLatLng(L.latLng(userPosition));
-            userCircle.addTo(map);
-        }
-        
-        // Créer ou réafficher le handle
-        if (!resizeHandle) {
-            createResizeHandle();
-        } else {
-            resizeHandle.addTo(map);
-            updateHandlePosition();
-        }
-        
-        showToast(`Recherche limitée à ${(currentRadius / 1000).toFixed(1)} km`, 'info');
-    } else {
-        // Désactiver le cercle
-        if (userCircle && map.hasLayer(userCircle)) {
-            map.removeLayer(userCircle);
-        }
-        
-        // Masquer le handle
-        if (resizeHandle && map.hasLayer(resizeHandle)) {
-            map.removeLayer(resizeHandle);
-        }
-        
-        showToast('Recherche sans limite de distance', 'info');
-    }
-    // Le chargement est piloté par viewport, pas par le cercle
-}
 
 /**
  * Retourne le nombre max d'activités par type selon le niveau de zoom
@@ -672,15 +460,15 @@ function createMarker(activity, addToCluster = true) {
         : `<i class="fas fa-${iconConfig.icon}"></i>`;
 
     const MARKER_COLORS = {
-        blue:   '#3b82f6',
-        gray:   '#6b7280',
-        green:  '#22c55e',
-        red:    '#ef4444',
-        yellow: '#eab308',
-        purple: '#a855f7',
-        orange: '#f97316',
-        pink:   '#ec4899',
-        cyan:   '#06b6d4',
+        blue:   '#476e99',
+        gray:   '#a7a7a7',
+        green:  '#58763a',
+        red:    '#cf0a1d',
+        yellow: '#fce883',
+        purple: '#cc99ff',
+        orange: '#fea347',
+        pink:   '#e9ace9',
+        cyan:   '#87d3f8',
     };
     const bgColor = MARKER_COLORS[iconConfig.color] || MARKER_COLORS.blue;
 
@@ -1116,6 +904,11 @@ function createPopupContent(activity) {
                     <span>${isFavorite ? 'Favori' : 'Ajouter'}</span>
                 </button>
 
+                <button class="popup-btn btn-todo" data-action="todo" data-id="${activity.id}" id="todo-btn-${activity.id}">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>À faire</span>
+                </button>
+
                 <button class="popup-btn btn-itinerary" data-action="itinerary" data-id="${activity.id}">
                     <i class="fas fa-route"></i>
                     <span>Itinéraire</span>
@@ -1159,6 +952,30 @@ function setupPopupEventListeners(activity) {
         });
     }
     
+    // Bouton à faire (toggle)
+    const todoBtn = document.querySelector('[data-action="todo"]');
+    if (todoBtn) {
+        todoBtn.addEventListener('click', () => {
+            onAuthRequired(async () => {
+                try {
+                    const isActive = todoBtn.classList.contains('active');
+                    const method = isActive ? 'DELETE' : 'POST';
+                    const res = await _authFetch(`${getApiBaseUrl()}/users/me/todo/${activity.id}`, { method });
+                    const data = await res.json();
+                    if (data.success) {
+                        const nowActive = !isActive;
+                        _updateTodoBtn(activity.id, nowActive);
+                    }
+                    showToast(data.message || (isActive ? 'Retiré' : 'Ajouté'), data.success ? 'success' : 'error');
+                } catch {
+                    showToast('Erreur réseau', 'error');
+                }
+            });
+        });
+    }
+
+    loadUserTodoStatus(activity.id);
+
     // Bouton itinéraire
     const itineraryBtn = document.querySelector('[data-action="itinerary"]');
     if (itineraryBtn) {
@@ -1187,6 +1004,35 @@ function setupPopupEventListeners(activity) {
 
     // Charger la note actuelle de l'utilisateur en async
     loadUserRating(activity.id);
+}
+
+/**
+ * Met à jour visuellement le bouton "À faire"
+ */
+function _updateTodoBtn(activityId, isInTodo) {
+    const btn = document.getElementById(`todo-btn-${activityId}`);
+    if (!btn) return;
+    btn.classList.toggle('active', isInTodo);
+    const icon = btn.querySelector('i');
+    if (icon) icon.className = isInTodo ? 'fas fa-clipboard-check' : 'fas fa-clipboard-list';
+    const label = btn.querySelector('span');
+    if (label) label.textContent = isInTodo ? 'À faire ✓' : 'À faire';
+}
+
+/**
+ * Charge le statut "à faire" de l'utilisateur pour une activité
+ */
+async function loadUserTodoStatus(activityId) {
+    try {
+        const token = typeof getAuthToken === 'function' ? getAuthToken() : null;
+        if (!token) return;
+        const res = await fetch(`${API_BASE_URL}/users/me/todo/${activityId}`, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        if (!res.ok) return;
+        const data = await res.json();
+        if (data.inTodo) _updateTodoBtn(activityId, true);
+    } catch {}
 }
 
 /**

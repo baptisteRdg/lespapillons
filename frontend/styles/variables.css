@@ -1,0 +1,134 @@
+/* ================================================
+   BeOut — Variables de design (couleurs, tailles, ombres)
+   Modifier ici pour changer le thème global de l'application.
+   ================================================ */
+
+:root {
+    /* ── Couleurs primaires ────────────────────────── */
+    --color-primary:          #3b82f6;
+    --color-primary-light:    #60a5fa;
+    --color-primary-dark:     #2563eb;
+    --color-primary-darker:   #1e40af;
+    --color-primary-muted:    #93c5fd;
+    --color-primary-bg:       rgba(59, 130, 246, 0.1);
+    --color-primary-focus:    rgba(147, 197, 253, 0.4);
+
+    /* ── Texte ─────────────────────────────────────── */
+    --color-text-heading:     #111827;
+    --color-text-primary:     #1f2937;
+    --color-text-secondary:   #374151;
+    --color-text-tertiary:    #4b5563;
+    --color-text-muted:       #6b7280;
+    --color-text-placeholder: #9ca3af;
+
+    /* ── Arrière-plans ─────────────────────────────── */
+    --color-bg-base:          #ffffff;
+    --color-bg-subtle:        #f9fafb;
+    --color-bg-muted:         #f3f4f6;
+    --color-bg-border:        #e5e7eb;
+    --color-bg-glass:         rgba(255, 255, 255, 0.6);
+    --color-bg-glass-opaque:  rgba(255, 255, 255, 0.95);
+    --color-bg-panel:         rgba(255, 255, 255, 0.92);
+    --color-bg-overlay:       rgba(255, 255, 255, 0.8);
+    --color-bg-card:          rgba(249, 250, 251, 0.9);
+    --color-bg-card-hover:    rgba(243, 244, 246, 0.6);
+
+    /* ── Bordures ──────────────────────────────────── */
+    --color-border-default:   #d1d5db;
+    --color-border-glass:     rgba(255, 255, 255, 0.4);
+    --color-border-subtle:    rgba(0, 0, 0, 0.06);
+    --color-border-light:     rgba(0, 0, 0, 0.1);
+
+    /* ── Ombres ────────────────────────────────────── */
+    --shadow-sm:              0 1px 3px rgba(0, 0, 0, 0.08);
+    --shadow-md:              0 4px 12px rgba(0, 0, 0, 0.12);
+    --shadow-lg:              0 8px 24px rgba(0, 0, 0, 0.15);
+    --shadow-header:          0 2px 8px rgba(167, 167, 167, 0.6);
+    --shadow-panel:           0 -2px 15px rgba(0, 0, 0, 0.14);
+    --shadow-modal:           0 20px 60px rgba(0, 0, 0, 0.2);
+
+    /* ── Backdrop / overlay ────────────────────────── */
+    --color-backdrop:         rgba(0, 0, 0, 0.5);
+    --color-backdrop-account: rgba(0, 0, 0, 0.45);
+
+    /* ── État : succès / erreur / info ─────────────── */
+    --color-success:          #22c55e;
+    --color-success-bg:       #d1fae5;
+    --color-success-text:     #065f46;
+    --color-error:            #ef4444;
+    --color-error-dark:       #dc2626;
+    --color-error-bg:         #fee2e2;
+    --color-error-bg-light:   #fef2f2;
+    --color-error-border:     #fecaca;
+    --color-error-text:       #991b1b;
+    --color-warning-bg:       #fef3c7;
+    --color-warning-text:     #92400e;
+
+    /* ── Boutons d'action (fiche) ──────────────────── */
+    --color-btn-favorite:        #fef3c7;
+    --color-btn-favorite-hover:  #fde68a;
+    --color-btn-favorite-active: #fbbf24;
+    --color-btn-favorite-text:   #92400e;
+
+    --color-btn-todo:            #d1fae5;
+    --color-btn-todo-hover:      #a7f3d0;
+    --color-btn-todo-active:     #10b981;
+    --color-btn-todo-text:       #065f46;
+
+    --color-btn-itinerary:       #dbeafe;
+    --color-btn-itinerary-hover: #bfdbfe;
+    --color-btn-itinerary-text:  #1e40af;
+
+    --color-btn-similar:         #e9d5ff;
+    --color-btn-similar-hover:   #d8b4fe;
+    --color-btn-similar-text:    #6b21a8;
+
+    --color-btn-share:           #f3f4f6;
+    --color-btn-share-hover:     #e5e7eb;
+    --color-btn-share-text:      #374151;
+
+    /* ── Notation ──────────────────────────────────── */
+    --color-rating-1:         #fee2e2;
+    --color-rating-1-text:    #991b1b;
+    --color-rating-2:         #ffedd5;
+    --color-rating-2-text:    #9a3412;
+    --color-rating-3:         #fef9c3;
+    --color-rating-3-text:    #713f12;
+    --color-rating-4:         #dcfce7;
+    --color-rating-4-text:    #166534;
+    --color-rating-5:         #bbf7d0;
+    --color-rating-5-text:    #14532d;
+
+    --color-rating-badge-green:  rgba(16, 185, 129, 0.25);
+    --color-rating-badge-orange: rgba(245, 158, 11, 0.25);
+    --color-rating-badge-red:    rgba(239, 68, 68, 0.25);
+
+    /* ── Catégories ────────────────────────────────── */
+    --color-cat-musee:        #dbeafe;
+    --color-cat-musee-text:   #1e40af;
+    --color-cat-parc:         #d1fae5;
+    --color-cat-parc-text:    #065f46;
+    --color-cat-cinema:       #e0e7ff;
+    --color-cat-cinema-text:  #4338ca;
+    --color-cat-nightlife:    #f3e8ff;
+    --color-cat-nightlife-text: #6b21a8;
+    --color-cat-restaurant:   #fed7aa;
+    --color-cat-restaurant-text: #9a3412;
+
+    /* ── Marqueur utilisateur ──────────────────────── */
+    --color-user-marker:      #FACC15;
+    --color-user-marker-border: #EAB308;
+
+    /* ── Tailles / dimensions ──────────────────────── */
+    --header-h:               60px;
+    --panel-mobile-h:         38vh;
+    --border-radius-sm:       6px;
+    --border-radius-md:       12px;
+    --border-radius-lg:       20px;
+    --border-radius-full:     9999px;
+
+    /* ── Transitions ───────────────────────────────── */
+    --transition-fast:        0.15s ease;
+    --transition-normal:      0.2s ease;
+    --transition-slow:        0.3s ease;
+}

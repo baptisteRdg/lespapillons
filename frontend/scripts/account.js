@@ -210,7 +210,7 @@ function _renderActivityList(containerId, activities, listType) {
             : '';
         const removeAction = listType === 'todo' ? `data-remove-todo="${a.id}"` : `data-remove-done="${a.id}"`;
         return `
-            <div class="account-activity-item">
+            <div class="account-activity-item" data-goto-activity="${a.id}" data-lat="${a.latitude || ''}" data-lng="${a.longitude || ''}" data-type="${escapeHtml(a.type || 'autre')}">
                 <div class="account-activity-info">
                     <span class="account-activity-name">${escapeHtml(a.name)}</span>
                     <span class="account-activity-type">${escapeHtml(a.type)}</span>
@@ -223,14 +223,42 @@ function _renderActivityList(containerId, activities, listType) {
         `;
     }).join('');
 
+    container.querySelectorAll('[data-goto-activity]').forEach(item => {
+        item.addEventListener('click', (e) => {
+            if (e.target.closest('.account-activity-remove')) return;
+            const id  = parseInt(item.dataset.gotoActivity);
+            const lat = parseFloat(item.dataset.lat);
+            const lng = parseFloat(item.dataset.lng);
+            if (!id || !lat || !lng) return;
+
+            const zoom = Math.max(map.getZoom(), 15);
+            const pt   = map.project([lat, lng], zoom);
+            const off  = map.unproject(pt.add([0, computeMarkerOffset()]), zoom);
+            map.setView(off, zoom);
+
+            let poolEntry = activityPool.get(id);
+            let marker;
+            if (poolEntry) {
+                marker = poolEntry.marker;
+            } else {
+                const activity = { id, lat, lng, category: item.dataset.type || 'autre' };
+                marker = createMarker(activity, false);
+                activityPool.set(id, { activity, marker });
+            }
+            loadAndShowActivityDetails(id, marker);
+        });
+    });
+
     container.querySelectorAll('[data-remove-todo]').forEach(btn =>
-        btn.addEventListener('click', async () => {
+        btn.addEventListener('click', async (e) => {
+            e.stopPropagation();
             await _removeFromList(btn.dataset.removeTodo, 'todo');
             _loadTodo();
         })
     );
     container.querySelectorAll('[data-remove-done]').forEach(btn =>
-        btn.addEventListener('click', async () => {
+        btn.addEventListener('click', async (e) => {
+            e.stopPropagation();
             await _removeFromList(btn.dataset.removeDone, 'done');
             _loadDone();
         })

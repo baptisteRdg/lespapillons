@@ -234,6 +234,21 @@ router.get('/me/todo', requireAuth, async (req, res) => {
 });
 
 /**
+ * GET /api/users/me/todo/:activityId — vérifie si l'activité est dans la liste
+ */
+router.get('/me/todo/:activityId', requireAuth, async (req, res) => {
+    try {
+        const activityId = parseInt(req.params.activityId);
+        const item = await prisma.todoActivity.findUnique({
+            where: { userId_activityId: { userId: req.user.id, activityId } }
+        });
+        res.json({ success: true, inTodo: !!item });
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'Erreur serveur' });
+    }
+});
+
+/**
  * POST /api/users/me/todo/:activityId
  */
 router.post('/me/todo/:activityId', requireAuth, async (req, res) => {
