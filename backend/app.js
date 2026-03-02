@@ -24,6 +24,9 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
+// Fichiers uploadés (avatars, etc.) servis statiquement
+app.use('/uploads', require('express').static(require('path').join(__dirname, 'uploads')));
+
 // Logger simple pour toutes les requêtes
 app.use((req, res, next) => {
     console.log(`📥 ${req.method} ${req.path}`);
@@ -34,6 +37,7 @@ app.use((req, res, next) => {
 app.use('/api/auth',    require('./routes/auth'));
 app.use('/api/users',   require('./routes/users'));
 app.use('/api/ratings', require('./routes/ratings'));
+app.use('/api/upload',  require('./routes/upload'));
 
 // Swagger UI
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, {

@@ -1328,6 +1328,62 @@ header {
     gap: 0.5rem;
 }
 
+/* ── Zone d'upload avatar ── */
+.avatar-upload-label {
+    display: block;
+    cursor: pointer;
+    margin-bottom: 0.75rem;
+}
+
+.avatar-upload-preview {
+    min-height: 120px;
+    border: 2px dashed #d1d5db;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1rem;
+    background: #ffffff;
+    transition: border-color 0.2s, background 0.2s;
+}
+
+.avatar-upload-label:hover .avatar-upload-preview,
+.avatar-upload-label.drag-over .avatar-upload-preview {
+    border-color: #3b82f6;
+    background: #eff6ff;
+}
+
+.avatar-upload-icon {
+    font-size: 2rem;
+    color: #9ca3af;
+}
+
+.avatar-upload-hint {
+    font-size: 0.8125rem;
+    color: #6b7280;
+    text-align: center;
+    line-height: 1.5;
+}
+
+.avatar-upload-hint small {
+    font-size: 0.75rem;
+    color: #9ca3af;
+}
+
+.avatar-upload-img-preview {
+    width: 100%;
+    max-height: 140px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.account-btn-primary:disabled {
+    background: #93c5fd;
+    cursor: not-allowed;
+}
+
 .account-btn-primary {
     padding: 0.375rem 0.875rem;
     background: #3b82f6;

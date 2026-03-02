@@ -292,26 +292,83 @@ async function _savePseudo() {
     }
 }
 
+// Fichier sélectionné (en attente d'upload)
+let _pendingAvatarFile = null;
+
 function _showAvatarForm() {
-    document.getElementById('account-avatar-form')?.classList.remove('hidden');
-    const input = document.getElementById('account-avatar-input');
-    if (input) { input.value = getCurrentUser()?.avatar || ''; input.focus(); }
+    const form = document.getElementById('account-avatar-form');
+    form?.classList.remove('hidden');
+    // Réinitialiser l'état
+    _pendingAvatarFile = null;
+    _resetAvatarPreview();
+    document.getElementById('account-avatar-save-btn')?.setAttribute('disabled', '');
 }
 
 function _hideAvatarForm() {
     document.getElementById('account-avatar-form')?.classList.add('hidden');
+    _pendingAvatarFile = null;
+    _resetAvatarPreview();
+}
+
+function _resetAvatarPreview() {
+    const preview = document.getElementById('avatar-upload-preview');
+    const fileInput = document.getElementById('account-avatar-file-input');
+    if (preview) {
+        preview.innerHTML = `
+            <i class="fas fa-cloud-upload-alt avatar-upload-icon"></i>
+            <span class="avatar-upload-hint">Clique ou dépose une image<br><small>JPEG · PNG · WebP · GIF — max 5 Mo</small></span>
+        `;
+    }
+    if (fileInput) fileInput.value = '';
+}
+
+function _onAvatarFileSelected(file) {
+    if (!file) return;
+
+    // Vérification taille côté client (double sécurité)
+    if (file.size > 5 * 1024 * 1024) {
+        showToast('Image trop volumineuse (max 5 Mo)', 'error');
+        return;
+    }
+
+    // Vérification type côté client
+    const allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+    if (!allowed.includes(file.type)) {
+        showToast('Format non accepté. Utilise JPEG, PNG, WebP ou GIF', 'error');
+        return;
+    }
+
+    _pendingAvatarFile = file;
+
+    // Prévisualisation
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        const preview = document.getElementById('avatar-upload-preview');
+        if (preview) {
+            preview.innerHTML = `<img src="${e.target.result}" class="avatar-upload-img-preview" alt="Aperçu">`;
+        }
+        document.getElementById('account-avatar-save-btn')?.removeAttribute('disabled');
+    };
+    reader.readAsDataURL(file);
 }
 
 async function _saveAvatar() {
-    const avatar = document.getElementById('account-avatar-input')?.value?.trim() || null;
+    if (!_pendingAvatarFile) return;
+
+    const saveBtn = document.getElementById('account-avatar-save-btn');
+    if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = 'Envoi…'; }
 
     try {
-        const res  = await _authFetch(`${getApiBaseUrl()}/users/me`, {
-            method:  'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body:    JSON.stringify({ avatar })
+        const formData = new FormData();
+        formData.append('avatar', _pendingAvatarFile);
+
+        const res  = await _authFetch(`${getApiBaseUrl()}/upload/avatar`, {
+            method: 'POST',
+            body:   formData
+            // Ne PAS définir Content-Type : le navigateur le fait avec le boundary multipart
         });
         const data = await res.json();
+
         if (data.success) {
             const user = getCurrentUser();
             if (user) user.avatar = data.user.avatar;
@@ -320,10 +377,12 @@ async function _saveAvatar() {
             showToast('Photo mise à jour', 'success');
             _hideAvatarForm();
         } else {
-            showToast(data.message || 'Erreur', 'error');
+            showToast(data.message || 'Erreur lors de l\'upload', 'error');
         }
     } catch {
         showToast('Erreur réseau', 'error');
+    } finally {
+        if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = 'Enregistrer'; }
     }
 }
 
@@ -374,10 +433,31 @@ function initAccountPanel() {
     document.getElementById('account-pseudo-save-btn')?.addEventListener('click', _savePseudo);
     document.getElementById('account-pseudo-cancel-btn')?.addEventListener('click', _hidePseudoForm);
 
-    // Modifier avatar
+    // Modifier avatar — file picker
     document.getElementById('account-avatar-btn')?.addEventListener('click', _showAvatarForm);
     document.getElementById('account-avatar-save-btn')?.addEventListener('click', _saveAvatar);
     document.getElementById('account-avatar-cancel-btn')?.addEventListener('click', _hideAvatarForm);
+
+    // Sélection de fichier (click sur le label ou drop)
+    const fileInput = document.getElementById('account-avatar-file-input');
+    if (fileInput) {
+        fileInput.addEventListener('change', () => _onAvatarFileSelected(fileInput.files[0]));
+    }
+
+    // Drag & drop sur la zone de preview
+    const uploadLabel = document.getElementById('avatar-upload-label');
+    if (uploadLabel) {
+        uploadLabel.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadLabel.classList.add('drag-over');
+        });
+        uploadLabel.addEventListener('dragleave', () => uploadLabel.classList.remove('drag-over'));
+        uploadLabel.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadLabel.classList.remove('drag-over');
+            _onAvatarFileSelected(e.dataTransfer.files[0]);
+        });
+    }
 
     // Ajouter ami
     document.getElementById('friend-add-btn')?.addEventListener('click', _sendFriendRequest);

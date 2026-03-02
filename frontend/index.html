@@ -234,9 +234,21 @@
 
             <!-- Formulaire modifier avatar (caché par défaut) -->
             <div class="account-edit-form hidden" id="account-avatar-form">
-                <input type="url" id="account-avatar-input" class="account-input" placeholder="URL de ta photo de profil">
+                <!-- Zone de sélection de fichier -->
+                <label class="avatar-upload-label" id="avatar-upload-label" for="account-avatar-file-input">
+                    <div class="avatar-upload-preview" id="avatar-upload-preview">
+                        <i class="fas fa-cloud-upload-alt avatar-upload-icon"></i>
+                        <span class="avatar-upload-hint">Clique ou dépose une image<br><small>JPEG · PNG · WebP · GIF — max 5 Mo</small></span>
+                    </div>
+                </label>
+                <input
+                    type="file"
+                    id="account-avatar-file-input"
+                    accept="image/jpeg,image/png,image/webp,image/gif"
+                    style="display:none"
+                >
                 <div class="account-edit-actions">
-                    <button id="account-avatar-save-btn" class="account-btn-primary">Enregistrer</button>
+                    <button id="account-avatar-save-btn" class="account-btn-primary" disabled>Enregistrer</button>
                     <button id="account-avatar-cancel-btn" class="account-btn-secondary">Annuler</button>
                 </div>
             </div>
