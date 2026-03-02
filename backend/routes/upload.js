@@ -90,7 +90,7 @@ router.post('/avatar', requireAuth, upload.single('avatar'), async (req, res) =>
         // userId est un cuid (alphanumérique + tirets), pas d'injection possible
         const filename    = `${req.user.id}_${Date.now()}.webp`;
         const filepath    = path.join(UPLOAD_DIR, filename);
-        const publicUrl   = `/uploads/avatars/${filename}`;
+        const publicUrl   = `/api/uploads/avatars/${filename}`;
 
         // ── Écriture sur le disque ────────────────────────────────────────────
         await fs.promises.writeFile(filepath, imageBuffer);
@@ -127,13 +127,13 @@ router.post('/avatar', requireAuth, upload.single('avatar'), async (req, res) =>
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 /**
- * Convertit une URL publique locale (/uploads/avatars/xxx.webp)
+ * Convertit une URL publique locale (/api/uploads/avatars/xxx.webp ou /uploads/avatars/xxx.webp)
  * en chemin absolu sur le disque.
  * Renvoie null si l'URL est externe (pas notre fichier local).
  */
 function _localPathFromUrl(url) {
-    if (!url || !url.startsWith('/uploads/avatars/')) return null;
-    // Extraire uniquement le nom de fichier pour éviter toute traversée de chemin
+    if (!url) return null;
+    if (!url.includes('/uploads/avatars/')) return null;
     const basename = path.basename(url);
     return path.join(UPLOAD_DIR, basename);
 }

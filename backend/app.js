@@ -24,8 +24,8 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-// Fichiers uploadés (avatars, etc.) servis statiquement
-app.use('/uploads', require('express').static(require('path').join(__dirname, 'uploads')));
+// Fichiers uploadés (avatars, etc.) servis via /api/uploads (passe par la route /api de Nginx)
+app.use('/api/uploads', require('express').static(require('path').join(__dirname, 'uploads')));
 
 // Logger simple pour toutes les requêtes
 app.use((req, res, next) => {

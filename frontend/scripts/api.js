@@ -20,19 +20,26 @@ const API_BASE_URL = getApiBaseUrl();
 console.log('🌐 API URL:', API_BASE_URL);
 
 /**
- * Résout l'URL d'un avatar local (/uploads/...) en préfixant l'hôte backend
- * quand le frontend tourne sur un port différent du backend (développement).
- * En production (même domaine, Nginx proxy /uploads), aucun préfixe.
- * Utilisé par auth.js ET account.js — doit être dans api.js (chargé en premier).
+ * Résout l'URL d'un avatar.
+ *  - Nouvelles URLs : /api/uploads/avatars/... → fonctionne partout (Nginx route /api vers le backend)
+ *  - Anciennes URLs : /uploads/avatars/... → normalisées en /api/uploads/...
+ *  - En dev (localhost) : préfixe http://localhost:3000
  */
 function resolveAvatarUrl(url) {
     if (!url) return null;
+
+    // Normaliser les anciennes URLs (/uploads/...) vers /api/uploads/...
     if (url.startsWith('/uploads/')) {
+        url = '/api' + url;
+    }
+
+    if (url.startsWith('/api/uploads/')) {
         const isLocalDev = window.location.hostname === 'localhost' ||
                            window.location.hostname === '127.0.0.1';
         return isLocalDev ? `http://localhost:3000${url}` : url;
     }
-    return url; // URL externe ou déjà absolue
+
+    return url;
 }
 
 /**
