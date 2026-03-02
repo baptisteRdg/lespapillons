@@ -323,28 +323,12 @@ function _resetAvatarPreview() {
     if (fileInput) fileInput.value = '';
 }
 
-/** Détecte le MIME d'un fichier : priorité à file.type, fallback sur l'extension */
-function _detectMime(file) {
-    if (file.type) return file.type.toLowerCase();
-    const ext = file.name.split('.').pop().toLowerCase();
-    const map = { jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', webp: 'image/webp', gif: 'image/gif' };
-    return map[ext] || '';
-}
-
 function _onAvatarFileSelected(file) {
     if (!file) return;
 
-    // Vérification taille côté client (double sécurité)
+    // Seule vérification côté client : la taille (Sharp validera le vrai type côté serveur)
     if (file.size > 5 * 1024 * 1024) {
         showToast('Image trop volumineuse (max 5 Mo)', 'error');
-        return;
-    }
-
-    // Vérification type — par MIME déclaré ou par extension (cas Windows/.PNG)
-    const allowed = new Set(['image/jpeg', 'image/jpg', 'image/png', 'image/x-png', 'image/webp', 'image/gif']);
-    const mime = _detectMime(file);
-    if (!allowed.has(mime)) {
-        showToast('Format non accepté. Utilise JPEG, PNG, WebP ou GIF', 'error');
         return;
     }
 
@@ -363,7 +347,15 @@ function _onAvatarFileSelected(file) {
 }
 
 async function _saveAvatar() {
-    if (!_pendingAvatarFile) return;
+    if (!_pendingAvatarFile) {
+        showToast('Aucun fichier sélectionné', 'error');
+        return;
+    }
+
+    if (!getAuthToken()) {
+        showToast('Tu dois être connecté pour changer ta photo', 'error');
+        return;
+    }
 
     const saveBtn = document.getElementById('account-avatar-save-btn');
     if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = 'Envoi…'; }
@@ -372,11 +364,19 @@ async function _saveAvatar() {
         const formData = new FormData();
         formData.append('avatar', _pendingAvatarFile);
 
-        const res  = await _authFetch(`${getApiBaseUrl()}/upload/avatar`, {
+        const res = await _authFetch(`${getApiBaseUrl()}/upload/avatar`, {
             method: 'POST',
             body:   formData
-            // Ne PAS définir Content-Type : le navigateur le fait avec le boundary multipart
+            // Ne PAS définir Content-Type : le navigateur le pose lui-même avec le boundary
         });
+
+        // Nginx peut renvoyer du HTML (ex: 413 trop grand) au lieu de JSON
+        const contentType = res.headers.get('content-type') || '';
+        if (!contentType.includes('application/json')) {
+            showToast(`Erreur serveur (HTTP ${res.status}) — image peut-être trop grande`, 'error');
+            return;
+        }
+
         const data = await res.json();
 
         if (data.success) {
@@ -384,13 +384,14 @@ async function _saveAvatar() {
             if (user) user.avatar = data.user.avatar;
             _renderProfile(data.user);
             if (typeof _updateAccountButton === 'function') _updateAccountButton();
-            showToast('Photo mise à jour', 'success');
+            showToast('Photo mise à jour ✓', 'success');
             _hideAvatarForm();
         } else {
             showToast(data.message || 'Erreur lors de l\'upload', 'error');
         }
-    } catch {
-        showToast('Erreur réseau', 'error');
+    } catch (err) {
+        console.error('Erreur upload avatar:', err);
+        showToast('Erreur réseau — vérifie ta connexion', 'error');
     } finally {
         if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = 'Enregistrer'; }
     }
