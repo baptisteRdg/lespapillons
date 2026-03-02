@@ -33,12 +33,29 @@ async function _loadAccountData() {
     ]);
 }
 
+/**
+ * Résout l'URL d'un avatar local (/uploads/...) en préfixant l'hôte backend
+ * quand le frontend tourne sur un port différent (dev).
+ * En prod (même domaine), aucun préfixe n'est nécessaire.
+ */
+function _resolveAvatarUrl(url) {
+    if (!url) return null;
+    if (url.startsWith('/uploads/')) {
+        // En dev le frontend est sur :8080, le backend sur :3000
+        const isLocalDev = window.location.hostname === 'localhost' ||
+                           window.location.hostname === '127.0.0.1';
+        return isLocalDev ? `http://localhost:3000${url}` : url;
+    }
+    return url; // URL externe ou déjà absolue
+}
+
 function _renderProfile(user) {
     // Avatar
     const avatarEl = document.getElementById('account-avatar-display');
     if (avatarEl) {
-        if (user.avatar) {
-            avatarEl.innerHTML = `<img src="${user.avatar}" alt="Avatar" class="account-avatar-img">`;
+        const avatarUrl = _resolveAvatarUrl(user.avatar);
+        if (avatarUrl) {
+            avatarEl.innerHTML = `<img src="${avatarUrl}" alt="Avatar" class="account-avatar-img">`;
         } else {
             const initials = (user.pseudo || '?').slice(0, 2).toUpperCase();
             avatarEl.innerHTML = `<span class="account-initials-lg">${initials}</span>`;

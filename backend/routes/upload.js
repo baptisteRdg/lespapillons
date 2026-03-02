@@ -33,14 +33,21 @@ if (!fs.existsSync(UPLOAD_DIR)) {
 }
 
 // ── Configuration Multer ──────────────────────────────────────────────────────
-const ALLOWED_MIMES = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/gif']);
+// image/x-png : variante envoyée par certains navigateurs/OS pour les .PNG
+const ALLOWED_MIMES = new Set([
+    'image/jpeg', 'image/jpg',
+    'image/png',  'image/x-png',
+    'image/webp',
+    'image/gif'
+]);
 const MAX_SIZE_BYTES = 5 * 1024 * 1024; // 5 Mo
 
 const upload = multer({
     storage: multer.memoryStorage(), // tout en RAM, rien sur le disque avant validation
     limits:  { fileSize: MAX_SIZE_BYTES },
     fileFilter(_req, file, cb) {
-        if (ALLOWED_MIMES.has(file.mimetype)) {
+        // Normaliser en minuscules pour gérer image/PNG, image/JPEG, etc.
+        if (ALLOWED_MIMES.has(file.mimetype.toLowerCase())) {
             cb(null, true);
         } else {
             cb(new Error('Type de fichier non autorisé. Acceptés : JPEG, PNG, WebP, GIF'));
