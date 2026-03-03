@@ -24,5 +24,8 @@ Thumbs.db
 dist/
 build/
 
+# Ignore Prisma SQLite database
+backend/prisma/dev.db
+
 # Tests — fichiers temporaires
 tests/benchmark-history.json
