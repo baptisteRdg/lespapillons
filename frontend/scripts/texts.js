@@ -9,7 +9,7 @@ const T = Object.freeze({
 
     // ── Application ──────────────────────────────────────────────────────────
     APP_NAME: 'BeOut',
-    PAGE_TITLE: 'BeOut - Découvrez Paris',
+    PAGE_TITLE: 'Trouvez des activités à faire partout en France',
 
     // ── Toasts / notifications ───────────────────────────────────────────────
     TOASTS: Object.freeze({
@@ -19,7 +19,7 @@ const T = Object.freeze({
         LOAD_ERROR:          'Erreur lors du chargement',
         ERROR:               'Erreur',
 
-        FAVORITE_ADDED:      'Ajouté aux favoris !',
+        FAVORITE_ADDED:      'Ajouté aux favoris',
         FAVORITE_REMOVED:    'Retiré des favoris',
         TODO_ADDED:          'Ajouté',
         TODO_REMOVED:        'Retiré',
@@ -29,10 +29,10 @@ const T = Object.freeze({
         SEARCH_NO_RESULTS:   (term) => `Aucune activité trouvée pour « ${term} »`,
         SEARCH_RESULTS:      (n) => `${n} activité(s) trouvée(s)`,
 
-        LINK_COPIED:         'Lien copié dans le presse-papier !',
+        LINK_COPIED:         'Lien copié dans le presse-papier',
         LINK_FALLBACK:       (url) => `Lien : ${url}`,
-        SIMILAR_SOON:        'Bientôt disponible — restez connectés !',
-        ACTIVITY_NOT_FOUND:  'Activité introuvable ou inaccessible',
+        SIMILAR_SOON:        'Bientôt disponible — restez connectés',
+        ACTIVITY_NOT_FOUND:  'Activité introuvable',
 
         LOGGED_IN:           (pseudo) => `Connecté en tant que ${pseudo}`,
         LOGGED_IN_TEST:      (pseudo) => `Connecté (test) : ${pseudo}`,
@@ -43,14 +43,15 @@ const T = Object.freeze({
 
         IMAGE_TOO_LARGE:     'Image trop volumineuse (max 8 Mo)',
         NO_FILE:             'Aucun fichier sélectionné',
-        AUTH_REQUIRED_AVATAR:'Tu dois être connecté pour changer ta photo',
-        AVATAR_UPDATED:      'Photo mise à jour ✓',
+        AUTH_REQUIRED_AVATAR:'Il faut être connecté pour changer ta photo',
+        AVATAR_UPDATED:      'Photo mise à jour',
         UPLOAD_ERROR:        'Erreur lors de l\'upload',
         SERVER_ERROR_IMAGE:  (status) => `Erreur serveur (HTTP ${status}) — image peut-être trop grande`,
 
         FRIEND_REQUEST_SENT: 'Demande envoyée',
         FRIEND_REMOVED:      'Ami supprimé',
         REMOVED:             'Retiré',
+        DEFAULT:             'Action réussie !',
     }),
 
     // ── Erreurs (modale login, etc.) ─────────────────────────────────────────
@@ -97,17 +98,18 @@ const T = Object.freeze({
     LABELS: Object.freeze({
         MY_FAVORITES:    'Mes Favoris',
         MY_ACCOUNT:      'Mon compte',
-        LOGIN:           'Connexion',
-        LOGIN_SUBTITLE:  'Entre ton numéro de téléphone pour recevoir un code par SMS',
+        LOGIN:           'Connexion / Création de compte',
+        LOGIN_SUBTITLE:  'Entre ton numéro de téléphone pour te connecter ou créer un compte en une seule étape',
         PHONE:           'Numéro de téléphone',
         OTP_CODE:        'Code reçu par SMS',
         FRIENDS:         'Amis',
         TODO:            'À faire',
         DONE:            'Réalisées',
+        CLOSE:           'Fermer',
         FRIEND_REQUESTS: 'Demandes reçues',
         VISIT_WEBSITE:   'Visiter le site web',
         CATEGORY_OTHER:  'Autre',
-        SEARCH:          'Rechercher par nom, type ou ville…',
+        SEARCH:          'Rechercher une activité',
         LEGAL:           'En continuant, tu acceptes nos conditions d\'utilisation. Ton numéro ne sera jamais partagé.',
         STYLE_PICKER:    'Changer le style de la carte',
         AVATAR_HINT:     'Clique ou dépose une image<br><small>JPEG · PNG · WebP · GIF — max 8 Mo</small>',
@@ -120,7 +122,7 @@ const T = Object.freeze({
     PLACEHOLDERS: Object.freeze({
         PHONE:     '+33 6 12 34 56 78',
         OTP:       '123456',
-        SEARCH:    'Rechercher par nom, type ou ville…',
+        SEARCH:    'Rechercher une activité',
         PSEUDO:    'Nouveau pseudo (3 caractères min)',
         FRIEND:    'Pseudo de ton ami',
     }),
@@ -148,3 +150,44 @@ const T = Object.freeze({
         propre:    'Propre',
     }),
 });
+
+/**
+ * Résout une clé de type "LABELS.LOGIN" en parcourant l'objet T.
+ * Retourne undefined si la clé n'existe pas.
+ */
+function _resolveT(key) {
+    return key.split('.').reduce((obj, k) => obj?.[k], T);
+}
+
+/**
+ * Applique les textes de T sur le DOM.
+ *   data-t="LABELS.LOGIN"            → textContent
+ *   data-t-html="LABELS.AVATAR_HINT" → innerHTML (pour le <br> etc.)
+ *   data-t-placeholder="PLACEHOLDERS.PHONE"
+ *   data-t-title="LABELS.STYLE_PICKER"
+ *   data-t-aria="LABELS.LOGIN"       → aria-label
+ */
+function applyTexts() {
+    document.querySelectorAll('[data-t]').forEach(el => {
+        const v = _resolveT(el.dataset.t);
+        if (v !== undefined) el.textContent = v;
+    });
+    document.querySelectorAll('[data-t-html]').forEach(el => {
+        const v = _resolveT(el.dataset.tHtml);
+        if (v !== undefined) el.innerHTML = v;
+    });
+    document.querySelectorAll('[data-t-placeholder]').forEach(el => {
+        const v = _resolveT(el.dataset.tPlaceholder);
+        if (v !== undefined) el.placeholder = v;
+    });
+    document.querySelectorAll('[data-t-title]').forEach(el => {
+        const v = _resolveT(el.dataset.tTitle);
+        if (v !== undefined) el.title = v;
+    });
+    document.querySelectorAll('[data-t-aria]').forEach(el => {
+        const v = _resolveT(el.dataset.tAria);
+        if (v !== undefined) el.setAttribute('aria-label', v);
+    });
+}
+
+document.addEventListener('DOMContentLoaded', applyTexts);

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>BeOut - Découvrez Paris</title>
+    <title data-t="PAGE_TITLE">BeOut - Découvrez Paris</title>
 
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -22,7 +22,7 @@
             <!-- Logo -->
             <div class="header-logo">
                 <i class="fas fa-butterfly header-logo-icon"></i>
-                <h1 class="header-title idiqlat-regular">BeOut</h1>
+                <h1 class="header-title idiqlat-regular" data-t="APP_NAME">BeOut</h1>
             </div>
 
             <!-- Barre de recherche -->
@@ -32,6 +32,7 @@
                         type="text"
                         id="searchInput"
                         placeholder="Rechercher par nom, type ou ville…"
+                        data-t-placeholder="PLACEHOLDERS.SEARCH"
                         class="search-input"
                     >
                     <i class="fas fa-search search-icon"></i>
@@ -42,12 +43,12 @@
             <div class="header-actions">
                 <button id="favoritesBtn">
                     <i class="fas fa-heart"></i>
-                    <span class="hide-mobile">Mes Favoris</span>
+                    <span class="hide-mobile" data-t="LABELS.MY_FAVORITES">Mes Favoris</span>
                     <span id="favCount">0</span>
                 </button>
 
                 <!-- Bouton compte -->
-                <button id="accountBtn" class="account-btn" title="Mon compte">
+                <button id="accountBtn" class="account-btn" title="Mon compte" data-t-title="LABELS.MY_ACCOUNT">
                     <i class="fas fa-user-circle"></i>
                 </button>
             </div>
@@ -60,13 +61,13 @@
     <!-- Loader carte (non bloquant) -->
     <div id="map-loader">
         <div class="map-loader-spinner"></div>
-        <span>Chargement…</span>
+        <span data-t="LOADING">Chargement…</span>
     </div>
 
     <!-- Fiche activité (bottom sheet mobile / panneau gauche desktop) -->
     <div id="activity-panel">
         <div id="panel-drag-handle"></div>
-        <button id="panel-close" aria-label="Fermer">
+        <button id="panel-close" aria-label="Fermer" data-t-aria="LABELS.CLOSE">
             <i class="fas fa-times"></i>
         </button>
         <div id="panel-content">
@@ -78,79 +79,80 @@
     <aside id="favoritesSidebar">
         <div class="sidebar-header">
             <h2 class="sidebar-title">
-                <i class="fas fa-heart"></i>Mes Favoris
+                <i class="fas fa-heart"></i><span data-t="LABELS.MY_FAVORITES">Mes Favoris</span>
             </h2>
             <button id="closeSidebar">
                 <i class="fas fa-times"></i>
             </button>
         </div>
         <div id="favoritesContent">
-            <p class="fav-empty">Aucun favori pour le moment</p>
+            <p class="fav-empty" data-t="EMPTY.FAVORITES">Aucun favori pour le moment</p>
         </div>
     </aside>
 
     <!-- Sélecteur de style de carte -->
     <div id="style-picker">
-        <button id="style-picker-toggle" title="Changer le style de la carte">
+        <button id="style-picker-toggle" title="Changer le style de la carte" data-t-title="LABELS.STYLE_PICKER">
             <i class="fas fa-layer-group"></i>
         </button>
         <div id="style-picker-panel">
             <div class="style-option" data-style="papillon">
                 <span class="style-preview style-preview--papillon"></span>
-                <span class="style-label">Papillon</span>
+                <span class="style-label" data-t="MAP_STYLES.papillon">Papillon</span>
             </div>
             <div class="style-option" data-style="satellite">
                 <span class="style-preview style-preview--satellite"></span>
-                <span class="style-label">Satellite</span>
+                <span class="style-label" data-t="MAP_STYLES.satellite">Satellite</span>
             </div>
             <div class="style-option" data-style="nuit">
                 <span class="style-preview style-preview--nuit"></span>
-                <span class="style-label">Nuit</span>
+                <span class="style-label" data-t="MAP_STYLES.nuit">Nuit</span>
             </div>
             <div class="style-option" data-style="simple">
                 <span class="style-preview style-preview--simple"></span>
-                <span class="style-label">Simple</span>
+                <span class="style-label" data-t="MAP_STYLES.simple">Simple</span>
             </div>
             <div class="style-option" data-style="propre">
                 <span class="style-preview style-preview--propre"></span>
-                <span class="style-label">Propre</span>
+                <span class="style-label" data-t="MAP_STYLES.propre">Propre</span>
             </div>
         </div>
     </div>
 
     <!-- Toast notification -->
     <div id="toast">
-        <span id="toastMessage">Action réussie !</span>
+        <span id="toastMessage" data-t="TOASTS.DEFAULT">Action réussie !</span>
     </div>
 
     <!-- ══ POPUP LOGIN ══════════════════════════════════════════════════════════ -->
-    <div id="login-popup" class="overlay-backdrop" role="dialog" aria-modal="true" aria-label="Connexion">
+    <div id="login-popup" class="overlay-backdrop" role="dialog" aria-modal="true" aria-label="Connexion" data-t-aria="LABELS.LOGIN">
         <div class="login-modal">
-            <button id="login-close" class="login-close-btn" aria-label="Fermer">
+            <button id="login-close" class="login-close-btn" aria-label="Fermer" data-t-aria="LABELS.CLOSE">
                 <i class="fas fa-times"></i>
             </button>
 
             <div class="login-header">
                 <i class="fas fa-butterfly login-logo"></i>
-                <h2 class="login-title">Connexion</h2>
-                <p class="login-subtitle">Entre ton numéro de téléphone pour recevoir un code par SMS</p>
+                <h2 class="login-title" data-t="LABELS.LOGIN">Connexion</h2>
+                <p class="login-subtitle" data-t="LABELS.LOGIN_SUBTITLE">Entre ton numéro de téléphone pour recevoir un code par SMS</p>
             </div>
 
             <!-- Étape 1 : numéro de téléphone -->
             <div id="login-step-phone">
                 <div class="login-field">
-                    <label for="login-phone-input" class="login-label">Numéro de téléphone</label>
+                    <label for="login-phone-input" class="login-label" data-t="LABELS.PHONE">Numéro de téléphone</label>
                     <input
                         type="tel"
                         id="login-phone-input"
                         class="login-input"
                         placeholder="+33 6 12 34 56 78"
+                        data-t-placeholder="PLACEHOLDERS.PHONE"
                         inputmode="tel"
                         autocomplete="tel"
                     >
                 </div>
                 <button id="login-send-btn" class="login-btn login-btn-primary">
-                    <span class="btn-text">Recevoir le code SMS</span>
+                    <span class="btn-text" data-t="BUTTONS.SEND_CODE">Recevoir le code SMS</span>
                     <span class="btn-spinner hidden"><i class="fas fa-spinner fa-spin"></i></span>
                 </button>
                 <!-- reCAPTCHA invisible Firebase -->
@@ -160,22 +162,23 @@
             <!-- Étape 2 : code OTP -->
             <div id="login-step-otp" class="hidden">
                 <div class="login-field">
-                    <label for="login-otp-input" class="login-label">Code reçu par SMS</label>
+                    <label for="login-otp-input" class="login-label" data-t="LABELS.OTP_CODE">Code reçu par SMS</label>
                     <input
                         type="text"
                         id="login-otp-input"
                         class="login-input login-input-otp"
                         placeholder="123456"
+                        data-t-placeholder="PLACEHOLDERS.OTP"
                         inputmode="numeric"
                         autocomplete="one-time-code"
                         maxlength="6"
                     >
                 </div>
                 <button id="login-verify-btn" class="login-btn login-btn-primary">
-                    <span class="btn-text">Valider le code</span>
+                    <span class="btn-text" data-t="BUTTONS.VERIFY_CODE">Valider le code</span>
                     <span class="btn-spinner hidden"><i class="fas fa-spinner fa-spin"></i></span>
                 </button>
-                <button id="login-back-btn" class="login-btn login-btn-secondary">
+                <button id="login-back-btn" class="login-btn login-btn-secondary" data-t="BUTTONS.CHANGE_PHONE">
                     Changer de numéro
                 </button>
             </div>
@@ -183,7 +186,7 @@
             <!-- Message d'erreur -->
             <p id="login-error" class="login-error hidden"></p>
 
-            <p class="login-legal">
+            <p class="login-legal" data-t="LABELS.LEGAL">
                 En continuant, tu acceptes nos conditions d'utilisation.
                 Ton numéro ne sera jamais partagé.
             </p>
@@ -191,13 +194,13 @@
     </div>
 
     <!-- ══ PANNEAU COMPTE ═══════════════════════════════════════════════════════ -->
-    <div id="account-panel" role="dialog" aria-modal="true" aria-label="Mon compte">
+    <div id="account-panel" role="dialog" aria-modal="true" aria-label="Mon compte" data-t-aria="LABELS.MY_ACCOUNT">
         <div class="account-backdrop" id="account-backdrop"></div>
         <div class="account-drawer">
             <!-- En-tête profil -->
             <div class="account-drawer-header">
-                <h2 class="account-drawer-title">Mon compte</h2>
-                <button id="account-close-btn" class="account-close-btn" aria-label="Fermer">
+                <h2 class="account-drawer-title" data-t="LABELS.MY_ACCOUNT">Mon compte</h2>
+                <button id="account-close-btn" class="account-close-btn" aria-label="Fermer" data-t-aria="LABELS.CLOSE">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
@@ -208,7 +211,7 @@
                     <div class="account-avatar" id="account-avatar-display">
                         <i class="fas fa-user"></i>
                     </div>
-                    <button class="account-avatar-edit" id="account-avatar-btn" title="Changer la photo">
+                    <button class="account-avatar-edit" id="account-avatar-btn" title="Changer la photo" data-t-title="BUTTONS.CHANGE_PHOTO">
                         <i class="fas fa-camera"></i>
                     </button>
                 </div>
@@ -216,7 +219,7 @@
                 <div class="account-info">
                     <div class="account-pseudo-wrap" id="account-pseudo-wrap">
                         <span class="account-pseudo" id="account-pseudo-display"></span>
-                        <button class="account-edit-btn" id="account-pseudo-edit-btn" title="Modifier le pseudo">
+                        <button class="account-edit-btn" id="account-pseudo-edit-btn" title="Modifier le pseudo" data-t-title="BUTTONS.EDIT_PSEUDO">
                             <i class="fas fa-pencil"></i>
                         </button>
                     </div>
@@ -226,10 +229,10 @@
 
             <!-- Formulaire modifier pseudo (caché par défaut) -->
             <div class="account-edit-form hidden" id="account-pseudo-form">
-                <input type="text" id="account-pseudo-input" class="account-input" placeholder="Nouveau pseudo (3 caractères min)" maxlength="30">
+                <input type="text" id="account-pseudo-input" class="account-input" placeholder="Nouveau pseudo (3 caractères min)" maxlength="30" data-t-placeholder="PLACEHOLDERS.PSEUDO">
                 <div class="account-edit-actions">
-                    <button id="account-pseudo-save-btn" class="account-btn-primary">Enregistrer</button>
-                    <button id="account-pseudo-cancel-btn" class="account-btn-secondary">Annuler</button>
+                    <button id="account-pseudo-save-btn" class="account-btn-primary" data-t="BUTTONS.SAVE">Enregistrer</button>
+                    <button id="account-pseudo-cancel-btn" class="account-btn-secondary" data-t="BUTTONS.CANCEL">Annuler</button>
                 </div>
             </div>
 
@@ -239,7 +242,7 @@
                 <label class="avatar-upload-label" id="avatar-upload-label" for="account-avatar-file-input">
                     <div class="avatar-upload-preview" id="avatar-upload-preview">
                         <i class="fas fa-cloud-upload-alt avatar-upload-icon"></i>
-                        <span class="avatar-upload-hint">Clique ou dépose une image<br><small>JPEG · PNG · WebP · GIF — max 8 Mo</small></span>
+                        <span class="avatar-upload-hint" data-t-html="LABELS.AVATAR_HINT">Clique ou dépose une image<br><small>JPEG · PNG · WebP · GIF — max 8 Mo</small></span>
                     </div>
                 </label>
                 <input
@@ -249,8 +252,8 @@
                     style="display:none"
                 >
                 <div class="account-edit-actions">
-                    <button id="account-avatar-save-btn" class="account-btn-primary" disabled>Enregistrer</button>
-                    <button id="account-avatar-cancel-btn" class="account-btn-secondary">Annuler</button>
+                    <button id="account-avatar-save-btn" class="account-btn-primary" disabled data-t="BUTTONS.SAVE">Enregistrer</button>
+                    <button id="account-avatar-cancel-btn" class="account-btn-secondary" data-t="BUTTONS.CANCEL">Annuler</button>
                 </div>
             </div>
 
@@ -261,13 +264,13 @@
                 <div class="account-accordion">
                     <button class="account-accordion-toggle" data-target="section-friends">
                         <i class="fas fa-user-group"></i>
-                        <span>Amis</span>
+                        <span data-t="LABELS.FRIENDS">Amis</span>
                         <i class="fas fa-chevron-down accordion-chevron"></i>
                     </button>
                     <div class="account-accordion-body hidden" id="section-friends">
                         <!-- Ajouter un ami -->
                         <div class="friend-add-wrap">
-                            <input type="text" id="friend-pseudo-input" class="account-input" placeholder="Pseudo de ton ami">
+                            <input type="text" id="friend-pseudo-input" class="account-input" placeholder="Pseudo de ton ami" data-t-placeholder="PLACEHOLDERS.FRIEND">
                             <button id="friend-add-btn" class="account-btn-primary">
                                 <i class="fas fa-user-plus"></i>
                             </button>
@@ -276,7 +279,7 @@
                         <div id="friend-requests-list" class="friend-requests-list hidden"></div>
                         <!-- Liste d'amis -->
                         <div id="friends-list" class="friends-list">
-                            <p class="account-empty-msg">Aucun ami pour l'instant</p>
+                            <p class="account-empty-msg" data-t="EMPTY.FRIENDS">Aucun ami pour l'instant</p>
                         </div>
                     </div>
                 </div>
@@ -285,12 +288,12 @@
                 <div class="account-accordion">
                     <button class="account-accordion-toggle" data-target="section-todo">
                         <i class="fas fa-bookmark"></i>
-                        <span>À faire</span>
+                        <span data-t="LABELS.TODO">À faire</span>
                         <i class="fas fa-chevron-down accordion-chevron"></i>
                     </button>
                     <div class="account-accordion-body hidden" id="section-todo">
                         <div id="todo-list" class="account-activity-list">
-                            <p class="account-empty-msg">Aucune activité à faire</p>
+                            <p class="account-empty-msg" data-t="EMPTY.TODO">Aucune activité à faire</p>
                         </div>
                     </div>
                 </div>
@@ -299,12 +302,12 @@
                 <div class="account-accordion">
                     <button class="account-accordion-toggle" data-target="section-done">
                         <i class="fas fa-circle-check"></i>
-                        <span>Réalisées</span>
+                        <span data-t="LABELS.DONE">Réalisées</span>
                         <i class="fas fa-chevron-down accordion-chevron"></i>
                     </button>
                     <div class="account-accordion-body hidden" id="section-done">
                         <div id="done-list" class="account-activity-list">
-                            <p class="account-empty-msg">Aucune activité réalisée</p>
+                            <p class="account-empty-msg" data-t="EMPTY.DONE">Aucune activité réalisée</p>
                         </div>
                     </div>
                 </div>
@@ -314,7 +317,7 @@
             <!-- Déconnexion -->
             <button id="account-logout-btn" class="account-logout-btn">
                 <i class="fas fa-right-from-bracket"></i>
-                Se déconnecter
+                <span data-t="BUTTONS.LOGOUT">Se déconnecter</span>
             </button>
         </div>
     </div>

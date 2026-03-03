@@ -5,130 +5,81 @@
 
 :root {
     /* ── Couleurs primaires ────────────────────────── */
-    --color-primary:          #3b82f6;
-    --color-primary-light:    #60a5fa;
-    --color-primary-dark:     #2563eb;
-    --color-primary-darker:   #1e40af;
-    --color-primary-muted:    #93c5fd;
-    --color-primary-bg:       rgba(59, 130, 246, 0.1);
-    --color-primary-focus:    rgba(147, 197, 253, 0.4);
+    --color-primary:          #487239;   /* Couleur principale de l'app (boutons, liens, header) */
+    --color-primary-light:    #7e9c74;   /* Variante claire du primaire (hover léger) */
+    --color-primary-dark:     #1B4F08;   /* Variante foncée du primaire (hover appuyé, bordures actives) */
 
     /* ── Texte ─────────────────────────────────────── */
-    --color-text-heading:     #111827;
-    --color-text-primary:     #1f2937;
-    --color-text-secondary:   #374151;
-    --color-text-tertiary:    #4b5563;
-    --color-text-muted:       #6b7280;
-    --color-text-placeholder: #9ca3af;
+    --color-text-heading:     #1F261C;   /* Titres principaux (h1, h2) */
+    --color-text-primary:     #1b2219;   /* Texte courant, paragraphes */
+    --color-text-secondary:   #41342a;   /* Texte secondaire (sous-titres, descriptions) */
+    --color-text-muted:       #6b7280;   /* Texte discret (labels, hints, timestamps) */
+    --color-text-placeholder: #9ca3af;   /* Placeholder des champs de saisie */
 
     /* ── Arrière-plans ─────────────────────────────── */
-    --color-bg-base:          #ffffff;
-    --color-bg-subtle:        #f9fafb;
-    --color-bg-muted:         #f3f4f6;
-    --color-bg-border:        #e5e7eb;
-    --color-bg-glass:         rgba(255, 255, 255, 0.6);
-    --color-bg-glass-opaque:  rgba(255, 255, 255, 0.95);
-    --color-bg-panel:         rgba(255, 255, 255, 0.92);
-    --color-bg-overlay:       rgba(255, 255, 255, 0.8);
-    --color-bg-card:          rgba(249, 250, 251, 0.9);
-    --color-bg-card-hover:    rgba(243, 244, 246, 0.6);
+    --color-bg-subtle:        #dfdfdfa6;   /* Fond légèrement teinté (sections alternées) */
+    --color-bg-muted:         #f3f4f6;   /* Fond gris clair (barres, séparateurs, inputs) */
+    --color-bg-border:        #e5e7eb;   /* Fond utilisé comme séparateur visuel léger */
 
     /* ── Bordures ──────────────────────────────────── */
-    --color-border-default:   #d1d5db;
-    --color-border-glass:     rgba(255, 255, 255, 0.4);
-    --color-border-subtle:    rgba(0, 0, 0, 0.06);
-    --color-border-light:     rgba(0, 0, 0, 0.1);
-
-    /* ── Ombres ────────────────────────────────────── */
-    --shadow-sm:              0 1px 3px rgba(0, 0, 0, 0.08);
-    --shadow-md:              0 4px 12px rgba(0, 0, 0, 0.12);
-    --shadow-lg:              0 8px 24px rgba(0, 0, 0, 0.15);
-    --shadow-header:          0 2px 8px rgba(167, 167, 167, 0.6);
-    --shadow-panel:           0 -2px 15px rgba(0, 0, 0, 0.14);
-    --shadow-modal:           0 20px 60px rgba(0, 0, 0, 0.2);
+    --color-border-default:   #d1d5db;   /* Bordure standard des inputs et conteneurs */
 
     /* ── Backdrop / overlay ────────────────────────── */
-    --color-backdrop:         rgba(0, 0, 0, 0.5);
-    --color-backdrop-account: rgba(0, 0, 0, 0.45);
+    --color-backdrop:         rgba(0, 0, 0, 0.5);   /* Fond noir semi-transparent derrière les modales */
+    --color-backdrop-account: rgba(0, 0, 0, 0.45);  /* Fond derrière le drawer compte (légèrement plus léger) */
 
-    /* ── État : succès / erreur / info ─────────────── */
-    --color-success:          #22c55e;
-    --color-success-bg:       #d1fae5;
-    --color-success-text:     #065f46;
-    --color-error:            #ef4444;
-    --color-error-dark:       #dc2626;
-    --color-error-bg:         #fee2e2;
-    --color-error-bg-light:   #fef2f2;
-    --color-error-border:     #fecaca;
-    --color-error-text:       #991b1b;
-    --color-warning-bg:       #fef3c7;
-    --color-warning-text:     #92400e;
+    /* ── État : succès / erreur ──────────────────── */
+    --color-success:          #68a553;   /* Vert de validation (icônes, bordures ok) */
+    --color-success-text:     #cee3c7;   /* Texte sur fond succès */
+    --color-error:            #ad4950 ;   /* Rouge d'erreur principal */
+    --color-error-dark:       #773237;   /* Rouge foncé (hover sur erreur) */
+    --color-error-text:       #c77b80;   /* Texte sur fond erreur */
+    --color-warning-text:     #f7ebec;   /* Texte sur fond avertissement */
 
-    /* ── Boutons d'action (fiche) ──────────────────── */
-    --color-btn-favorite:        #fef3c7;
-    --color-btn-favorite-hover:  #fde68a;
-    --color-btn-favorite-active: #fbbf24;
-    --color-btn-favorite-text:   #92400e;
+    /* ── Background ─────────────────────────────── */
+    --color-bg-activity-panel: #ffffff83;   /* Fond du panel d'activité */
+    --color-bg-account-panel: #ffffffa2;   /* Fond du panel de compte */
 
-    --color-btn-todo:            #d1fae5;
-    --color-btn-todo-hover:      #a7f3d0;
-    --color-btn-todo-active:     #10b981;
-    --color-btn-todo-text:       #065f46;
+    /* ── Boutons d'action (fiche activité) ─────────── */
+    --color-btn-favorite:        #fef3c7; /* Fond du bouton Favori (jaune pâle) */
+    --color-btn-favorite-hover:  #fde68a; /* Fond Favori au survol */
+    --color-btn-favorite-active: #fbbf24; /* Fond Favori quand activé (jaune vif) */
+    --color-btn-favorite-text:   #92400e; /* Texte/icône du bouton Favori */
 
-    --color-btn-itinerary:       #dbeafe;
-    --color-btn-itinerary-hover: #bfdbfe;
-    --color-btn-itinerary-text:  #1e40af;
+    --color-btn-todo:            #d1fae5; /* Fond du bouton À faire (vert pâle) */
+    --color-btn-todo-hover:      #a7f3d0; /* Fond À faire au survol */
+    --color-btn-todo-active:     #10b981; /* Fond À faire quand activé (vert vif) */
+    --color-btn-todo-text:       #065f46; /* Texte/icône du bouton À faire */
 
-    --color-btn-similar:         #e9d5ff;
-    --color-btn-similar-hover:   #d8b4fe;
-    --color-btn-similar-text:    #6b21a8;
+    --color-btn-itinerary:       #dbeafe; /* Fond du bouton Itinéraire (bleu pâle) */
+    --color-btn-itinerary-hover: #bfdbfe; /* Fond Itinéraire au survol */
+    --color-btn-itinerary-text:  #1e40af; /* Texte/icône du bouton Itinéraire */
 
-    --color-btn-share:           #f3f4f6;
-    --color-btn-share-hover:     #e5e7eb;
-    --color-btn-share-text:      #374151;
+    --color-btn-similar:         #e9d5ff; /* Fond du bouton Similaires (violet pâle) */
+    --color-btn-similar-hover:   #d8b4fe; /* Fond Similaires au survol */
+    --color-btn-similar-text:    #6b21a8; /* Texte/icône du bouton Similaires */
 
-    /* ── Notation ──────────────────────────────────── */
-    --color-rating-1:         #fee2e2;
-    --color-rating-1-text:    #991b1b;
-    --color-rating-2:         #ffedd5;
-    --color-rating-2-text:    #9a3412;
-    --color-rating-3:         #fef9c3;
-    --color-rating-3-text:    #713f12;
-    --color-rating-4:         #dcfce7;
-    --color-rating-4-text:    #166534;
-    --color-rating-5:         #bbf7d0;
-    --color-rating-5-text:    #14532d;
+    /* ── Notation (barre 1-5 étoiles) ─────────────── */
+    --color-rating-1:         #fee2e2;   /* Fond note 1/5 — "Déconseille" (rouge pâle) */
+    --color-rating-1-text:    #991b1b;   /* Texte note 1/5 */
+    --color-rating-2:         #ffedd5;   /* Fond note 2/5 — "Pas fan" (orange pâle) */
+    --color-rating-2-text:    #9a3412;   /* Texte note 2/5 */
+    --color-rating-3:         #fef9c3;   /* Fond note 3/5 — "Normal" (jaune pâle) */
+    --color-rating-3-text:    #713f12;   /* Texte note 3/5 */
+    --color-rating-4:         #dcfce7;   /* Fond note 4/5 — "Bien" (vert pâle) */
+    --color-rating-4-text:    #166534;   /* Texte note 4/5 */
+    --color-rating-5:         #bbf7d0;   /* Fond note 5/5 — "Recommande" (vert vif) */
+    --color-rating-5-text:    #14532d;   /* Texte note 5/5 */
 
-    --color-rating-badge-green:  rgba(16, 185, 129, 0.25);
-    --color-rating-badge-orange: rgba(245, 158, 11, 0.25);
-    --color-rating-badge-red:    rgba(239, 68, 68, 0.25);
+    --color-rating-badge-green:  rgba(16, 185, 129, 0.25);  /* Badge note moyenne haute (≥4) */
+    --color-rating-badge-orange: rgba(245, 158, 11, 0.25);  /* Badge note moyenne (2.5–4) */
+    --color-rating-badge-red:    rgba(239, 68, 68, 0.25);   /* Badge note moyenne basse (<2.5) */
 
-    /* ── Catégories ────────────────────────────────── */
-    --color-cat-musee:        #dbeafe;
-    --color-cat-musee-text:   #1e40af;
-    --color-cat-parc:         #d1fae5;
-    --color-cat-parc-text:    #065f46;
-    --color-cat-cinema:       #e0e7ff;
-    --color-cat-cinema-text:  #4338ca;
-    --color-cat-nightlife:    #f3e8ff;
-    --color-cat-nightlife-text: #6b21a8;
-    --color-cat-restaurant:   #fed7aa;
-    --color-cat-restaurant-text: #9a3412;
-
-    /* ── Marqueur utilisateur ──────────────────────── */
-    --color-user-marker:      #FACC15;
-    --color-user-marker-border: #EAB308;
+    /* ── Marqueur utilisateur (point "ma position") ── */
+    --color-user-marker:      #FACC15;   /* Couleur du point GPS de l'utilisateur (jaune) */
+    --color-user-marker-border: #EAB308; /* Bordure du point GPS */
 
     /* ── Tailles / dimensions ──────────────────────── */
-    --header-h:               60px;
-    --panel-mobile-h:         38vh;
-    --border-radius-sm:       6px;
-    --border-radius-md:       12px;
-    --border-radius-lg:       20px;
-    --border-radius-full:     9999px;
-
-    /* ── Transitions ───────────────────────────────── */
-    --transition-fast:        0.15s ease;
-    --transition-normal:      0.2s ease;
-    --transition-slow:        0.3s ease;
+    --header-h:               60px;      /* Hauteur du header fixe */
+    --border-radius-sm:       6px;       /* Coins arrondis petits (boutons, inputs) */
 }

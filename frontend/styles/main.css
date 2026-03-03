@@ -35,9 +35,9 @@ header {
     position: absolute;
     top: 0; left: 0; right: 0;
     z-index: 1000;
-    background: rgba(255, 255, 255, 0.6);
-    backdrop-filter: blur(60px);
-    -webkit-backdrop-filter: blur(60px);
+    background: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
     box-shadow: 0 2px 8px rgba(167, 167, 167, 0.6);
 }
 
@@ -530,7 +530,9 @@ header {
     left: 0;
     right: 0;
     z-index: 2000;
-    background: #fff;
+    background: var(--color-bg-activity-panel);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
     border-radius: 16px 16px 0 0;
     box-shadow: 0 -4px 32px rgba(0, 0, 0, 0.14);
     height: 38vh;
@@ -1131,9 +1133,9 @@ header {
     right: 0;
     bottom: 0;
     width: min(380px, 100vw);
-    background: rgba(255, 255, 255, 0.80);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: var(--color-bg-account-panel);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
     box-shadow: -4px 0 24px rgba(0, 0, 0, 0.12);
     display: flex;
     flex-direction: column;
