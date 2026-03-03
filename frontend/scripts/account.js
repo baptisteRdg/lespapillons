@@ -83,7 +83,7 @@ function _renderFriendRequests(requests) {
     }
 
     container.classList.remove('hidden');
-    container.innerHTML = `<p class="account-section-label">Demandes reçues</p>` +
+    container.innerHTML = `<p class="account-section-label">${T.LABELS.FRIEND_REQUESTS}</p>` +
         requests.map(r => `
             <div class="friend-request-item" data-id="${r.id}">
                 <div class="friend-avatar-sm">${r.from.pseudo.slice(0, 2).toUpperCase()}</div>
@@ -112,7 +112,7 @@ function _renderFriends(friends) {
     if (!container) return;
 
     if (!friends.length) {
-        container.innerHTML = '<p class="account-empty-msg">Aucun ami pour l\'instant</p>';
+        container.innerHTML = `<p class="account-empty-msg">${T.EMPTY.FRIENDS}</p>`;
         return;
     }
 
@@ -120,7 +120,7 @@ function _renderFriends(friends) {
         <div class="friend-item" data-id="${f.id}">
             <div class="friend-avatar-sm">${f.pseudo.slice(0, 2).toUpperCase()}</div>
             <span class="friend-name">${escapeHtml(f.pseudo)}</span>
-            <button class="friend-remove-btn" data-id="${f.id}" title="Supprimer">
+            <button class="friend-remove-btn" data-id="${f.id}" title="${T.BUTTONS.DELETE}">
                 <i class="fas fa-user-minus"></i>
             </button>
         </div>
@@ -139,13 +139,13 @@ async function _sendFriendRequest() {
     try {
         const res  = await _authFetch(`${getApiBaseUrl()}/users/friends/request/${encodeURIComponent(pseudo)}`, { method: 'POST' });
         const data = await res.json();
-        showToast(data.message || 'Demande envoyée', data.success ? 'success' : 'error');
+        showToast(data.message || T.TOASTS.FRIEND_REQUEST_SENT, data.success ? 'success' : 'error');
         if (data.success) {
             input.value = '';
             await _loadFriends();
         }
     } catch {
-        showToast('Erreur réseau', 'error');
+        showToast(T.TOASTS.NETWORK_ERROR, 'error');
     }
 }
 
@@ -160,7 +160,7 @@ async function _respondFriendRequest(requestId, action) {
         showToast(data.message || '', data.success ? 'success' : 'error');
         if (data.success) await _loadFriends();
     } catch {
-        showToast('Erreur réseau', 'error');
+        showToast(T.TOASTS.NETWORK_ERROR, 'error');
     }
 }
 
@@ -168,10 +168,10 @@ async function _removeFriend(friendId) {
     try {
         const res  = await _authFetch(`${getApiBaseUrl()}/users/friends/${friendId}`, { method: 'DELETE' });
         const data = await res.json();
-        showToast(data.message || 'Ami supprimé', 'info');
+        showToast(data.message || T.TOASTS.FRIEND_REMOVED, 'info');
         if (data.success) await _loadFriends();
     } catch {
-        showToast('Erreur réseau', 'error');
+        showToast(T.TOASTS.NETWORK_ERROR, 'error');
     }
 }
 
@@ -193,14 +193,14 @@ async function _loadDone() {
     } catch {}
 }
 
-const RATING_LABELS = ['', 'Déconseille', 'Pas fan', 'Normal', 'Bien', 'Recommande'];
+const RATING_LABELS = T.RATING_LABELS;
 
 function _renderActivityList(containerId, activities, listType) {
     const container = document.getElementById(containerId);
     if (!container) return;
 
     if (!activities.length) {
-        container.innerHTML = `<p class="account-empty-msg">${listType === 'todo' ? 'Aucune activité à faire' : 'Aucune activité réalisée'}</p>`;
+        container.innerHTML = `<p class="account-empty-msg">${listType === 'todo' ? T.EMPTY.TODO : T.EMPTY.DONE}</p>`;
         return;
     }
 
@@ -216,7 +216,7 @@ function _renderActivityList(containerId, activities, listType) {
                     <span class="account-activity-type">${escapeHtml(a.type)}</span>
                     ${ratingHtml}
                 </div>
-                <button class="account-activity-remove" ${removeAction} title="Retirer">
+                <button class="account-activity-remove" ${removeAction} title="${T.BUTTONS.REMOVE}">
                     <i class="fas fa-trash-alt"></i>
                 </button>
             </div>
@@ -270,9 +270,9 @@ async function _removeFromList(activityId, listType) {
         const url = `${getApiBaseUrl()}/users/me/${listType}/${activityId}`;
         const res = await _authFetch(url, { method: 'DELETE' });
         const data = await res.json();
-        showToast(data.message || 'Retiré', 'info');
+        showToast(data.message || T.TOASTS.REMOVED, 'info');
     } catch {
-        showToast('Erreur réseau', 'error');
+        showToast(T.TOASTS.NETWORK_ERROR, 'error');
     }
 }
 
@@ -294,7 +294,7 @@ function _hidePseudoForm() {
 async function _savePseudo() {
     const pseudo = document.getElementById('account-pseudo-input')?.value?.trim();
     if (!pseudo || pseudo.length < 3) {
-        showToast('Pseudo trop court (3 caractères minimum)', 'error');
+        showToast(T.TOASTS.PSEUDO_TOO_SHORT, 'error');
         return;
     }
 
@@ -311,13 +311,13 @@ async function _savePseudo() {
             if (user) user.pseudo = data.user.pseudo;
             _renderProfile(data.user);
             if (typeof _updateAccountButton === 'function') _updateAccountButton();
-            showToast('Pseudo mis à jour', 'success');
+            showToast(T.TOASTS.PSEUDO_UPDATED, 'success');
             _hidePseudoForm();
         } else {
-            showToast(data.message || 'Erreur', 'error');
+            showToast(data.message || T.TOASTS.ERROR, 'error');
         }
     } catch {
-        showToast('Erreur réseau', 'error');
+        showToast(T.TOASTS.NETWORK_ERROR, 'error');
     }
 }
 
@@ -345,7 +345,7 @@ function _resetAvatarPreview() {
     if (preview) {
         preview.innerHTML = `
             <i class="fas fa-cloud-upload-alt avatar-upload-icon"></i>
-            <span class="avatar-upload-hint">Clique ou dépose une image<br><small>JPEG · PNG · WebP · GIF — max 5 Mo</small></span>
+            <span class="avatar-upload-hint">${T.LABELS.AVATAR_HINT}</span>
         `;
     }
     if (fileInput) fileInput.value = '';
@@ -356,7 +356,7 @@ function _onAvatarFileSelected(file) {
 
     // Seule vérification côté client : la taille (Sharp validera le vrai type côté serveur)
     if (file.size > 8 * 1024 * 1024) {
-        showToast('Image trop volumineuse (max 8 Mo)', 'error');
+        showToast(T.TOASTS.IMAGE_TOO_LARGE, 'error');
         return;
     }
 
@@ -376,17 +376,17 @@ function _onAvatarFileSelected(file) {
 
 async function _saveAvatar() {
     if (!_pendingAvatarFile) {
-        showToast('Aucun fichier sélectionné', 'error');
+        showToast(T.TOASTS.NO_FILE, 'error');
         return;
     }
 
     if (!getAuthToken()) {
-        showToast('Tu dois être connecté pour changer ta photo', 'error');
+        showToast(T.TOASTS.AUTH_REQUIRED_AVATAR, 'error');
         return;
     }
 
     const saveBtn = document.getElementById('account-avatar-save-btn');
-    if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = 'Envoi…'; }
+    if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = T.BUTTONS.SENDING; }
 
     try {
         const formData = new FormData();
@@ -401,7 +401,7 @@ async function _saveAvatar() {
         // Nginx peut renvoyer du HTML (ex: 413 trop grand) au lieu de JSON
         const contentType = res.headers.get('content-type') || '';
         if (!contentType.includes('application/json')) {
-            showToast(`Erreur serveur (HTTP ${res.status}) — image peut-être trop grande`, 'error');
+            showToast(T.TOASTS.SERVER_ERROR_IMAGE(res.status), 'error');
             return;
         }
 
@@ -412,16 +412,16 @@ async function _saveAvatar() {
             if (user) user.avatar = data.user.avatar;
             _renderProfile(data.user);
             if (typeof _updateAccountButton === 'function') _updateAccountButton();
-            showToast('Photo mise à jour ✓', 'success');
+            showToast(T.TOASTS.AVATAR_UPDATED, 'success');
             _hideAvatarForm();
         } else {
-            showToast(data.message || 'Erreur lors de l\'upload', 'error');
+            showToast(data.message || T.TOASTS.UPLOAD_ERROR, 'error');
         }
     } catch (err) {
         console.error('Erreur upload avatar:', err);
-        showToast('Erreur réseau — vérifie ta connexion', 'error');
+        showToast(T.TOASTS.NETWORK_CHECK, 'error');
     } finally {
-        if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = 'Enregistrer'; }
+        if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = T.BUTTONS.SAVE; }
     }
 }
 

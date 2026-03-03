@@ -122,7 +122,7 @@ function logout() {
     _updateAccountButton();
     // Fermer le panneau compte s'il est ouvert
     document.getElementById('account-panel')?.classList.remove('open');
-    showToast('Déconnecté', 'info');
+    showToast(T.TOASTS.LOGGED_OUT, 'info');
 }
 
 // ── OTP ───────────────────────────────────────────────────────────────────────
@@ -136,7 +136,7 @@ async function sendOtp(phone) {
 
     if (!_firebaseAuth) {
         console.error('❌ [sendOtp] Firebase Auth non initialisé');
-        throw new Error('Service d\'authentification indisponible. Vérifiez votre connexion.');
+        throw new Error(T.ERRORS.AUTH_UNAVAILABLE);
     }
     console.log('✅ [sendOtp] Firebase Auth OK');
 
@@ -161,13 +161,13 @@ async function sendOtp(phone) {
     } catch (err) {
         console.error('❌ [sendOtp] Échec envoi SMS :', err.code, err.message);
         const messages = {
-            'auth/too-many-requests':     'Trop de tentatives. Réessayez plus tard.',
-            'auth/invalid-phone-number':  'Numéro de téléphone invalide.',
-            'auth/quota-exceeded':        'Quota SMS dépassé. Réessayez plus tard.',
-            'auth/captcha-check-failed':  'Vérification reCAPTCHA échouée. Rechargez la page.',
-            'auth/network-request-failed':'Erreur réseau. Vérifiez votre connexion.'
+            'auth/too-many-requests':     T.ERRORS.TOO_MANY_REQUESTS,
+            'auth/invalid-phone-number':  T.ERRORS.INVALID_PHONE,
+            'auth/quota-exceeded':        T.ERRORS.SMS_QUOTA,
+            'auth/captcha-check-failed':  T.ERRORS.CAPTCHA_FAILED,
+            'auth/network-request-failed':T.ERRORS.NETWORK
         };
-        throw new Error(messages[err.code] || err.message || 'Erreur lors de l\'envoi du SMS');
+        throw new Error(messages[err.code] || err.message || T.ERRORS.SMS_SEND);
     }
 }
 
@@ -180,7 +180,7 @@ async function verifyOtp(code) {
 
     if (!_confirmationResult) {
         console.error('❌ [verifyOtp] Aucun confirmationResult — sendOtp n\'a pas été appelé ?');
-        throw new Error('Aucun OTP en attente');
+        throw new Error(T.ERRORS.NO_OTP_PENDING);
     }
 
     let result;
@@ -209,7 +209,7 @@ async function verifyOtp(code) {
     if (!res.ok) {
         const err = await res.json().catch(() => ({}));
         console.error('❌ [verifyOtp] Erreur backend :', err);
-        throw new Error(err.message || 'Erreur serveur');
+        throw new Error(err.message || T.ERRORS.SERVER);
     }
 
     const data = await res.json();
@@ -229,7 +229,7 @@ async function verifyOtp(code) {
         cb();
     }
 
-    showToast(`Connecté en tant que ${_currentUser.pseudo}`, 'success');
+    showToast(T.TOASTS.LOGGED_IN(_currentUser.pseudo), 'success');
     return data;
 }
 
@@ -328,10 +328,10 @@ function initLoginPopup() {
                 _currentUser = data.user;
                 _updateAccountButton();
                 hideLoginPopup();
-                showToast(`Connecté (test) : ${_currentUser.pseudo}`, 'success');
+                showToast(T.TOASTS.LOGGED_IN_TEST(_currentUser.pseudo), 'success');
                 if (_pendingAuthCallback) { const cb = _pendingAuthCallback; _pendingAuthCallback = null; cb(); }
             } catch (err) {
-                _setLoginError(err.message || 'Erreur connexion test');
+                _setLoginError(err.message || T.ERRORS.TEST_CONNECTION);
             } finally {
                 _setLoginLoading(btn, false);
             }
@@ -344,7 +344,7 @@ function initLoginPopup() {
         }
 
         if (!/^\+[0-9]{8,15}$/.test(phone.replace(/\s/g, ''))) {
-            const msg = 'Numéro invalide. Format : 06 XX XX XX XX';
+            const msg = T.ERRORS.PHONE_FORMAT;
             _setLoginError(msg);
             if (typeof showToast === 'function') showToast(msg, 'error');
             return;
@@ -358,7 +358,7 @@ function initLoginPopup() {
             _showLoginStep('otp');
             document.getElementById('login-otp-input')?.focus();
         } catch (err) {
-            const msg = err.message || 'Erreur lors de l\'envoi du SMS';
+            const msg = err.message || T.ERRORS.SMS_SEND;
             _setLoginError(msg);
             if (typeof showToast === 'function') showToast(msg, 'error');
         } finally {
@@ -372,7 +372,7 @@ function initLoginPopup() {
         const btn  = document.getElementById('login-verify-btn');
 
         if (!/^[0-9]{6}$/.test(code)) {
-            _setLoginError('Le code doit contenir 6 chiffres');
+            _setLoginError(T.ERRORS.CODE_6_DIGITS);
             return;
         }
 
@@ -382,7 +382,7 @@ function initLoginPopup() {
         try {
             await verifyOtp(code);
         } catch (err) {
-            const msg = err.message || 'Code incorrect ou expiré';
+            const msg = err.message || T.ERRORS.CODE_INVALID;
             _setLoginError(msg);
             if (typeof showToast === 'function') showToast(msg, 'error');
             _setLoginLoading(btn, false);

@@ -45,27 +45,27 @@ const JAWG_TOKEN = 'q8ENjbC5b2HaKNzPYe09LRKGCNFudkoHzE5iHznAfmXmBwohhWjfKj1wuFMD
 // Styles de carte disponibles
 const MAP_STYLES = {
     papillon: {
-        label: 'Papillon',
+        label: T.MAP_STYLES.papillon,
         url: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}{r}.png',
         options: { subdomains: 'abcd' }
     },
     satellite: {
-        label: 'Satellite',
+        label: T.MAP_STYLES.satellite,
         url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
         options: { maxZoom: 19 }
     },
     nuit: {
-        label: 'Nuit',
+        label: T.MAP_STYLES.nuit,
         url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
         options: { subdomains: 'abcd' }
     },
     simple: {
-        label: 'Simple',
+        label: T.MAP_STYLES.simple,
         url: `https://tile.jawg.io/jawg-streets/{z}/{x}/{y}{r}.png?access-token=${JAWG_TOKEN}`,
         options: {}
     },
     propre: {
-        label: 'Propre',
+        label: T.MAP_STYLES.propre,
         url: `https://tile.jawg.io/jawg-lagoon/{z}/{x}/{y}{r}.png?access-token=${JAWG_TOKEN}`,
         options: {}
     }
@@ -109,7 +109,7 @@ function setMapStyle(styleKey, save = true) {
 
     // Vérifier le token Jawg si nécessaire
     if ((styleKey === 'simple' || styleKey === 'propre') && !JAWG_TOKEN) {
-        showToast('Ajoutez votre token Jawg dans map.js (JAWG_TOKEN)', 'info');
+        showToast(T.TOASTS.ERROR, 'info');
         return;
     }
 
@@ -588,14 +588,14 @@ async function loadAndShowActivityDetails(activityId, marker) {
         }
 
         // Afficher le loader dans le panel
-        showActivityPanel('<div class="popup-loading"><i class="fas fa-spinner fa-spin popup-loading-spinner"></i><p class="popup-loading-text">Chargement…</p></div>', activityId);
+        showActivityPanel(`<div class="popup-loading"><i class="fas fa-spinner fa-spin popup-loading-spinner"></i><p class="popup-loading-text">${T.LOADING}</p></div>`, activityId);
 
         // Charger les détails depuis l'API
         const details = await getActivityDetails(activityId);
 
         if (!details) {
             console.error(`❌ Impossible de charger #${activityId}`);
-            showActivityPanel('<div class="popup-error">Erreur lors du chargement</div>', activityId);
+            showActivityPanel(`<div class="popup-error">${T.TOASTS.LOAD_ERROR}</div>`, activityId);
             return;
         }
 
@@ -612,7 +612,7 @@ async function loadAndShowActivityDetails(activityId, marker) {
 
     } catch (error) {
         console.error(`❌ Erreur fiche #${activityId}:`, error);
-        showActivityPanel('<div class="popup-error">Erreur lors du chargement</div>', activityId);
+        showActivityPanel(`<div class="popup-error">${T.TOASTS.LOAD_ERROR}</div>`, activityId);
     }
 }
 
@@ -825,11 +825,11 @@ function _ratingBadgeHtml(avg, total) {
  */
 function _ratingBarHtml(userRating, activityId) {
     const LABELS = [
-        { v: 1, label: 'Déconseille', cls: 'rating-btn-1' },
-        { v: 2, label: 'Pas fan',     cls: 'rating-btn-2' },
-        { v: 3, label: 'Normal',      cls: 'rating-btn-3' },
-        { v: 4, label: 'Bien',        cls: 'rating-btn-4' },
-        { v: 5, label: 'Recommande',  cls: 'rating-btn-5' }
+        { v: 1, label: T.RATING_LABELS[1], cls: 'rating-btn-1' },
+        { v: 2, label: T.RATING_LABELS[2], cls: 'rating-btn-2' },
+        { v: 3, label: T.RATING_LABELS[3], cls: 'rating-btn-3' },
+        { v: 4, label: T.RATING_LABELS[4], cls: 'rating-btn-4' },
+        { v: 5, label: T.RATING_LABELS[5], cls: 'rating-btn-5' }
     ];
     const buttons = LABELS.map(({ v, label, cls }) => {
         const active = userRating === v ? ' rating-btn-active' : '';
@@ -850,7 +850,7 @@ function createPopupContent(activity) {
         .replace(/\s+/g, '-');
     
     const safeTitle    = escapeHtml(activity.title);
-    const safeCategory = escapeHtml(activity.category || 'Autre');
+    const safeCategory = escapeHtml(activity.category || T.LABELS.CATEGORY_OTHER);
     const safeAddress  = escapeHtml(activity.address || '');
     const safeDesc     = escapeHtml(activity.description || '');
     const safePhone    = escapeHtml(activity.phone || '');
@@ -885,7 +885,7 @@ function createPopupContent(activity) {
                 <div class="popup-links" id="popup-links-${activity.id}"${!activity.website && !activity.phone ? ' style="display:none"' : ''}>
                     <a href="${safeWebsite || '#'}" target="_blank" rel="noopener noreferrer" class="popup-link" id="popup-web-${activity.id}"${!safeWebsite ? ' style="display:none"' : ''}>
                         <i class="fas fa-globe"></i>
-                        <span class="popup-link-label">Visiter le site web</span>
+                        <span class="popup-link-label">${T.LABELS.VISIT_WEBSITE}</span>
                     </a>
                     <a href="tel:${safePhone}" class="popup-link" id="popup-phone-${activity.id}"${!activity.phone ? ' style="display:none"' : ''}>
                         <i class="fas fa-phone"></i>
@@ -902,27 +902,27 @@ function createPopupContent(activity) {
             <div class="popup-footer">
                 <button class="popup-btn btn-favorite ${favoriteClass}" data-action="favorite" data-id="${activity.id}">
                     <i class="${favoriteIcon} fa-heart"></i>
-                    <span>${isFavorite ? 'Favori' : 'Ajouter'}</span>
+                    <span>${isFavorite ? T.BUTTONS.FAVORITE : T.BUTTONS.ADD}</span>
                 </button>
 
                 <button class="popup-btn btn-todo" data-action="todo" data-id="${activity.id}" id="todo-btn-${activity.id}">
                     <i class="fas fa-clipboard-list"></i>
-                    <span>À faire</span>
+                    <span>${T.BUTTONS.TODO}</span>
                 </button>
 
                 <button class="popup-btn btn-itinerary" data-action="itinerary" data-id="${activity.id}">
                     <i class="fas fa-route"></i>
-                    <span>Itinéraire</span>
+                    <span>${T.BUTTONS.ITINERARY}</span>
                 </button>
 
                 <button class="popup-btn btn-similar" data-action="similar" data-id="${activity.id}">
                     <i class="fas fa-search"></i>
-                    <span>Similaires</span>
+                    <span>${T.BUTTONS.SIMILAR}</span>
                 </button>
 
                 <button class="popup-btn btn-share" data-action="share" data-id="${activity.id}" data-title="${escapeHtml(activity.title)}">
                     <i class="fas fa-share-nodes"></i>
-                    <span>Partager</span>
+                    <span>${T.BUTTONS.SHARE}</span>
                 </button>
             </div>
         </div>
@@ -949,7 +949,7 @@ function setupPopupEventListeners(activity) {
             favoriteBtn.classList.toggle('active', isFav);
             favoriteBtn.querySelector('i').className = `${isFav ? 'fa-solid' : 'fa-regular'} fa-heart`;
             const label = favoriteBtn.querySelector('span');
-            if (label) label.textContent = isFav ? 'Favori' : 'Ajouter';
+            if (label) label.textContent = isFav ? T.BUTTONS.FAVORITE : T.BUTTONS.ADD;
         });
     }
     
@@ -967,9 +967,9 @@ function setupPopupEventListeners(activity) {
                         const nowActive = !isActive;
                         _updateTodoBtn(activity.id, nowActive);
                     }
-                    showToast(data.message || (isActive ? 'Retiré' : 'Ajouté'), data.success ? 'success' : 'error');
+                    showToast(data.message || (isActive ? T.TOASTS.TODO_REMOVED : T.TOASTS.TODO_ADDED), data.success ? 'success' : 'error');
                 } catch {
-                    showToast('Erreur réseau', 'error');
+                    showToast(T.TOASTS.NETWORK_ERROR, 'error');
                 }
             });
         });
@@ -1017,7 +1017,7 @@ function _updateTodoBtn(activityId, isInTodo) {
     const icon = btn.querySelector('i');
     if (icon) icon.className = isInTodo ? 'fas fa-clipboard-check' : 'fas fa-clipboard-list';
     const label = btn.querySelector('span');
-    if (label) label.textContent = isInTodo ? 'À faire ✓' : 'À faire';
+    if (label) label.textContent = isInTodo ? T.BUTTONS.TODO_CHECKED : T.BUTTONS.TODO;
 }
 
 /**
@@ -1077,7 +1077,7 @@ async function submitRating(activityId, value) {
             body:    JSON.stringify({ activityId, value })
         });
         const data = await res.json();
-        if (!data.success) { showToast(data.message || 'Erreur', 'error'); return; }
+        if (!data.success) { showToast(data.message || T.TOASTS.ERROR, 'error'); return; }
 
         _updateRatingBar(activityId, value);
 
@@ -1090,10 +1090,9 @@ async function submitRating(activityId, value) {
             }
         }
 
-        const LABELS = ['', 'Déconseille', 'Pas fan', 'Normal', 'Bien', 'Recommande'];
-        showToast(`Note : ${LABELS[value]}`, 'success');
+        showToast(T.TOASTS.RATING_SUCCESS(T.RATING_LABELS[value]), 'success');
     } catch {
-        showToast('Erreur réseau', 'error');
+        showToast(T.TOASTS.NETWORK_ERROR, 'error');
     }
 }
 
@@ -1122,7 +1121,7 @@ function toggleFavorite(activityId, activityData = null) {
     
     if (existingIndex > -1) {
         favorites.splice(existingIndex, 1);
-        showToast('Retiré des favoris', 'info');
+        showToast(T.TOASTS.FAVORITE_REMOVED, 'info');
     } else {
         // Priorité : données passées directement, sinon chercher dans le pool
         const poolEntry = activityPool.get(activityId);
@@ -1135,7 +1134,7 @@ function toggleFavorite(activityId, activityData = null) {
                 lng: source.lng,
                 type: source.type || source.category
             });
-            showToast('Ajouté aux favoris !', 'success');
+            showToast(T.TOASTS.FAVORITE_ADDED, 'success');
         } else {
             console.warn(`⚠️ Impossible d'ajouter le favori #${activityId} : données introuvables`);
             return;
@@ -1162,7 +1161,7 @@ function openItinerary(destLat, destLng) {
  * @param {string} category - Catégorie de l'activité
  */
 function showSimilarActivities(category) {
-    showToast('Bientôt disponible — restez connectés !', 'info');
+    showToast(T.TOASTS.SIMILAR_SOON, 'info');
 }
 
 /**
@@ -1181,10 +1180,10 @@ async function shareActivity(activityId, title) {
     } else {
         try {
             await navigator.clipboard.writeText(url);
-            showToast('Lien copié dans le presse-papier !', 'success');
+            showToast(T.TOASTS.LINK_COPIED, 'success');
         } catch {
             // Fallback si clipboard indisponible
-            showToast(`Lien : ${url}`, 'info');
+            showToast(T.TOASTS.LINK_FALLBACK(url), 'info');
         }
     }
 }
@@ -1205,7 +1204,7 @@ async function handleDeepLink() {
 
     const details = await getActivityDetails(activityId);
     if (!details || !details.lat) {
-        showToast('Activité introuvable ou inaccessible', 'info');
+        showToast(T.TOASTS.ACTIVITY_NOT_FOUND, 'info');
         return;
     }
 
@@ -1268,7 +1267,7 @@ async function showFavoritesSidebar() {
     const favorites = getFavorites();
     
     if (favorites.length === 0) {
-        content.innerHTML = '<p class="fav-empty">Aucun favori pour le moment</p>';
+        content.innerHTML = `<p class="fav-empty">${T.EMPTY.FAVORITES}</p>`;
     } else {
         content.innerHTML = favorites.map(fav => `
             <div class="fav-item" data-lat="${fav.lat}" data-lng="${fav.lng}" data-id="${fav.id}">
@@ -1416,9 +1415,9 @@ async function searchActivities(searchTerm) {
     enterSearchMode(results);
 
     if (results.length === 0) {
-        showToast(`Aucune activité trouvée pour "${term}"`, 'info');
+        showToast(T.TOASTS.SEARCH_NO_RESULTS(term), 'info');
     } else {
-        showToast(`${results.length} activité(s) trouvée(s)`, 'success');
+        showToast(T.TOASTS.SEARCH_RESULTS(results.length), 'success');
         await centerOnSearchResults(results);
     }
 }
