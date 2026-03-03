@@ -20,6 +20,29 @@ const API_BASE_URL = getApiBaseUrl();
 console.log('🌐 API URL:', API_BASE_URL);
 
 /**
+ * Résout l'URL d'un avatar.
+ *  - Nouvelles URLs : /api/uploads/avatars/... → fonctionne partout (Nginx route /api vers le backend)
+ *  - Anciennes URLs : /uploads/avatars/... → normalisées en /api/uploads/...
+ *  - En dev (localhost) : préfixe http://localhost:3000
+ */
+function resolveAvatarUrl(url) {
+    if (!url) return null;
+
+    // Normaliser les anciennes URLs (/uploads/...) vers /api/uploads/...
+    if (url.startsWith('/uploads/')) {
+        url = '/api' + url;
+    }
+
+    if (url.startsWith('/api/uploads/')) {
+        const isLocalDev = window.location.hostname === 'localhost' ||
+                           window.location.hostname === '127.0.0.1';
+        return isLocalDev ? `http://localhost:3000${url}` : url;
+    }
+
+    return url;
+}
+
+/**
  * Calcule la distance entre deux points géographiques (formule de Haversine)
  * @param {number} lat1 - Latitude du point 1
  * @param {number} lng1 - Longitude du point 1
@@ -43,15 +66,13 @@ function calculateDistance(lat1, lng1, lat2, lng2) {
 }
 
 /**
- * Récupère les activités (version légère) dans un rayon donné
+ * Récupère les activités (version légère) autour d'un point
  * @param {number} centerLat - Latitude du centre
  * @param {number} centerLng - Longitude du centre
- * @param {number} radiusMeters - Rayon en mètres (null = pas de limite)
  * @returns {Promise<Array>} Liste des activités légères
  */
-async function getActivitiesInRadius(centerLat, centerLng, radiusMeters = null) {
+async function getActivitiesInRadius(centerLat, centerLng) {
     try {
-        // Construire l'URL avec les paramètres
         let url = `${API_BASE_URL}/activities`;
         const params = new URLSearchParams();
         
@@ -60,15 +81,11 @@ async function getActivitiesInRadius(centerLat, centerLng, radiusMeters = null) 
             params.append('lng', centerLng);
         }
         
-        if (radiusMeters !== null) {
-            params.append('radius', radiusMeters);
-        }
-        
         if (params.toString()) {
             url += `?${params.toString()}`;
         }
         
-        console.log('🔍 API: Chargement activités', { url, radius: radiusMeters });
+        console.log('🔍 API: Chargement activités', { url });
         
         // Appel API
         const response = await fetch(url);

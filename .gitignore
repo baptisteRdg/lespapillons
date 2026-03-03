@@ -23,3 +23,6 @@ Thumbs.db
 # Ignore build files
 dist/
 build/
+
+# Tests — fichiers temporaires
+tests/benchmark-history.json

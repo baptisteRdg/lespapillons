@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const express = require('express');
 const cors = require('cors');
 const { PrismaClient } = require('@prisma/client');
@@ -9,6 +11,10 @@ const {
     geojsonCollectionToActivities,
     activitiesToGeojsonCollection
 } = require('./helpers/geojson');
+const { initFirebase } = require('./services/firebase');
+
+// Initialiser Firebase Admin au démarrage
+initFirebase();
 
 const app = express();
 const prisma = new PrismaClient();
@@ -18,11 +24,20 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
+// Fichiers uploadés (avatars, etc.) servis via /api/uploads (passe par la route /api de Nginx)
+app.use('/api/uploads', require('express').static(require('path').join(__dirname, 'uploads')));
+
 // Logger simple pour toutes les requêtes
 app.use((req, res, next) => {
     console.log(`📥 ${req.method} ${req.path}`);
     next();
 });
+
+// Nouvelles routes
+app.use('/api/auth',    require('./routes/auth'));
+app.use('/api/users',   require('./routes/users'));
+app.use('/api/ratings', require('./routes/ratings'));
+app.use('/api/upload',  require('./routes/upload'));
 
 // Swagger UI
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, {
@@ -76,7 +91,7 @@ app.get('/', (req, res) => {
  */
 app.get('/api/activities', async (req, res) => {
     try {
-        const { type, lat, lng, radius, search, bbox, limitPerType } = req.query;
+        const { type, lat, lng, search, bbox, limitPerType } = req.query;
         
         // Récupérer uniquement les champs nécessaires pour l'affichage sur la carte
         let activities = await prisma.activity.findMany({
@@ -132,17 +147,11 @@ app.get('/api/activities', async (req, res) => {
                 )
             }));
             
-            // Filtrer par rayon si spécifié
-            if (radius) {
-                const radiusMeters = parseFloat(radius);
-                activities = activities.filter(activity => activity.distance <= radiusMeters);
-            }
-            
             // Trier par distance (plus proche en premier)
             activities.sort((a, b) => a.distance - b.distance);
             
-            // Fallback : sans rayon, sans recherche texte, sans bbox → limiter à 100
-            if (!radius && !search && !bbox) {
+            // Fallback : sans recherche texte, sans bbox → limiter à 100
+            if (!search && !bbox) {
                 activities = activities.slice(0, 100);
             }
             
@@ -184,9 +193,14 @@ app.get('/api/activities/:id', async (req, res) => {
     try {
         const activityId = parseInt(req.params.id);
         
-        const activity = await prisma.activity.findUnique({
-            where: { id: activityId }
-        });
+        const [activity, avgResult] = await Promise.all([
+            prisma.activity.findUnique({ where: { id: activityId } }),
+            prisma.rating.aggregate({
+                where:  { activityId },
+                _avg:   { value: true },
+                _count: { value: true }
+            })
+        ]);
         
         if (!activity) {
             return res.status(404).json({
@@ -194,10 +208,13 @@ app.get('/api/activities/:id', async (req, res) => {
                 message: "Activité non trouvée"
             });
         }
+
+        const avgRating    = avgResult._avg.value ? Math.round(avgResult._avg.value * 10) / 10 : null;
+        const totalRatings = avgResult._count.value;
         
         res.json({
             success: true,
-            data: activity
+            data:    { ...activity, avgRating, totalRatings }
         });
     } catch (error) {
         console.error('Erreur GET /api/activities/:id:', error);

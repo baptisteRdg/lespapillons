@@ -9,52 +9,182 @@ datasource db {
   url      = "file:./dev.db"
 }
 
-// Modèle Activité
+// ─── Activité ────────────────────────────────────────────────────────────────
 model Activity {
-  id          Int        @id @default(autoincrement())
-  
-  // Champs OBLIGATOIRES
-  name        String
-  type        String
-  latitude    Float
-  longitude   Float
-  
-  // Champs OPTIONNELS (bonus)
-  address     String?
-  phone       String?
-  website     String?
-  description String?
+  id           Int      @id @default(autoincrement())
+
+  name         String
+  type         String
+  latitude     Float
+  longitude    Float
+
+  address      String?
+  phone        String?
+  website      String?
+  description  String?
   openingHours String?
-  
-  // Propriétés FLEXIBLES (pour toutes les autres données GeoJSON)
-  // Stocké en String (JSON sérialisé) car SQLite ne supporte pas Json
-  properties  String?
-  
-  // Métadonnées
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-  
-  // Relations
-  favorites   Favorite[]
-  
+  properties   String?
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  favorites      Favorite[]
+  ratings        Rating[]
+  todoBy         TodoActivity[]
+  doneBy         DoneActivity[]
+  groupActivities GroupActivity[]
+
   @@map("activities")
 }
 
-// Modèle Favori
+// ─── Utilisateur ─────────────────────────────────────────────────────────────
+model User {
+  id          String   @id @default(cuid())
+  phone       String   @unique
+  pseudo      String   @unique
+  avatar      String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  lastLoginAt DateTime?
+
+  favorites        Favorite[]
+  ratings          Rating[]
+  todoActivities   TodoActivity[]
+  doneActivities   DoneActivity[]
+  sentRequests     FriendRequest[] @relation("sentRequests")
+  receivedRequests FriendRequest[] @relation("receivedRequests")
+  friendships      Friendship[]    @relation("userFriendships")
+  friendOf         Friendship[]    @relation("friendUserFriendships")
+  ownedGroups      Group[]
+  groupMemberships GroupMember[]
+
+  @@map("users")
+}
+
+// ─── Favori ───────────────────────────────────────────────────────────────────
 model Favorite {
   id         Int      @id @default(autoincrement())
-  
-  // Association utilisateur (pour l'instant userId en string, plus tard ce sera une vraie relation)
-  userId     String   @default("default-user")
-  
-  // Relation avec l'activité
+  userId     String
   activityId Int
-  activity   Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
-  
-  // Métadonnées
   createdAt  DateTime @default(now())
-  
-  // Un utilisateur ne peut pas avoir 2x le même favori
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  activity Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
+
   @@unique([userId, activityId])
   @@map("favorites")
+}
+
+// ─── Note (1-5) ───────────────────────────────────────────────────────────────
+model Rating {
+  id         String   @id @default(cuid())
+  userId     String
+  activityId Int
+  value      Int      // 1 = déconseille … 5 = recommande
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  activity Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, activityId])
+  @@map("ratings")
+}
+
+// ─── Activité à faire ─────────────────────────────────────────────────────────
+model TodoActivity {
+  id         String   @id @default(cuid())
+  userId     String
+  activityId Int
+  createdAt  DateTime @default(now())
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  activity Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, activityId])
+  @@map("todo_activities")
+}
+
+// ─── Activité réalisée ────────────────────────────────────────────────────────
+model DoneActivity {
+  id         String   @id @default(cuid())
+  userId     String
+  activityId Int
+  createdAt  DateTime @default(now())
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  activity Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, activityId])
+  @@map("done_activities")
+}
+
+// ─── Amitié (lien bidirectionnel) ─────────────────────────────────────────────
+model Friendship {
+  id        String   @id @default(cuid())
+  userId    String
+  friendId  String
+  createdAt DateTime @default(now())
+
+  user   User @relation("userFriendships",       fields: [userId],   references: [id], onDelete: Cascade)
+  friend User @relation("friendUserFriendships",  fields: [friendId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, friendId])
+  @@map("friendships")
+}
+
+// ─── Demande d'amis ───────────────────────────────────────────────────────────
+model FriendRequest {
+  id        String   @id @default(cuid())
+  fromId    String
+  toId      String
+  status    String   @default("pending") // pending | accepted | rejected
+  createdAt DateTime @default(now())
+
+  from User @relation("sentRequests",     fields: [fromId], references: [id], onDelete: Cascade)
+  to   User @relation("receivedRequests", fields: [toId],   references: [id], onDelete: Cascade)
+
+  @@unique([fromId, toId])
+  @@map("friend_requests")
+}
+
+// ─── Groupe (DB uniquement — front non implémenté) ────────────────────────────
+model Group {
+  id        String   @id @default(cuid())
+  name      String
+  ownerId   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  owner      User            @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  members    GroupMember[]
+  activities GroupActivity[]
+
+  @@map("groups")
+}
+
+model GroupMember {
+  id       String   @id @default(cuid())
+  groupId  String
+  userId   String
+  joinedAt DateTime @default(now())
+
+  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId],  references: [id], onDelete: Cascade)
+
+  @@unique([groupId, userId])
+  @@map("group_members")
+}
+
+model GroupActivity {
+  id         String   @id @default(cuid())
+  groupId    String
+  activityId Int
+  addedAt    DateTime @default(now())
+
+  group    Group    @relation(fields: [groupId],    references: [id], onDelete: Cascade)
+  activity Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
+
+  @@unique([groupId, activityId])
+  @@map("group_activities")
 }

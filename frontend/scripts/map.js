@@ -3,7 +3,7 @@
  */
 
 // Version du localStorage — à incrémenter lors d'un changement de DB ou de format de données
-const STORAGE_VERSION = '1';
+const STORAGE_VERSION = '2';
 
 /**
  * Vérifie la version du localStorage et purge les données si obsolètes
@@ -14,6 +14,7 @@ function checkStorageVersion() {
         console.warn(`🗑️ LocalStorage obsolète (v${stored} → v${STORAGE_VERSION}), purge...`);
         localStorage.removeItem('favorites');
         localStorage.removeItem('user_position');
+        localStorage.removeItem('map_style');
         localStorage.setItem('storage_version', STORAGE_VERSION);
     }
 }
@@ -44,27 +45,27 @@ const JAWG_TOKEN = 'q8ENjbC5b2HaKNzPYe09LRKGCNFudkoHzE5iHznAfmXmBwohhWjfKj1wuFMD
 // Styles de carte disponibles
 const MAP_STYLES = {
     papillon: {
-        label: 'Papillon',
+        label: T.MAP_STYLES.papillon,
         url: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}{r}.png',
         options: { subdomains: 'abcd' }
     },
     satellite: {
-        label: 'Satellite',
+        label: T.MAP_STYLES.satellite,
         url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
         options: { maxZoom: 19 }
     },
     nuit: {
-        label: 'Nuit',
+        label: T.MAP_STYLES.nuit,
         url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
         options: { subdomains: 'abcd' }
     },
     simple: {
-        label: 'Simple',
+        label: T.MAP_STYLES.simple,
         url: `https://tile.jawg.io/jawg-streets/{z}/{x}/{y}{r}.png?access-token=${JAWG_TOKEN}`,
         options: {}
     },
     propre: {
-        label: 'Propre',
+        label: T.MAP_STYLES.propre,
         url: `https://tile.jawg.io/jawg-lagoon/{z}/{x}/{y}{r}.png?access-token=${JAWG_TOKEN}`,
         options: {}
     }
@@ -76,15 +77,12 @@ const MAP_CONFIG = {
     zoom: 12,
     minZoom: 3,
     maxZoom: 18,
-    defaultRadiusMeters: 5000, // Rayon par défaut de 5km
-    minRadiusMeters: 500, // Rayon minimum de 500m
-    maxRadiusMeters: 50000 // Rayon maximum de 50km
 };
 
 // Variables globales
 let map;
 let currentTileLayer = null;
-let currentStyleKey = 'papillon';
+let currentStyleKey = 'propre';
 const activityPool = new Map();           // id → { activity, marker }
 const categoryClusterGroups = new Map();  // category → MarkerClusterGroup
 const MAX_POOL = 400;
@@ -94,14 +92,8 @@ let lastLoadedBounds = null;  // Bounds lors du dernier chargement (avec padding
 let lastLoadedZoom = null;    // Zoom lors du dernier chargement
 let viewportLoadTimeout = null; // Debounce du rechargement viewport
 let userMarker;
-let userCircle;
-let resizeHandle;
 let userPosition = MAP_CONFIG.center;
-let currentRadius = MAP_CONFIG.defaultRadiusMeters;
-let circleEnabled = false;
-let isResizingCircle = false;
 let currentPanelActivityId = null; // ID de l'activité actuellement affichée dans le panel
-let radiusTooltip;
 
 /**
  * Initialise la carte Leaflet
@@ -117,7 +109,7 @@ function setMapStyle(styleKey, save = true) {
 
     // Vérifier le token Jawg si nécessaire
     if ((styleKey === 'simple' || styleKey === 'propre') && !JAWG_TOKEN) {
-        showToast('Ajoutez votre token Jawg dans map.js (JAWG_TOKEN)', 'info');
+        showToast(T.TOASTS.ERROR, 'info');
         return;
     }
 
@@ -216,11 +208,10 @@ function initMap() {
     }).setView(userPosition, MAP_CONFIG.zoom);
 
     // Appliquer le style sauvegardé (ou papillon par défaut)
-    const savedStyle = localStorage.getItem('map_style') || 'papillon';
+    const savedStyle = localStorage.getItem('map_style') || 'propre';
     setMapStyle(savedStyle, false);
     
     createUserMarker();
-    createRadiusTooltip();
 
     map.on('moveend', () => {
         if (isSearchMode) return;
@@ -257,8 +248,6 @@ function trySetUserPositionFromBrowser() {
             saveUserPosition(lat, lng); // Sauvegarder pour les prochaines visites
             map.setView(userPosition, MAP_CONFIG.zoom);
             userMarker.setLatLng(userPosition);
-            if (userCircle) userCircle.setLatLng(userPosition);
-            if (resizeHandle) updateHandlePosition();
             loadActivitiesInViewport();
         },
         () => {
@@ -270,37 +259,9 @@ function trySetUserPositionFromBrowser() {
 }
 
 /**
- * Crée l'infobulle pour afficher la distance du rayon
- */
-function createRadiusTooltip() {
-    radiusTooltip = L.tooltip({
-        permanent: false,
-        direction: 'top',
-        className: 'radius-tooltip',
-        offset: [0, -10]
-    });
-}
-
-/**
- * Crée le marqueur de position utilisateur avec cercle de rayon
+ * Crée le marqueur de position utilisateur (draggable)
  */
 function createUserMarker() {
-    // Création du cercle de rayon (si activé)
-    if (circleEnabled) {
-        userCircle = L.circle(userPosition, {
-            color: 'rgba(59, 130, 246, 0.4)',
-            fillColor: 'rgba(59, 130, 246, 0.08)',
-            fillOpacity: 1,
-            radius: currentRadius,
-            weight: 2,
-            className: 'user-radius-circle'
-        }).addTo(map);
-        
-        // Créer le handle de redimensionnement
-        createResizeHandle();
-    }
-    
-    // Création du marqueur utilisateur draggable (you.svg, jaune, au-dessus des autres points)
     const userIcon = L.divIcon({
         html: '<div class="user-marker"><img src="assets/icon/you.svg" alt="" class="user-marker-icon"></div>',
         className: 'user-marker-container',
@@ -314,190 +275,18 @@ function createUserMarker() {
         zIndexOffset: 1000
     }).addTo(map);
     
-    // Événement de déplacement du marqueur
     userMarker.on('drag', function(e) {
         const newPos = e.target.getLatLng();
         userPosition = [newPos.lat, newPos.lng];
-        
-        // Mettre à jour la position du cercle ET du handle même si désactivé
-        if (userCircle) {
-            userCircle.setLatLng(newPos);
-        }
-        if (resizeHandle) {
-            updateHandlePosition();
-        }
     });
     
-    // Événement de fin de déplacement du marqueur utilisateur
     userMarker.on('dragend', function(e) {
         const newPos = e.target.getLatLng();
         userPosition = [newPos.lat, newPos.lng];
-        saveUserPosition(newPos.lat, newPos.lng); // Mémoriser la nouvelle position
-    });
-    
-    // Événement de clic sur le marqueur : toggle du cercle
-    userMarker.on('click', toggleCircle);
-}
-
-/**
- * Crée le handle (poignée) de redimensionnement du rayon
- */
-function createResizeHandle() {
-    if (!circleEnabled) return;
-    
-    // Calculer la position du handle (à droite du cercle)
-    const center = L.latLng(userPosition);
-    const handlePos = calculateHandlePosition(center, currentRadius);
-    
-    // Créer le handle avec une icône personnalisée
-    const handleIcon = L.divIcon({
-        html: '<div class="resize-handle"><div class="resize-handle-inner"></div></div>',
-        className: 'resize-handle-container',
-        iconSize: [50, 32],
-        iconAnchor: [25, 16]
-    });
-    
-    resizeHandle = L.marker(handlePos, {
-        icon: handleIcon,
-        draggable: true,
-        zIndexOffset: 3000
-    }).addTo(map);
-    
-    // Désactiver les interactions avec la carte au début du drag (dragstart = sûr sur mobile aussi)
-    resizeHandle.on('dragstart', function(e) {
-        L.DomEvent.stopPropagation(e);
-        map.dragging.disable();
-        map.doubleClickZoom.disable();
-        map.scrollWheelZoom.disable();
-        
-        // Afficher l'infobulle
-        const radiusKm = (currentRadius / 1000).toFixed(1);
-        radiusTooltip
-            .setLatLng(handlePos)
-            .setContent(`${radiusKm} km`)
-            .addTo(map);
-    });
-    
-    // Pendant le drag, mettre à jour le rayon
-    resizeHandle.on('drag', function(e) {
-        const handleLatLng = e.target.getLatLng();
-        const center = L.latLng(userPosition);
-        
-        // Calculer le nouveau rayon
-        const newRadius = calculateDistance(
-            center.lat, center.lng,
-            handleLatLng.lat, handleLatLng.lng
-        );
-        
-        // Limiter le rayon entre min et max
-        currentRadius = Math.max(
-            MAP_CONFIG.minRadiusMeters,
-            Math.min(MAP_CONFIG.maxRadiusMeters, newRadius)
-        );
-        
-        // Mettre à jour le cercle
-        if (userCircle) {
-            userCircle.setRadius(currentRadius);
-        }
-        
-        // Repositionner le handle exactement à droite
-        updateHandlePosition();
-        
-        // Mettre à jour l'infobulle
-        const radiusKm = (currentRadius / 1000).toFixed(1);
-        radiusTooltip.setContent(`${radiusKm} km`);
-    });
-    
-    // Fin du drag
-    resizeHandle.on('dragend', function(e) {
-        map.dragging.enable();
-        map.doubleClickZoom.enable();
-        map.scrollWheelZoom.enable();
-        
-        // Masquer l'infobulle
-        if (map.hasLayer(radiusTooltip)) {
-            map.removeLayer(radiusTooltip);
-        }
-        
-        // Le viewport ne change pas lors du resize du cercle, pas de rechargement
+        saveUserPosition(newPos.lat, newPos.lng);
     });
 }
 
-/**
- * Calcule la position du handle (sur la bordure droite du cercle)
- */
-function calculateHandlePosition(center, radius) {
-    // Calculer la position exacte sur la bordure du cercle à droite
-    // en utilisant la formule de conversion rayon -> degrés de longitude
-    const radiusInDegrees = (radius / 111320) / Math.cos(center.lat * Math.PI / 180);
-    return L.latLng(center.lat, center.lng + radiusInDegrees);
-}
-
-/**
- * Met à jour la position du handle
- */
-function updateHandlePosition() {
-    if (resizeHandle && userCircle) {
-        const center = L.latLng(userPosition);
-        const handlePos = calculateHandlePosition(center, currentRadius);
-        resizeHandle.setLatLng(handlePos);
-        
-        // Mettre à jour l'infobulle si elle est visible
-        if (map.hasLayer(radiusTooltip)) {
-            radiusTooltip.setLatLng(handlePos);
-        }
-    }
-}
-
-/**
- * Active/désactive le cercle de recherche au clic sur le marqueur
- */
-function toggleCircle(e) {
-    L.DomEvent.stopPropagation(e); // Empêcher la propagation du clic
-    
-    circleEnabled = !circleEnabled;
-    
-    if (circleEnabled) {
-        // Réactiver le cercle
-        if (!userCircle) {
-            userCircle = L.circle(userPosition, {
-                color: 'rgba(59, 130, 246, 0.4)',
-                fillColor: 'rgba(59, 130, 246, 0.08)',
-                fillOpacity: 1,
-                radius: currentRadius,
-                weight: 2,
-                className: 'user-radius-circle'
-            }).addTo(map);
-        } else {
-            // Mettre à jour la position avant de réafficher
-            userCircle.setLatLng(L.latLng(userPosition));
-            userCircle.addTo(map);
-        }
-        
-        // Créer ou réafficher le handle
-        if (!resizeHandle) {
-            createResizeHandle();
-        } else {
-            resizeHandle.addTo(map);
-            updateHandlePosition();
-        }
-        
-        showToast(`Recherche limitée à ${(currentRadius / 1000).toFixed(1)} km`, 'info');
-    } else {
-        // Désactiver le cercle
-        if (userCircle && map.hasLayer(userCircle)) {
-            map.removeLayer(userCircle);
-        }
-        
-        // Masquer le handle
-        if (resizeHandle && map.hasLayer(resizeHandle)) {
-            map.removeLayer(resizeHandle);
-        }
-        
-        showToast('Recherche sans limite de distance', 'info');
-    }
-    // Le chargement est piloté par viewport, pas par le cercle
-}
 
 /**
  * Retourne le nombre max d'activités par type selon le niveau de zoom
@@ -672,15 +461,15 @@ function createMarker(activity, addToCluster = true) {
         : `<i class="fas fa-${iconConfig.icon}"></i>`;
 
     const MARKER_COLORS = {
-        blue:   '#3b82f6',
-        gray:   '#6b7280',
-        green:  '#22c55e',
-        red:    '#ef4444',
-        yellow: '#eab308',
-        purple: '#a855f7',
-        orange: '#f97316',
-        pink:   '#ec4899',
-        cyan:   '#06b6d4',
+        blue:   '#476e99',
+        gray:   '#a7a7a7',
+        green:  '#58763a',
+        red:    '#cf0a1d',
+        yellow: '#fce883',
+        purple: '#cc99ff',
+        orange: '#fea347',
+        pink:   '#e9ace9',
+        cyan:   '#87d3f8',
     };
     const bgColor = MARKER_COLORS[iconConfig.color] || MARKER_COLORS.blue;
 
@@ -799,14 +588,14 @@ async function loadAndShowActivityDetails(activityId, marker) {
         }
 
         // Afficher le loader dans le panel
-        showActivityPanel('<div class="popup-loading"><i class="fas fa-spinner fa-spin popup-loading-spinner"></i><p class="popup-loading-text">Chargement…</p></div>', activityId);
+        showActivityPanel(`<div class="popup-loading"><i class="fas fa-spinner fa-spin popup-loading-spinner"></i><p class="popup-loading-text">${T.LOADING}</p></div>`, activityId);
 
         // Charger les détails depuis l'API
         const details = await getActivityDetails(activityId);
 
         if (!details) {
             console.error(`❌ Impossible de charger #${activityId}`);
-            showActivityPanel('<div class="popup-error">Erreur lors du chargement</div>', activityId);
+            showActivityPanel(`<div class="popup-error">${T.TOASTS.LOAD_ERROR}</div>`, activityId);
             return;
         }
 
@@ -823,7 +612,7 @@ async function loadAndShowActivityDetails(activityId, marker) {
 
     } catch (error) {
         console.error(`❌ Erreur fiche #${activityId}:`, error);
-        showActivityPanel('<div class="popup-error">Erreur lors du chargement</div>', activityId);
+        showActivityPanel(`<div class="popup-error">${T.TOASTS.LOAD_ERROR}</div>`, activityId);
     }
 }
 
@@ -1018,26 +807,58 @@ function escapeHtml(str) {
         .replace(/'/g, '&#039;');
 }
 
+/**
+ * Retourne le HTML du badge de note moyenne (coloré selon la valeur)
+ * @param {number|null} avg
+ * @param {number} total
+ */
+function _ratingBadgeHtml(avg, total) {
+    if (!avg || total === 0) return '';
+    const cls = avg >= 4 ? 'rating-badge-green' : avg >= 3 ? 'rating-badge-orange' : 'rating-badge-red';
+    return `<span class="rating-badge ${cls}" title="${total} avis">★ ${avg}</span>`;
+}
+
+/**
+ * Retourne le HTML de la section notation (5 boutons rectangulaires)
+ * @param {number|null} userRating — note actuelle de l'utilisateur (ou null)
+ * @param {number} activityId
+ */
+function _ratingBarHtml(userRating, activityId) {
+    const LABELS = [
+        { v: 1, label: T.RATING_LABELS[1], cls: 'rating-btn-1' },
+        { v: 2, label: T.RATING_LABELS[2], cls: 'rating-btn-2' },
+        { v: 3, label: T.RATING_LABELS[3], cls: 'rating-btn-3' },
+        { v: 4, label: T.RATING_LABELS[4], cls: 'rating-btn-4' },
+        { v: 5, label: T.RATING_LABELS[5], cls: 'rating-btn-5' }
+    ];
+    const buttons = LABELS.map(({ v, label, cls }) => {
+        const active = userRating === v ? ' rating-btn-active' : '';
+        return `<button class="rating-btn ${cls}${active}" data-action="rate" data-id="${activityId}" data-value="${v}">${label}</button>`;
+    }).join('');
+    return `<div class="rating-bar" id="rating-bar-${activityId}">${buttons}</div>`;
+}
+
 function createPopupContent(activity) {
     const isFavorite = isActivityFavorite(activity.id);
     const favoriteClass = isFavorite ? 'active' : '';
-    const favoriteIcon = isFavorite ? 'fa-solid' : 'fa-regular';
+    const favoriteIcon  = isFavorite ? 'fa-solid' : 'fa-regular';
     
-    // Nettoyer le nom de catégorie pour créer une classe CSS valide
     const categoryClass = (activity.category || 'autre')
         .toLowerCase()
         .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '') // Retirer les accents
-        .replace(/\s+/g, '-'); // Remplacer les espaces par des tirets
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/\s+/g, '-');
     
     const safeTitle    = escapeHtml(activity.title);
-    const safeCategory = escapeHtml(activity.category || 'Autre');
+    const safeCategory = escapeHtml(activity.category || T.LABELS.CATEGORY_OTHER);
     const safeAddress  = escapeHtml(activity.address || '');
     const safeDesc     = escapeHtml(activity.description || '');
     const safePhone    = escapeHtml(activity.phone || '');
-    // website : on vérifie que c'est bien une URL http(s) avant de l'utiliser
     const safeWebsite  = activity.website && /^https?:\/\//i.test(activity.website)
         ? escapeHtml(activity.website) : '';
+
+    // Badge note moyenne (sera rechargé de façon async après)
+    const avgBadge = _ratingBadgeHtml(activity.avgRating, activity.totalRatings || 0);
 
     return `
         <div class="popup-content">
@@ -1045,7 +866,10 @@ function createPopupContent(activity) {
                 <img class="popup-header-img" id="popup-header-img-${activity.id}" alt="" aria-hidden="true">
                 <div class="popup-header-text">
                     <h3 class="popup-title">${safeTitle}</h3>
-                    <span class="category-badge category-${categoryClass}">${safeCategory}</span>
+                    <div class="popup-header-meta">
+                        <span class="category-badge category-${categoryClass}">${safeCategory}</span>
+                        <span id="rating-avg-badge-${activity.id}">${avgBadge}</span>
+                    </div>
                 </div>
             </div>
 
@@ -1061,7 +885,7 @@ function createPopupContent(activity) {
                 <div class="popup-links" id="popup-links-${activity.id}"${!activity.website && !activity.phone ? ' style="display:none"' : ''}>
                     <a href="${safeWebsite || '#'}" target="_blank" rel="noopener noreferrer" class="popup-link" id="popup-web-${activity.id}"${!safeWebsite ? ' style="display:none"' : ''}>
                         <i class="fas fa-globe"></i>
-                        <span class="popup-link-label">Visiter le site web</span>
+                        <span class="popup-link-label">${T.LABELS.VISIT_WEBSITE}</span>
                     </a>
                     <a href="tel:${safePhone}" class="popup-link" id="popup-phone-${activity.id}"${!activity.phone ? ' style="display:none"' : ''}>
                         <i class="fas fa-phone"></i>
@@ -1070,25 +894,35 @@ function createPopupContent(activity) {
                 </div>
             </div>
 
+            <!-- Notation -->
+            <div class="rating-section">
+                ${_ratingBarHtml(null, activity.id)}
+            </div>
+
             <div class="popup-footer">
                 <button class="popup-btn btn-favorite ${favoriteClass}" data-action="favorite" data-id="${activity.id}">
                     <i class="${favoriteIcon} fa-heart"></i>
-                    <span>${isFavorite ? 'Favori' : 'Ajouter'}</span>
+                    <span>${isFavorite ? T.BUTTONS.FAVORITE : T.BUTTONS.ADD}</span>
+                </button>
+
+                <button class="popup-btn btn-todo" data-action="todo" data-id="${activity.id}" id="todo-btn-${activity.id}">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>${T.BUTTONS.TODO}</span>
                 </button>
 
                 <button class="popup-btn btn-itinerary" data-action="itinerary" data-id="${activity.id}">
                     <i class="fas fa-route"></i>
-                    <span>Itinéraire</span>
+                    <span>${T.BUTTONS.ITINERARY}</span>
                 </button>
 
                 <button class="popup-btn btn-similar" data-action="similar" data-id="${activity.id}">
                     <i class="fas fa-search"></i>
-                    <span>Similaires</span>
+                    <span>${T.BUTTONS.SIMILAR}</span>
                 </button>
 
                 <button class="popup-btn btn-share" data-action="share" data-id="${activity.id}" data-title="${escapeHtml(activity.title)}">
                     <i class="fas fa-share-nodes"></i>
-                    <span>Partager</span>
+                    <span>${T.BUTTONS.SHARE}</span>
                 </button>
             </div>
         </div>
@@ -1111,15 +945,38 @@ function setupPopupEventListeners(activity) {
                 lng: activity.lng,
                 type: activity.category
             });
-            // Mettre à jour le bouton sans recharger toute la fiche
             const isFav = isActivityFavorite(activity.id);
             favoriteBtn.classList.toggle('active', isFav);
             favoriteBtn.querySelector('i').className = `${isFav ? 'fa-solid' : 'fa-regular'} fa-heart`;
             const label = favoriteBtn.querySelector('span');
-            if (label) label.textContent = isFav ? 'Favori' : 'Ajouter';
+            if (label) label.textContent = isFav ? T.BUTTONS.FAVORITE : T.BUTTONS.ADD;
         });
     }
     
+    // Bouton à faire (toggle)
+    const todoBtn = document.querySelector('[data-action="todo"]');
+    if (todoBtn) {
+        todoBtn.addEventListener('click', () => {
+            onAuthRequired(async () => {
+                try {
+                    const isActive = todoBtn.classList.contains('active');
+                    const method = isActive ? 'DELETE' : 'POST';
+                    const res = await _authFetch(`${getApiBaseUrl()}/users/me/todo/${activity.id}`, { method });
+                    const data = await res.json();
+                    if (data.success) {
+                        const nowActive = !isActive;
+                        _updateTodoBtn(activity.id, nowActive);
+                    }
+                    showToast(data.message || (isActive ? T.TOASTS.TODO_REMOVED : T.TOASTS.TODO_ADDED), data.success ? 'success' : 'error');
+                } catch {
+                    showToast(T.TOASTS.NETWORK_ERROR, 'error');
+                }
+            });
+        });
+    }
+
+    loadUserTodoStatus(activity.id);
+
     // Bouton itinéraire
     const itineraryBtn = document.querySelector('[data-action="itinerary"]');
     if (itineraryBtn) {
@@ -1137,6 +994,117 @@ function setupPopupEventListeners(activity) {
     if (shareBtn) {
         shareBtn.addEventListener('click', () => shareActivity(activity.id, activity.title));
     }
+
+    // Boutons notation
+    document.querySelectorAll(`[data-action="rate"][data-id="${activity.id}"]`).forEach(btn => {
+        btn.addEventListener('click', () => {
+            const value = parseInt(btn.dataset.value);
+            onAuthRequired(() => submitRating(activity.id, value));
+        });
+    });
+
+    // Charger la note actuelle de l'utilisateur en async
+    loadUserRating(activity.id);
+}
+
+/**
+ * Met à jour visuellement le bouton "À faire"
+ */
+function _updateTodoBtn(activityId, isInTodo) {
+    const btn = document.getElementById(`todo-btn-${activityId}`);
+    if (!btn) return;
+    btn.classList.toggle('active', isInTodo);
+    const icon = btn.querySelector('i');
+    if (icon) icon.className = isInTodo ? 'fas fa-clipboard-check' : 'fas fa-clipboard-list';
+    const label = btn.querySelector('span');
+    if (label) label.textContent = isInTodo ? T.BUTTONS.TODO_CHECKED : T.BUTTONS.TODO;
+}
+
+/**
+ * Charge le statut "à faire" de l'utilisateur pour une activité
+ */
+async function loadUserTodoStatus(activityId) {
+    try {
+        const token = typeof getAuthToken === 'function' ? getAuthToken() : null;
+        if (!token) return;
+        const res = await fetch(`${API_BASE_URL}/users/me/todo/${activityId}`, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        if (!res.ok) return;
+        const data = await res.json();
+        if (data.inTodo) _updateTodoBtn(activityId, true);
+    } catch {}
+}
+
+/**
+ * Charge la note de l'utilisateur pour une activité et met à jour l'UI
+ */
+async function loadUserRating(activityId) {
+    try {
+        const token  = typeof getAuthToken === 'function' ? getAuthToken() : null;
+        const headers = token ? { Authorization: `Bearer ${token}` } : {};
+        const res    = await fetch(`${API_BASE_URL}/ratings/activity/${activityId}`, { headers });
+        if (!res.ok) return;
+        const data = await res.json();
+
+        // Mettre à jour le badge de note moyenne
+        if (data.average) {
+            const badgeEl = document.getElementById(`rating-avg-badge-${activityId}`);
+            if (badgeEl) {
+                const cls = data.average >= 4 ? 'rating-badge-green' : data.average >= 3 ? 'rating-badge-orange' : 'rating-badge-red';
+                badgeEl.innerHTML = `<span class="rating-badge ${cls}" title="${data.totalVotes} avis">★ ${data.average}</span>`;
+            }
+        }
+
+        // Marquer le bouton actif selon la note de l'utilisateur
+        if (data.userRating) {
+            _updateRatingBar(activityId, data.userRating);
+        }
+    } catch {}
+}
+
+/**
+ * Envoie une note au serveur et met à jour l'UI
+ */
+async function submitRating(activityId, value) {
+    try {
+        const token = typeof getAuthToken === 'function' ? getAuthToken() : null;
+        if (!token) return;
+
+        const res  = await fetch(`${API_BASE_URL}/ratings`, {
+            method:  'POST',
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+            body:    JSON.stringify({ activityId, value })
+        });
+        const data = await res.json();
+        if (!data.success) { showToast(data.message || T.TOASTS.ERROR, 'error'); return; }
+
+        _updateRatingBar(activityId, value);
+
+        // Mettre à jour le badge moyenne
+        if (data.average) {
+            const badgeEl = document.getElementById(`rating-avg-badge-${activityId}`);
+            if (badgeEl) {
+                const cls = data.average >= 4 ? 'rating-badge-green' : data.average >= 3 ? 'rating-badge-orange' : 'rating-badge-red';
+                badgeEl.innerHTML = `<span class="rating-badge ${cls}" title="${data.totalVotes} avis">★ ${data.average}</span>`;
+            }
+        }
+
+        showToast(T.TOASTS.RATING_SUCCESS(T.RATING_LABELS[value]), 'success');
+    } catch {
+        showToast(T.TOASTS.NETWORK_ERROR, 'error');
+    }
+}
+
+/**
+ * Met à jour visuellement la barre de notation
+ */
+function _updateRatingBar(activityId, selectedValue) {
+    const bar = document.getElementById(`rating-bar-${activityId}`);
+    if (!bar) return;
+    bar.querySelectorAll('.rating-btn').forEach(btn => {
+        btn.classList.toggle('rating-btn-active', parseInt(btn.dataset.value) === selectedValue);
+    });
 }
 
 /**
@@ -1153,7 +1121,7 @@ function toggleFavorite(activityId, activityData = null) {
     
     if (existingIndex > -1) {
         favorites.splice(existingIndex, 1);
-        showToast('Retiré des favoris', 'info');
+        showToast(T.TOASTS.FAVORITE_REMOVED, 'info');
     } else {
         // Priorité : données passées directement, sinon chercher dans le pool
         const poolEntry = activityPool.get(activityId);
@@ -1166,7 +1134,7 @@ function toggleFavorite(activityId, activityData = null) {
                 lng: source.lng,
                 type: source.type || source.category
             });
-            showToast('Ajouté aux favoris !', 'success');
+            showToast(T.TOASTS.FAVORITE_ADDED, 'success');
         } else {
             console.warn(`⚠️ Impossible d'ajouter le favori #${activityId} : données introuvables`);
             return;
@@ -1193,7 +1161,7 @@ function openItinerary(destLat, destLng) {
  * @param {string} category - Catégorie de l'activité
  */
 function showSimilarActivities(category) {
-    showToast('Bientôt disponible — restez connectés !', 'info');
+    showToast(T.TOASTS.SIMILAR_SOON, 'info');
 }
 
 /**
@@ -1212,10 +1180,10 @@ async function shareActivity(activityId, title) {
     } else {
         try {
             await navigator.clipboard.writeText(url);
-            showToast('Lien copié dans le presse-papier !', 'success');
+            showToast(T.TOASTS.LINK_COPIED, 'success');
         } catch {
             // Fallback si clipboard indisponible
-            showToast(`Lien : ${url}`, 'info');
+            showToast(T.TOASTS.LINK_FALLBACK(url), 'info');
         }
     }
 }
@@ -1236,7 +1204,7 @@ async function handleDeepLink() {
 
     const details = await getActivityDetails(activityId);
     if (!details || !details.lat) {
-        showToast('Activité introuvable ou inaccessible', 'info');
+        showToast(T.TOASTS.ACTIVITY_NOT_FOUND, 'info');
         return;
     }
 
@@ -1299,7 +1267,7 @@ async function showFavoritesSidebar() {
     const favorites = getFavorites();
     
     if (favorites.length === 0) {
-        content.innerHTML = '<p class="fav-empty">Aucun favori pour le moment</p>';
+        content.innerHTML = `<p class="fav-empty">${T.EMPTY.FAVORITES}</p>`;
     } else {
         content.innerHTML = favorites.map(fav => `
             <div class="fav-item" data-lat="${fav.lat}" data-lng="${fav.lng}" data-id="${fav.id}">
@@ -1391,10 +1359,11 @@ function showToast(message, type = 'success') {
     toast.className = `toast-${type}`;
     toastMessage.innerHTML = `<i class="fas ${icons[type]}"></i>${message}`;
 
-    toast.style.transform = 'translateY(0)';
+    toast.style.transform = 'translateX(-50%) translateY(0)';
 
-    setTimeout(() => {
-        toast.style.transform = 'translateY(200px)';
+    clearTimeout(toast._hideTimer);
+    toast._hideTimer = setTimeout(() => {
+        toast.style.transform = 'translateX(-50%) translateY(-8rem)';
     }, 3000);
 }
 
@@ -1446,9 +1415,9 @@ async function searchActivities(searchTerm) {
     enterSearchMode(results);
 
     if (results.length === 0) {
-        showToast(`Aucune activité trouvée pour "${term}"`, 'info');
+        showToast(T.TOASTS.SEARCH_NO_RESULTS(term), 'info');
     } else {
-        showToast(`${results.length} activité(s) trouvée(s)`, 'success');
+        showToast(T.TOASTS.SEARCH_RESULTS(results.length), 'success');
         await centerOnSearchResults(results);
     }
 }
