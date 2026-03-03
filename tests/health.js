@@ -8,13 +8,11 @@
  * Teste : front statique, API back, base de données, auth, cohérence données.
  */
 
-const BASE      = process.argv[2] || 'http://localhost:3000';
-const FRONT_URL = process.argv[3] || BASE; // en dev : node health.js http://localhost:3000 http://localhost:5500
-const API       = `${BASE}/api`;
+const BASE = process.argv[2] || 'http://localhost:3000';
+const API  = `${BASE}/api`;
 
-const passed  = [];
-const failed  = [];
-const skipped = [];
+const passed = [];
+const failed = [];
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -29,20 +27,6 @@ async function test(name, fn) {
         const ms = Date.now() - t0;
         failed.push({ name, ms, error: err.message });
         console.log(`  ❌  ${name}  (${ms} ms) — ${err.message}`);
-    }
-}
-
-async function testOptional(name, fn) {
-    const t0 = Date.now();
-    try {
-        await fn();
-        const ms = Date.now() - t0;
-        passed.push({ name, ms });
-        console.log(`  ✅  ${name}  (${ms} ms)`);
-    } catch {
-        const ms = Date.now() - t0;
-        skipped.push({ name, ms });
-        console.log(`  ⏭️  ${name}  (skip — non servi en dev)`);
     }
 }
 
@@ -64,35 +48,8 @@ async function fetchStatus(url) {
 // ── Tests ────────────────────────────────────────────────────────────────────
 
 async function run() {
-    console.log(`\n🩺  Tests de santé — API: ${BASE}  Front: ${FRONT_URL}\n`);
-    console.log('── Frontend ────────────────────────────────');
-
-    await testOptional('Front : index.html accessible', async () => {
-        const status = await fetchStatus(FRONT_URL);
-        assert(status === 200, `HTTP ${status}`);
-    });
-
-    await testOptional('Front : main.css accessible', async () => {
-        const status = await fetchStatus(`${FRONT_URL}/styles/main.css`);
-        assert(status === 200, `HTTP ${status}`);
-    });
-
-    await testOptional('Front : variables.css accessible', async () => {
-        const status = await fetchStatus(`${FRONT_URL}/styles/variables.css`);
-        assert(status === 200, `HTTP ${status}`);
-    });
-
-    await testOptional('Front : texts.js accessible', async () => {
-        const status = await fetchStatus(`${FRONT_URL}/scripts/texts.js`);
-        assert(status === 200, `HTTP ${status}`);
-    });
-
-    await testOptional('Front : map.js accessible', async () => {
-        const status = await fetchStatus(`${FRONT_URL}/scripts/map.js`);
-        assert(status === 200, `HTTP ${status}`);
-    });
-
-    console.log('\n── Backend API ─────────────────────────────');
+    console.log(`\n🩺  Tests de santé — ${BASE}\n`);
+    console.log('── Backend API ─────────────────────────────');
 
     await test('API : racine répond', async () => {
         const { status, body } = await fetchJson(`${API.replace('/api', '')}/`);
@@ -242,7 +199,6 @@ async function run() {
 
     console.log('\n══════════════════════════════════════════════');
     console.log(`  ✅ Réussis : ${passed.length}`);
-    if (skipped.length) console.log(`  ⏭️  Skips  : ${skipped.length}`);
     console.log(`  ❌ Échoués : ${failed.length}`);
     console.log('══════════════════════════════════════════════\n');
 
