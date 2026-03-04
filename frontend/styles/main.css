@@ -725,7 +725,6 @@ header {
 
 .popup-body {
     padding: 1rem;
-    background: rgba(255, 255, 255, 0.6);
 }
 
 .popup-info-block { margin-bottom: 0.75rem; }
@@ -769,7 +768,6 @@ header {
     display: flex;
     gap: 0.5rem;
     flex-wrap: wrap;
-    background: rgba(255, 255, 255, 0.4);
 }
 
 /* Boutons du popup */
