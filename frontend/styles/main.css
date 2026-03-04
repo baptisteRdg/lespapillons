@@ -2,6 +2,14 @@
    BeOut — Styles (source unique, sans Tailwind)
    ================================================ */
 
+/* ===== POLICE ===== */
+@font-face {
+    font-family: 'Outfit';
+    src: url('../fonts/Outfit/Outfit-VariableFont_wght.ttf') format('truetype');
+    font-weight: 100 900;
+    font-display: swap;
+}
+
 /* ===== RESET MINIMAL ===== */
 *, *::before, *::after { box-sizing: border-box; }
 a    { text-decoration: none; }
@@ -22,6 +30,11 @@ body {
     height: 100vh;
     height: 100dvh; /* iOS Safari : exclut la barre d'URL */
     overflow: hidden;
+    font-family: 'Outfit', sans-serif;
+}
+
+input, button, select, textarea {
+    font-family: inherit;
 }
 
 #map {
