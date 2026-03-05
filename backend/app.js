@@ -2,7 +2,10 @@ require('dotenv').config();
 
 const express = require('express');
 const cors = require('cors');
+const dns = require('dns');
+const net = require('net');
 const { PrismaClient } = require('@prisma/client');
+const rateLimit = require('express-rate-limit');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
 const {
@@ -12,6 +15,7 @@ const {
     activitiesToGeojsonCollection
 } = require('./helpers/geojson');
 const { initFirebase } = require('./services/firebase');
+const { requireAuth } = require('./middleware/auth');
 
 // Initialiser Firebase Admin au démarrage
 initFirebase();
@@ -21,8 +25,42 @@ const prisma = new PrismaClient();
 const PORT = process.env.PORT || 3000;
 
 // Middleware
+app.set('trust proxy', 1); // Nginx envoie X-Forwarded-For → Express lit la vraie IP client
 app.use(cors());
 app.use(express.json());
+
+// ── Rate limiting ────────────────────────────────────────────────────────────
+// Souple : ne bloque que les abus automatisés, pas les vrais utilisateurs.
+// Localhost exempté (dev local + benchmarks).
+const isLocalhost = (req) => ['127.0.0.1', '::1', '::ffff:127.0.0.1'].includes(req.ip);
+
+const globalLimiter = rateLimit({
+    windowMs: 60 * 1000,
+    max: 300,
+    standardHeaders: true,
+    legacyHeaders: false,
+    skip: isLocalhost,
+    message: { success: false, message: 'Trop de requêtes, réessayez dans quelques secondes' }
+});
+const authLimiter = rateLimit({
+    windowMs: 60 * 1000,
+    max: 15,
+    standardHeaders: true,
+    legacyHeaders: false,
+    skip: isLocalhost,
+    message: { success: false, message: 'Trop de tentatives de connexion, réessayez dans une minute' }
+});
+const proxyLimiter = rateLimit({
+    windowMs: 60 * 1000,
+    max: 40,
+    standardHeaders: true,
+    legacyHeaders: false,
+    skip: isLocalhost,
+    message: { success: false, message: 'Trop de requêtes proxy, réessayez dans quelques secondes' }
+});
+app.use('/api/', globalLimiter);
+app.use('/api/auth/', authLimiter);
+app.use('/api/og-image', proxyLimiter);
 
 // Fichiers uploadés (avatars, etc.) servis via /api/uploads (passe par la route /api de Nginx)
 app.use('/api/uploads', require('express').static(require('path').join(__dirname, 'uploads')));
@@ -229,7 +267,7 @@ app.get('/api/activities/:id', async (req, res) => {
  * POST /api/activities
  * Crée une nouvelle activité
  */
-app.post('/api/activities', async (req, res) => {
+app.post('/api/activities', requireAuth, async (req, res) => {
     try {
         const { name, type, latitude, longitude, address, phone, website, description, openingHours, properties } = req.body;
         
@@ -275,7 +313,7 @@ app.post('/api/activities', async (req, res) => {
  * POST /api/activities/import/geojson
  * Importe des activités depuis un GeoJSON (Feature ou FeatureCollection)
  */
-app.post('/api/activities/import/geojson', async (req, res) => {
+app.post('/api/activities/import/geojson', requireAuth, async (req, res) => {
     try {
         const geojson = req.body;
         
@@ -375,7 +413,7 @@ app.get('/api/activities/export/geojson', async (req, res) => {
  * PUT /api/activities/:id
  * Met à jour une activité existante
  */
-app.put('/api/activities/:id', async (req, res) => {
+app.put('/api/activities/:id', requireAuth, async (req, res) => {
     try {
         const activityId = parseInt(req.params.id);
         const { name, type, latitude, longitude, address, phone, website, description, openingHours } = req.body;
@@ -431,7 +469,7 @@ app.put('/api/activities/:id', async (req, res) => {
  * DELETE /api/activities/:id
  * Supprime une activité
  */
-app.delete('/api/activities/:id', async (req, res) => {
+app.delete('/api/activities/:id', requireAuth, async (req, res) => {
     try {
         const activityId = parseInt(req.params.id);
         
@@ -466,6 +504,32 @@ app.delete('/api/activities/:id', async (req, res) => {
 });
 
 /**
+ * Vérifie si une adresse IP est privée/locale (anti-SSRF)
+ */
+function isPrivateIP(ip) {
+    if (net.isIPv4(ip)) {
+        const parts = ip.split('.').map(Number);
+        return (
+            parts[0] === 127 ||                                    // 127.0.0.0/8
+            parts[0] === 10 ||                                     // 10.0.0.0/8
+            (parts[0] === 172 && parts[1] >= 16 && parts[1] <= 31) || // 172.16.0.0/12
+            (parts[0] === 192 && parts[1] === 168) ||              // 192.168.0.0/16
+            (parts[0] === 169 && parts[1] === 254) ||              // 169.254.0.0/16 (link-local)
+            parts[0] === 0                                         // 0.0.0.0/8
+        );
+    }
+    if (net.isIPv6(ip)) {
+        const normalized = ip.toLowerCase();
+        return (
+            normalized === '::1' ||
+            normalized.startsWith('fc') || normalized.startsWith('fd') || // ULA
+            normalized.startsWith('fe80')                                  // link-local
+        );
+    }
+    return false;
+}
+
+/**
  * GET /api/og-image?url=...
  * Proxy côté serveur : récupère l'image og:image (ou twitter:image) d'une URL tierce.
  * Nécessaire car le navigateur ne peut pas lire le HTML d'autres domaines (CORS).
@@ -483,6 +547,16 @@ app.get('/api/og-image', async (req, res) => {
         if (!['http:', 'https:'].includes(targetUrl.protocol)) throw new Error();
     } catch {
         return res.status(400).json({ imageUrl: null, error: 'url invalide' });
+    }
+
+    // Anti-SSRF : résoudre le hostname et bloquer les IPs privées/locales
+    try {
+        const { address } = await dns.promises.lookup(targetUrl.hostname);
+        if (isPrivateIP(address)) {
+            return res.status(403).json({ imageUrl: null, error: 'adresse non autorisée' });
+        }
+    } catch {
+        return res.status(400).json({ imageUrl: null, error: 'hostname non résolu' });
     }
 
     try {
