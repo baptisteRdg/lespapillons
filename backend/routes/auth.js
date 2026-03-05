@@ -2,6 +2,7 @@ const express = require('express');
 const jwt     = require('jsonwebtoken');
 const { PrismaClient } = require('@prisma/client');
 const { verifyFirebaseToken } = require('../services/firebase');
+const { requireAuth } = require('../middleware/auth');
 
 const router = express.Router();
 const prisma = new PrismaClient();
@@ -105,16 +106,9 @@ router.post('/login', async (req, res) => {
  * Retourne le profil de l'utilisateur courant depuis le JWT.
  * Utilisé au chargement pour restaurer la session.
  */
-router.get('/me', async (req, res) => {
-    const header = req.headers.authorization;
-    if (!header?.startsWith('Bearer ')) {
-        return res.status(401).json({ success: false, message: 'Non authentifié' });
-    }
-
+router.get('/me', requireAuth, async (req, res) => {
     try {
-        const payload = jwt.verify(header.split(' ')[1], process.env.JWT_SECRET);
-        const user    = await prisma.user.findUnique({ where: { id: payload.id } });
-
+        const user = await prisma.user.findUnique({ where: { id: req.user.id } });
         if (!user) return res.status(404).json({ success: false, message: 'Utilisateur introuvable' });
 
         res.json({
@@ -127,7 +121,7 @@ router.get('/me', async (req, res) => {
             }
         });
     } catch {
-        res.status(401).json({ success: false, message: 'Token invalide' });
+        res.status(500).json({ success: false, message: 'Erreur serveur' });
     }
 });
 

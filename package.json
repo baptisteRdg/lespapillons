@@ -8,7 +8,7 @@
     "start:backend": "cd backend && npm start",
     "start:frontend": "cd frontend && npm start",
     "import": "cd backend && npm run import",
-    "install:all": "npm install && cd backend && npm install",
+    "install:all": "npm install && cd backend && npm install && cd ../frontend && npm install",
     "test": "node tests/run.js",
     "test:health": "node tests/health.js",
     "test:bench": "node tests/benchmark.js"

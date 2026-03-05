@@ -34,6 +34,8 @@ model Activity {
   doneBy         DoneActivity[]
   groupActivities GroupActivity[]
 
+  @@index([type])
+  @@index([latitude, longitude])
   @@map("activities")
 }
 
@@ -145,6 +147,7 @@ model FriendRequest {
   to   User @relation("receivedRequests", fields: [toId],   references: [id], onDelete: Cascade)
 
   @@unique([fromId, toId])
+  @@index([toId, status])
   @@map("friend_requests")
 }
 

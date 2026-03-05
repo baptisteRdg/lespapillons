@@ -131,73 +131,56 @@ app.get('/api/activities', async (req, res) => {
     try {
         const { type, lat, lng, search, bbox, limitPerType } = req.query;
         
-        // Récupérer uniquement les champs nécessaires pour l'affichage sur la carte
-        let activities = await prisma.activity.findMany({
-            select: {
-                id: true,
-                name: true,
-                latitude: true,
-                longitude: true,
-                type: true
-            },
-            orderBy: { createdAt: 'desc' }
-        });
-        
-        // Filtrer par type si spécifié
+        // Construire la clause WHERE côté DB (au lieu de tout charger puis filtrer en JS)
+        const where = {};
+
         if (type) {
-            activities = activities.filter(a => 
-                a.type.toLowerCase() === type.toLowerCase()
-            );
-        }
-        
-        // Filtrer par terme de recherche (nom ou type) si spécifié
-        if (search) {
-            const term = search.toLowerCase().trim();
-            activities = activities.filter(a =>
-                a.name.toLowerCase().includes(term) ||
-                a.type.toLowerCase().includes(term)
-            );
+            where.type = type;
         }
 
-        // Filtrer par bounding box (minLat,minLng,maxLat,maxLng)
+        if (search) {
+            const term = search.trim();
+            // SQLite LIKE est case-insensitive pour l'ASCII
+            where.OR = [
+                { name: { contains: term } },
+                { type: { contains: term } }
+            ];
+        }
+
         if (bbox) {
             const parts = bbox.split(',').map(parseFloat);
             if (parts.length === 4 && parts.every(n => !isNaN(n))) {
                 const [minLat, minLng, maxLat, maxLng] = parts;
-                activities = activities.filter(a =>
-                    a.latitude  >= minLat && a.latitude  <= maxLat &&
-                    a.longitude >= minLng && a.longitude <= maxLng
-                );
+                where.latitude  = { gte: minLat, lte: maxLat };
+                where.longitude = { gte: minLng, lte: maxLng };
             }
         }
+
+        let activities = await prisma.activity.findMany({
+            select: { id: true, name: true, latitude: true, longitude: true, type: true },
+            where,
+            orderBy: { createdAt: 'desc' }
+        });
         
-        // Si lat/lng fournis, calculer la distance pour chaque activité
+        // Haversine + tri par distance (impossible en SQL sans extension spatiale)
         if (lat && lng) {
             const centerLat = parseFloat(lat);
             const centerLng = parseFloat(lng);
             
-            // Ajouter la distance à chaque activité
-            activities = activities.map(activity => ({
-                ...activity,
-                distance: calculateDistance(
-                    centerLat, centerLng,
-                    activity.latitude, activity.longitude
-                )
+            activities = activities.map(a => ({
+                ...a,
+                distance: calculateDistance(centerLat, centerLng, a.latitude, a.longitude)
             }));
             
-            // Trier par distance (plus proche en premier)
             activities.sort((a, b) => a.distance - b.distance);
             
-            // Fallback : sans recherche texte, sans bbox → limiter à 100
             if (!search && !bbox) {
                 activities = activities.slice(0, 100);
             }
             
-            // Supprimer le champ distance avant de renvoyer
-            activities = activities.map(({ distance, ...activity }) => activity);
+            activities = activities.map(({ distance, ...a }) => a);
         }
 
-        // Limiter le nombre de résultats par type (pour éviter la surcharge visuelle)
         if (limitPerType) {
             const limit = parseInt(limitPerType, 10);
             if (!isNaN(limit) && limit > 0) {
