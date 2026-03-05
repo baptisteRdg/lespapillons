@@ -19,6 +19,31 @@ function checkStorageVersion() {
     }
 }
 
+// ── Cache local des favoris (synchronisé avec l'API) ─────────────────────────
+let _favoritesCache = [];
+
+/**
+ * Charge les favoris depuis l'API backend.
+ * Appelé à l'init et après chaque connexion.
+ */
+async function loadFavorites() {
+    if (!isLoggedIn()) {
+        _favoritesCache = [];
+        updateFavoritesCount();
+        return;
+    }
+    try {
+        const res = await _authFetch(`${getApiBaseUrl()}/favorites`);
+        const data = await res.json();
+        if (data.success) {
+            _favoritesCache = data.data || [];
+        }
+    } catch (err) {
+        console.error('Erreur chargement favoris:', err);
+    }
+    updateFavoritesCount();
+}
+
 /**
  * Sauvegarde la position du marqueur utilisateur dans localStorage
  */
@@ -934,7 +959,7 @@ function createPopupContent(activity) {
  * @param {Object} activity - Données de l'activité
  */
 function setupPopupEventListeners(activity) {
-    // Bouton favoris
+    // Bouton favoris (auth obligatoire, géré via API)
     const favoriteBtn = document.querySelector('[data-action="favorite"]');
     if (favoriteBtn) {
         favoriteBtn.addEventListener('click', () => {
@@ -945,11 +970,6 @@ function setupPopupEventListeners(activity) {
                 lng: activity.lng,
                 type: activity.category
             });
-            const isFav = isActivityFavorite(activity.id);
-            favoriteBtn.classList.toggle('active', isFav);
-            favoriteBtn.querySelector('i').className = `${isFav ? 'fa-solid' : 'fa-regular'} fa-heart`;
-            const label = favoriteBtn.querySelector('span');
-            if (label) label.textContent = isFav ? T.BUTTONS.FAVORITE : T.BUTTONS.ADD;
         });
     }
     
@@ -1108,41 +1128,50 @@ function _updateRatingBar(activityId, selectedValue) {
 }
 
 /**
- * Ajoute ou retire une activité des favoris
- * @param {number} activityId - ID de l'activité
- */
-/**
- * Ajoute ou retire une activité des favoris
- * @param {number} activityId - ID de l'activité
+ * Ajoute ou retire une activité des favoris (via API, auth obligatoire)
  */
 function toggleFavorite(activityId, activityData = null) {
-    const favorites = getFavorites();
-    const existingIndex = favorites.findIndex(f => f.id === activityId);
-    
-    if (existingIndex > -1) {
-        favorites.splice(existingIndex, 1);
-        showToast(T.TOASTS.FAVORITE_REMOVED, 'info');
-    } else {
-        // Priorité : données passées directement, sinon chercher dans le pool
-        const poolEntry = activityPool.get(activityId);
-        const source = activityData || (poolEntry ? poolEntry.activity : null);
-        if (source) {
-            favorites.push({
-                id: source.id,
-                name: source.name || source.title,
-                lat: source.lat,
-                lng: source.lng,
-                type: source.type || source.category
-            });
-            showToast(T.TOASTS.FAVORITE_ADDED, 'success');
-        } else {
-            console.warn(`⚠️ Impossible d'ajouter le favori #${activityId} : données introuvables`);
-            return;
+    onAuthRequired(async () => {
+        const isFav = isActivityFavorite(activityId);
+        try {
+            const method = isFav ? 'DELETE' : 'POST';
+            const res = await _authFetch(`${getApiBaseUrl()}/favorites/${activityId}`, { method });
+            const data = await res.json();
+
+            if (data.success) {
+                if (isFav) {
+                    _favoritesCache = _favoritesCache.filter(f => f.id !== activityId);
+                    showToast(T.TOASTS.FAVORITE_REMOVED, 'info');
+                } else {
+                    const poolEntry = activityPool.get(activityId);
+                    const source = activityData || (poolEntry ? poolEntry.activity : null);
+                    if (source) {
+                        _favoritesCache.push({
+                            id: source.id,
+                            name: source.name || source.title,
+                            lat: source.lat,
+                            lng: source.lng,
+                            type: source.type || source.category
+                        });
+                    }
+                    showToast(T.TOASTS.FAVORITE_ADDED, 'success');
+                }
+                updateFavoritesCount();
+
+                const favoriteBtn = document.querySelector(`[data-action="favorite"][data-id="${activityId}"]`);
+                if (favoriteBtn) {
+                    const nowFav = isActivityFavorite(activityId);
+                    favoriteBtn.classList.toggle('active', nowFav);
+                    favoriteBtn.querySelector('i').className = `${nowFav ? 'fa-solid' : 'fa-regular'} fa-heart`;
+                    const label = favoriteBtn.querySelector('span');
+                    if (label) label.textContent = nowFav ? T.BUTTONS.FAVORITE : T.BUTTONS.ADD;
+                }
+            }
+        } catch (err) {
+            console.error('Erreur toggle favori:', err);
+            showToast(T.TOASTS.NETWORK_ERROR || 'Erreur réseau', 'error');
         }
-    }
-    
-    localStorage.setItem('favorites', JSON.stringify(favorites));
-    updateFavoritesCount();
+    });
 }
 
 /**
@@ -1229,31 +1258,26 @@ async function handleDeepLink() {
 }
 
 /**
- * Récupère les favoris depuis localStorage
- * @returns {Array<Object>} Liste des favoris avec {id, name, lat, lng, type}
+ * Récupère les favoris depuis le cache local (synchronisé avec l'API)
  */
 function getFavorites() {
-    const favoritesStr = localStorage.getItem('favorites');
-    return favoritesStr ? JSON.parse(favoritesStr) : [];
+    return _favoritesCache;
 }
 
 /**
  * Vérifie si une activité est dans les favoris
- * @param {number} activityId - ID de l'activité
- * @returns {boolean} true si l'activité est favorite
  */
 function isActivityFavorite(activityId) {
-    return getFavorites().some(f => f.id === activityId);
+    return _favoritesCache.some(f => f.id === activityId);
 }
 
 /**
  * Met à jour le compteur de favoris dans le header
  */
 function updateFavoritesCount() {
-    const favorites = getFavorites();
     const countElement = document.getElementById('favCount');
     if (countElement) {
-        countElement.textContent = favorites.length;
+        countElement.textContent = _favoritesCache.length;
     }
 }
 
@@ -1481,6 +1505,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initStylePicker();
     initActivityPanel();
     handleDeepLink();
+    loadFavorites();
     
     // Timestamp pour éviter la fermeture immédiate sur mobile (stopPropagation peu fiable sur iOS)
     let sidebarOpenedAt = 0;

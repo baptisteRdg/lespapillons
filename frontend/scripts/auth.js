@@ -120,7 +120,7 @@ function logout() {
             .then(({ signOut }) => signOut(_firebaseAuth).catch(() => {}));
     }
     _updateAccountButton();
-    // Fermer le panneau compte s'il est ouvert
+    if (typeof loadFavorites === 'function') loadFavorites();
     document.getElementById('account-panel')?.classList.remove('open');
     showToast(T.TOASTS.LOGGED_OUT, 'info');
 }
@@ -221,6 +221,9 @@ async function verifyOtp(code) {
 
     _updateAccountButton();
     hideLoginPopup();
+
+    // Charger les favoris du compte
+    if (typeof loadFavorites === 'function') loadFavorites();
 
     // Relancer l'action en attente
     if (_pendingAuthCallback) {
@@ -328,6 +331,7 @@ function initLoginPopup() {
                 _currentUser = data.user;
                 _updateAccountButton();
                 hideLoginPopup();
+                if (typeof loadFavorites === 'function') loadFavorites();
                 showToast(T.TOASTS.LOGGED_IN_TEST(_currentUser.pseudo), 'success');
                 if (_pendingAuthCallback) { const cb = _pendingAuthCallback; _pendingAuthCallback = null; cb(); }
             } catch (err) {

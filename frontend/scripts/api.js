@@ -206,16 +206,6 @@ async function searchActivitiesGlobal(searchTerm, centerLat, centerLng) {
     }
 }
 
-/**
- * Ajoute une activité aux favoris (localStorage uniquement)
- * @param {number} activityId - ID de l'activité
- * @returns {Promise<Object>} Résultat de l'opération
- */
-async function addToFavoritesAPI(activityId) {
-    // Fonction conservée pour compatibilité mais ne fait rien
-    // Les favoris sont gérés uniquement dans localStorage
-    return { success: true, message: "Favori géré localement" };
-}
 
 // Cache mémoire pour les données Wikidata et og:image (durée de la session)
 const _wikidataCache = new Map();

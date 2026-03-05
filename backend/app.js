@@ -26,7 +26,16 @@ const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.set('trust proxy', 1); // Nginx envoie X-Forwarded-For → Express lit la vraie IP client
-app.use(cors());
+app.use(cors({
+    origin: [
+        'http://localhost:8080',
+        'http://127.0.0.1:8080',
+        'http://localhost:3000',
+        'https://beout.fr',
+        'http://beout.fr'
+    ],
+    credentials: true
+}));
 app.use(express.json());
 
 // ── Rate limiting ────────────────────────────────────────────────────────────
@@ -374,7 +383,7 @@ app.post('/api/activities/import/geojson', requireAuth, async (req, res) => {
  * GET /api/activities/export/geojson
  * Exporte toutes les activités au format GeoJSON FeatureCollection
  */
-app.get('/api/activities/export/geojson', async (req, res) => {
+app.get('/api/activities/export/geojson', requireAuth, async (req, res) => {
     try {
         const activities = await prisma.activity.findMany({
             orderBy: { createdAt: 'desc' }
@@ -600,101 +609,70 @@ app.get('/api/og-image', async (req, res) => {
 
 /**
  * GET /api/favorites
- * Récupère les favoris d'un utilisateur avec les détails des activités
+ * Récupère les favoris de l'utilisateur connecté
  */
-app.get('/api/favorites', async (req, res) => {
+app.get('/api/favorites', requireAuth, async (req, res) => {
     try {
-        const { userId = 'default-user' } = req.query;
-        
         const favorites = await prisma.favorite.findMany({
-            where: { userId },
+            where: { userId: req.user.id },
             include: {
-                activity: true // Inclure les détails de l'activité
+                activity: { select: { id: true, name: true, type: true, latitude: true, longitude: true } }
             },
             orderBy: { createdAt: 'desc' }
         });
-        
+
         res.json({
             success: true,
             count: favorites.length,
-            data: favorites
+            data: favorites.map(f => ({
+                id: f.activity.id,
+                name: f.activity.name,
+                type: f.activity.type,
+                lat: f.activity.latitude,
+                lng: f.activity.longitude
+            }))
         });
     } catch (error) {
         console.error('Erreur GET /api/favorites:', error);
-        res.status(500).json({
-            success: false,
-            message: "Erreur serveur lors de la récupération des favoris"
-        });
+        res.status(500).json({ success: false, message: 'Erreur serveur' });
     }
 });
 
 /**
- * POST /api/favorites
- * Ajoute une activité aux favoris
+ * GET /api/favorites/check/:activityId
+ * Vérifie si une activité est dans les favoris de l'utilisateur connecté
  */
-app.post('/api/favorites', async (req, res) => {
+app.get('/api/favorites/check/:activityId', requireAuth, async (req, res) => {
     try {
-        const { activityId, userId = 'default-user' } = req.body;
-        
-        // Validation
-        if (!activityId) {
-            return res.status(400).json({
-                success: false,
-                message: "L'ID de l'activité est requis"
-            });
-        }
-        
-        // Vérifier que l'activité existe
-        const activity = await prisma.activity.findUnique({
-            where: { id: activityId }
+        const activityId = parseInt(req.params.activityId);
+        const fav = await prisma.favorite.findUnique({
+            where: { userId_activityId: { userId: req.user.id, activityId } }
         });
-        
-        if (!activity) {
-            return res.status(404).json({
-                success: false,
-                message: "Activité non trouvée"
-            });
-        }
-        
-        // Vérifier si déjà en favoris
-        const existing = await prisma.favorite.findUnique({
-            where: {
-                userId_activityId: {
-                    userId,
-                    activityId
-                }
-            }
-        });
-        
-        if (existing) {
-            return res.status(409).json({
-                success: false,
-                message: "Cette activité est déjà dans vos favoris"
-            });
-        }
-        
-        // Créer le favori
-        const favorite = await prisma.favorite.create({
-            data: {
-                userId,
-                activityId
-            },
-            include: {
-                activity: true
-            }
-        });
-        
-        res.status(201).json({
-            success: true,
-            message: "Activité ajoutée aux favoris !",
-            data: favorite
-        });
+        res.json({ success: true, isFavorite: !!fav });
     } catch (error) {
-        console.error('Erreur POST /api/favorites:', error);
-        res.status(500).json({
-            success: false,
-            message: "Erreur serveur lors de l'ajout aux favoris"
+        res.status(500).json({ success: false, message: 'Erreur serveur' });
+    }
+});
+
+/**
+ * POST /api/favorites/:activityId
+ * Ajoute une activité aux favoris (upsert pour éviter les doublons)
+ */
+app.post('/api/favorites/:activityId', requireAuth, async (req, res) => {
+    try {
+        const activityId = parseInt(req.params.activityId);
+
+        await prisma.favorite.upsert({
+            where: { userId_activityId: { userId: req.user.id, activityId } },
+            create: { userId: req.user.id, activityId },
+            update: {}
         });
+
+        res.json({ success: true, message: 'Ajouté aux favoris' });
+    } catch (error) {
+        if (error.code === 'P2003') return res.status(404).json({ success: false, message: 'Activité introuvable' });
+        console.error('Erreur POST /api/favorites:', error);
+        res.status(500).json({ success: false, message: 'Erreur serveur' });
     }
 });
 
@@ -702,45 +680,16 @@ app.post('/api/favorites', async (req, res) => {
  * DELETE /api/favorites/:activityId
  * Retire une activité des favoris
  */
-app.delete('/api/favorites/:activityId', async (req, res) => {
+app.delete('/api/favorites/:activityId', requireAuth, async (req, res) => {
     try {
         const activityId = parseInt(req.params.activityId);
-        const { userId = 'default-user' } = req.query;
-        
-        // Trouver le favori
-        const favorite = await prisma.favorite.findUnique({
-            where: {
-                userId_activityId: {
-                    userId,
-                    activityId
-                }
-            }
+        await prisma.favorite.deleteMany({
+            where: { userId: req.user.id, activityId }
         });
-        
-        if (!favorite) {
-            return res.status(404).json({
-                success: false,
-                message: "Favori non trouvé"
-            });
-        }
-        
-        // Supprimer le favori
-        await prisma.favorite.delete({
-            where: {
-                id: favorite.id
-            }
-        });
-        
-        res.json({
-            success: true,
-            message: "Activité retirée des favoris"
-        });
+        res.json({ success: true, message: 'Retiré des favoris' });
     } catch (error) {
-        console.error('Erreur DELETE /api/favorites/:activityId:', error);
-        res.status(500).json({
-            success: false,
-            message: "Erreur serveur lors de la suppression du favori"
-        });
+        console.error('Erreur DELETE /api/favorites:', error);
+        res.status(500).json({ success: false, message: 'Erreur serveur' });
     }
 });
 
