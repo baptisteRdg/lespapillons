@@ -25,7 +25,7 @@ Local : Frontend http://localhost:8080, Backend http://localhost:3000, Swagger h
 
 ## 🛠️ Stack
 
-- **Frontend** : Leaflet.js, TailwindCSS, Vanilla JS
+- **Frontend** : MapLibre GL JS, Vanilla JS
 - **Backend** : Node.js, Express
 - **Carte** : Carto Light
 

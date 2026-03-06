@@ -40,7 +40,6 @@ input, button, select, textarea {
 #map {
     width: 100%;
     height: 100%;
-    touch-action: none; /* laisser Leaflet gérer tous les gestes tactiles */
 }
 
 /* ===== HEADER ===== */
@@ -375,7 +374,7 @@ header {
 #toast.toast-info    { background-color: var(--color-primary); }
 
 /* ===== MARQUEUR UTILISATEUR ===== */
-.user-marker-container { z-index: 1000; }
+.user-marker-container { cursor: grab; }
 
 .user-marker {
     width: 36px;
@@ -418,48 +417,9 @@ header {
     background-color: var(--color-primary); /* couleur par défaut */
 }
 
-/* ===== CLUSTERS PAR CATÉGORIE ===== */
-.custom-cluster {
-    background: transparent !important;
-    border: none !important;
-}
-
-.activity-cluster-pin {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    border: 3px solid white;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.22);
-    color: white;
-    font-size: 1.1rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-}
-
-.cluster-count {
-    position: absolute;
-    top: -5px;
-    right: -5px;
-    background: white;
-    color: var(--color-text-primary);
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    font-size: 11px;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
-    line-height: 1;
-}
-
-/* Cacher les styles par défaut de Leaflet.markercluster */
-.leaflet-cluster-anim .leaflet-marker-icon,
-.leaflet-cluster-anim .leaflet-marker-shadow {
-    transition: transform 0.3s ease-out, opacity 0.3s ease-in;
+/* ===== MARQUEUR ACTIVITÉ (MapLibre) ===== */
+.custom-marker {
+    cursor: pointer;
 }
 
 /* ===== SÉLECTEUR DE STYLE DE CARTE ===== */
@@ -612,15 +572,13 @@ header {
     to { transform: rotate(360deg); }
 }
 
-/* ===== LEAFLET ===== */
-.leaflet-control-zoom { display: none !important; }
-
-.leaflet-control-attribution {
+/* ===== MAPLIBRE ===== */
+.maplibregl-ctrl-attrib {
     font-size: 10px;
     background: rgba(255, 255, 255, 0.6) !important;
-    padding: 2px 6px !important;
 }
-.leaflet-control-attribution a { color: #555; }
+.maplibregl-ctrl-attrib a { color: #555; }
+.maplibregl-canvas { outline: none; }
 
 /* ===== ACTIVITY PANEL — bottom sheet mobile / side panel desktop ===== */
 #activity-panel {
@@ -945,14 +903,7 @@ header {
     .hide-mobile { display: none; }
 
 
-    /* Popup */
-    .leaflet-popup-content-wrapper {
-        max-width: calc(100vw - 4rem) !important;
-    }
-
-    /* max-width uniquement pour le popup Leaflet flottant, pas pour le panel plein écran */
-    .leaflet-popup .popup-content { max-width: 280px; }
-    .popup-title   { font-size: 1.125rem; }
+    .popup-title { font-size: 1.125rem; }
 
     .popup-footer {
         flex-direction: column;

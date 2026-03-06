@@ -10,7 +10,7 @@
     "frontend",
     "carte",
     "activités",
-    "leaflet"
+    "maplibre"
   ],
   "author": "Baptiste Rodrigues",
   "license": "ISC"

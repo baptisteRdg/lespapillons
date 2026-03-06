@@ -232,9 +232,10 @@ function _renderActivityList(containerId, activities, listType) {
             if (!id || !lat || !lng) return;
 
             const zoom = Math.max(map.getZoom(), 15);
-            const pt   = map.project([lat, lng], zoom);
-            const off  = map.unproject(pt.add([0, computeMarkerOffset()]), zoom);
-            map.setView(off, zoom);
+            const pt   = map.project([lng, lat]);
+            pt.y += computeMarkerOffset();
+            const off  = map.unproject(pt);
+            map.flyTo({ center: off, zoom, duration: 400 });
 
             let poolEntry = activityPool.get(id);
             let marker;
@@ -242,7 +243,7 @@ function _renderActivityList(containerId, activities, listType) {
                 marker = poolEntry.marker;
             } else {
                 const activity = { id, lat, lng, category: item.dataset.type || 'autre' };
-                marker = createMarker(activity, false);
+                marker = createMarker(activity);
                 activityPool.set(id, { activity, marker });
             }
             loadAndShowActivityDetails(id, marker);

@@ -323,7 +323,7 @@ async function getWikidataData(wikidataId) {
 
 /**
  * Récupère les activités dans le viewport visible de la carte
- * @param {L.LatLngBounds} bounds - Bounds Leaflet du viewport
+ * @param {maplibregl.LngLatBounds} bounds - Bounds du viewport
  * @param {number} limitPerType - Nombre max d'activités par type
  * @returns {Promise<Array>} Liste d'activités légères
  */

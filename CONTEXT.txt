@@ -5,7 +5,7 @@ PROJET : Les Papillons - Outil cartographique interactif
 DESCRIPTION
 -----------
 Application web de découverte d'activités locales (musées, parcs, cinémas, golf, etc.)
-inspirée de Google Maps. Frontend Leaflet.js + TailwindCSS + Vanilla JS.
+inspirée de Google Maps. Frontend MapLibre GL JS + Vanilla JS.
 Backend Node.js + Express + Prisma + SQLite.
 
 
@@ -29,7 +29,7 @@ LesPapillons/
 │   ├── styles/main.css             Styles custom + TailwindCSS overrides
 │   ├── scripts/
 │   │   ├── api.js                  Appels API backend (local: :3000, prod: /api)
-│   │   └── map.js                  Logique Leaflet, UI, favoris, recherche
+│   │   └── map.js                  Logique MapLibre, UI, favoris, recherche
 │   └── assets/icon/                Icônes SVG locales (film, golf, musee, music, pool, tree)
 ├── backend/
 │   ├── app.js                      Serveur Express + routes API
