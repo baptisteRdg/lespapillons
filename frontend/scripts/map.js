@@ -55,7 +55,7 @@ const JAWG_TOKEN = 'q8ENjbC5b2HaKNzPYe09LRKGCNFudkoHzE5iHznAfmXmBwohhWjfKj1wuFMD
 const MAP_STYLES = {
     propre: {
         label: T.MAP_STYLES.propre,
-        url: `https://tile.jawg.io/dfc3a626-e8ca-4cd6-8ad5-0f7e06729444/{z}/{x}/{y}{r}.png?access-token=${JAWG_TOKEN}`
+        url: `https://tile.jawg.io/dfc3a626-e8ca-4cd6-8ad5-0f7e06729444/{z}/{x}/{y}.png?access-token=q8ENjbC5b2HaKNzPYe09LRKGCNFudkoHzE5iHznAfmXmBwohhWjfKj1wuFMDNn3H`
     },
     satellite: {
         label: T.MAP_STYLES.satellite,
@@ -67,7 +67,7 @@ const MAP_STYLES = {
     },
     simple: {
         label: T.MAP_STYLES.simple,
-        url: `https://tile.jawg.io/jawg-streets/{z}/{x}/{y}{r}.png?access-token=${JAWG_TOKEN}`
+        url: `https://tile.jawg.io/jawg-streets/{z}/{x}/{y}{r}.png?access-token=q8ENjbC5b2HaKNzPYe09LRKGCNFudkoHzE5iHznAfmXmBwohhWjfKj1wuFMDNn3H`
     }
 };
 
