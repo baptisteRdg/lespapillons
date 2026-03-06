@@ -128,141 +128,221 @@ header {
     flex-shrink: 0;
 }
 
-/* Bouton Mes Favoris */
-#favoritesBtn {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 1rem;
-    border-radius: 0.5rem;
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    background: rgba(239, 246, 255, 0.6);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    color: var(--color-primary-dark);
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
-    transition: background 0.2s;
-    font-size: 0.9375rem;
-}
-
-#favoritesBtn:hover {
-    background: rgba(219, 234, 254, 0.7);
-}
-
-/* Compteur de favoris */
-#favCount {
-    background-color: var(--color-primary);
-    color: white;
-    font-size: 0.75rem;
-    font-weight: 600;
-    border-radius: 9999px;
-    padding: 0.125rem 0.5rem;
-    line-height: 1.4;
-}
-
 /* Texte masqué sur mobile */
 .hide-mobile { display: inline; }
 
 /* ===== SIDEBAR FAVORIS ===== */
-#favoritesSidebar {
-    position: absolute;
-    top: 5rem;
-    right: 1rem;
+/* ── Bouton flottant favoris ────────────────────────────────────────── */
+#fav-picker {
+    position: fixed;
+    top: calc(var(--header-h, 60px) + 10px);
+    right: 68px;
     z-index: 1000;
-    width: 20rem;
-    border-radius: 0.5rem;
-    overflow: hidden;
-    transform: translateX(400px);
-    transition: transform 0.3s;
-    background: rgba(255, 255, 255, 0.95);
+    pointer-events: none;
+}
+
+#fav-picker-toggle {
+    pointer-events: auto;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.92);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-}
-
-@supports not (backdrop-filter: blur(12px)) {
-    #favoritesSidebar { background: rgba(255, 255, 255, 0.98); }
-}
-
-.sidebar-header {
-    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    color: white;
-    padding: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
+    color: #ef4444;
+    font-size: 16px;
+    cursor: pointer;
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: center;
+    transition: background 0.2s, transform 0.2s;
+    position: relative;
 }
 
-.sidebar-title {
-    font-size: 1.25rem;
+#fav-picker-toggle:hover {
+    background: rgba(255, 255, 255, 1);
+    transform: scale(1.05);
+}
+
+.fav-count-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    min-width: 18px;
+    height: 18px;
+    border-radius: 9px;
+    background: #ef4444;
+    color: white;
+    font-size: 11px;
     font-weight: 700;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-}
-
-#closeSidebar {
-    background: none;
-    border: none;
-    color: white;
-    font-size: 1.25rem;
-    padding: 0.25rem;
+    justify-content: center;
+    padding: 0 4px;
     line-height: 1;
-    transition: color 0.2s;
 }
 
-#closeSidebar:hover { color: var(--color-border-default); }
+.fav-count-badge.hidden { display: none; }
 
-#favoritesContent {
-    padding: 1rem;
-    max-height: 70vh;
+/* ── Panel favoris dédié ──────────────────────────────────────────── */
+#favorites-panel {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 2000;
+    background: var(--color-bg-activity-panel);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border-radius: 16px 16px 0 0;
+    box-shadow: 0 -4px 32px rgba(0, 0, 0, 0.14);
+    height: 42vh;
+    display: flex;
+    flex-direction: column;
+    transform: translateY(102%);
+    transition: transform 0.38s cubic-bezier(0.32, 0.72, 0, 1),
+                height 0.28s ease;
+    overflow: hidden;
+    will-change: transform;
+}
+
+#favorites-panel.panel-open {
+    transform: translateY(0);
+}
+
+#favorites-panel.panel-expanded {
+    height: 60vh;
+}
+
+#fav-drag-handle {
+    width: 36px;
+    height: 4px;
+    background: var(--color-border-default);
+    border-radius: 2px;
+    margin: 10px auto 4px;
+    flex-shrink: 0;
+    cursor: pointer;
+    touch-action: none;
+}
+
+#fav-panel-close {
+    position: absolute;
+    top: 10px;
+    right: 14px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--color-bg-muted);
+    border: none;
+    color: var(--color-text-muted);
+    font-size: 13px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s;
+    z-index: 10;
+}
+
+#fav-panel-close:hover { background: var(--color-bg-border); }
+
+#fav-panel-content {
+    flex: 1;
     overflow-y: auto;
-    background: rgba(255, 255, 255, 0.4);
+    -webkit-overflow-scrolling: touch;
 }
 
-/* Item favori */
+/* Desktop → panel droit indépendant */
+@media (min-width: 768px) {
+    #favorites-panel {
+        top: 64px;
+        bottom: 0;
+        right: 0;
+        left: auto;
+        width: 340px;
+        height: auto;
+        border-radius: 0;
+        box-shadow: -4px 0 24px rgba(0, 0, 0, 0.10);
+        transform: translateX(100%);
+        transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+    }
+
+    #favorites-panel.panel-open { transform: translateX(0); }
+    #favorites-panel.panel-expanded { height: auto; }
+
+    #fav-drag-handle { display: none; }
+}
+
+/* ── Items favoris dans le panel ──────────────────────────────────── */
+.fav-list-content {
+    padding: 0.75rem;
+}
+
+.fav-list-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--color-bg-border);
+}
+
+.fav-list-header h3 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+}
+
+.fav-list-header i { color: #ef4444; }
+
 .fav-item {
-    margin-bottom: 1rem;
     padding: 0.75rem;
     background: rgba(249, 250, 251, 0.9);
     border: 1px solid rgba(0, 0, 0, 0.06);
     border-radius: 0.5rem;
     cursor: pointer;
     transition: background 0.2s;
+    margin-bottom: 0.5rem;
 }
 
 .fav-item:hover { background: rgba(243, 244, 246, 0.6); }
+.fav-item:active { background: rgba(230, 230, 230, 0.8); }
 
 .fav-item-header {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 0.5rem;
+    align-items: center;
 }
 
 .fav-item-name {
-    font-weight: 700;
+    font-weight: 600;
+    font-size: 0.95rem;
     color: var(--color-text-primary);
 }
 
 .remove-favorite {
     background: none;
     border: none;
-    color: var(--color-error);
-    padding: 0.25rem;
+    color: #ef4444;
+    padding: 0.35rem;
     line-height: 1;
-    transition: color 0.2s;
+    transition: color 0.2s, transform 0.15s;
     flex-shrink: 0;
+    touch-action: manipulation;
 }
 
-.remove-favorite:hover { color: #b91c1c; }
+.remove-favorite:hover { color: #b91c1c; transform: scale(1.15); }
+
+.fav-item-meta {
+    margin-top: 0.35rem;
+}
 
 .fav-empty {
     color: var(--color-text-muted);
     text-align: center;
-    padding: 2rem 0;
+    padding: 2.5rem 1rem;
+    font-size: 0.9rem;
 }
 
 /* Scrollbar sidebar */
@@ -858,18 +938,6 @@ header {
 
     .hide-mobile { display: none; }
 
-    #favoritesBtn {
-        flex-shrink: 0;
-        padding: 0.5rem 0.65rem;
-    }
-
-    /* Sidebar pleine largeur */
-    #favoritesSidebar {
-        width: calc(100% - 2rem);
-        right: 1rem;
-        left: 1rem;
-        max-height: 70vh;
-    }
 
     /* Popup */
     .leaflet-popup-content-wrapper {

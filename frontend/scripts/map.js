@@ -245,7 +245,10 @@ function initMap() {
     });
 
     // Fermer le panel en cliquant sur la carte (mais pas sur un marker)
-    map.on('click', () => hideActivityPanel());
+    map.on('click', () => {
+        hideActivityPanel();
+        if (window.innerWidth < 768) hideFavoritesPanel();
+    });
     
     // Si position sauvegardée : chargement direct, pas besoin de géolocalisation
     // Sinon : tentative de géolocalisation (premier visit)
@@ -1157,6 +1160,7 @@ function toggleFavorite(activityId, activityData = null) {
                     showToast(T.TOASTS.FAVORITE_ADDED, 'success');
                 }
                 updateFavoritesCount();
+                _refreshFavPanel();
 
                 const favoriteBtn = document.querySelector(`[data-action="favorite"][data-id="${activityId}"]`);
                 if (favoriteBtn) {
@@ -1272,97 +1276,163 @@ function isActivityFavorite(activityId) {
 }
 
 /**
- * Met à jour le compteur de favoris dans le header
+ * Met à jour le badge de compteur favoris sur le bouton flottant
  */
 function updateFavoritesCount() {
-    const countElement = document.getElementById('favCount');
-    if (countElement) {
-        countElement.textContent = _favoritesCache.length;
-    }
+    const badge = document.getElementById('favCount');
+    if (!badge) return;
+    const count = _favoritesCache.length;
+    badge.textContent = count;
+    badge.classList.toggle('hidden', count === 0);
 }
 
+let _favPanelOpen = false;
+
 /**
- * Affiche la sidebar des favoris
+ * Génère le HTML de la liste de favoris
  */
-async function showFavoritesSidebar() {
-    const sidebar = document.getElementById('favoritesSidebar');
-    const content = document.getElementById('favoritesContent');
-    
+function _buildFavoritesListHtml() {
     const favorites = getFavorites();
-    
+
+    const header = `<div class="fav-list-header"><i class="fas fa-heart"></i><h3>Mes Favoris</h3></div>`;
+
     if (favorites.length === 0) {
-        content.innerHTML = `<p class="fav-empty">${T.EMPTY.FAVORITES}</p>`;
-    } else {
-        content.innerHTML = favorites.map(fav => `
+        return `${header}<div class="fav-list-content"><p class="fav-empty">${T.EMPTY?.FAVORITES || 'Aucun favori pour le moment'}</p></div>`;
+    }
+
+    const items = favorites.map(fav => {
+        const catClass = (fav.type || 'autre').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, '-');
+        return `
             <div class="fav-item" data-lat="${fav.lat}" data-lng="${fav.lng}" data-id="${fav.id}">
                 <div class="fav-item-header">
-                    <h3 class="fav-item-name">${fav.name}</h3>
-                    <button class="remove-favorite" data-id="${fav.id}">
-                        <i class="fas fa-heart"></i>
-                    </button>
+                    <span class="fav-item-name">${escapeHtml(fav.name)}</span>
+                    <button class="remove-favorite" data-id="${fav.id}" aria-label="Retirer"><i class="fas fa-heart-broken"></i></button>
                 </div>
-                <span class="category-badge category-${fav.type.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, '-')}">${fav.type}</span>
-            </div>
-        `).join('');
-        
-        // Événements pour centrer la carte
-        content.querySelectorAll('[data-lat]').forEach(element => {
-            element.addEventListener('click', async (e) => {
-                if (e.target.closest('.remove-favorite')) return;
-                
-                const lat = parseFloat(element.dataset.lat);
-                const lng = parseFloat(element.dataset.lng);
-                const id = parseInt(element.dataset.id);
-                
-                hideFavoritesSidebar();
-                
-                // Centrer la carte : marker dans la zone visible optimale (haut sur mobile)
-                const zoom = Math.max(map.getZoom(), 15);
-                const markerPoint = map.project([lat, lng], zoom);
-                const offsetLatLng = map.unproject(markerPoint.add([0, computeMarkerOffset()]), zoom);
-                map.setView(offsetLatLng, zoom);
-                
-                // Chercher le marker dans le pool
-                let poolEntry = activityPool.get(id);
-                let marker;
+                <div class="fav-item-meta">
+                    <span class="category-badge category-${catClass}">${escapeHtml(fav.type || 'Autre')}</span>
+                </div>
+            </div>`;
+    }).join('');
 
-                if (poolEntry) {
-                    marker = poolEntry.marker;
-                } else {
-                    // Pas encore dans le pool → créer un marker temporaire directement sur la carte
-                    console.log(`📍 Marker #${id} absent du pool, création d'un marker temporaire`);
-                    const fav = getFavorites().find(f => f.id === id);
-                    const activity = { id, lat, lng, category: fav ? fav.type : 'autre' };
-                    marker = createMarker(activity, false);
-                    activityPool.set(id, { activity, marker });
-                }
-                
-                await loadAndShowActivityDetails(id, marker);
-            });
-        });
-        
-        // Événements pour retirer des favoris
-        content.querySelectorAll('.remove-favorite').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const id = parseInt(btn.dataset.id);
-                toggleFavorite(id);
-                showFavoritesSidebar(); // Rafraîchir la sidebar
-            });
-        });
-    }
-    
-    sidebar.dataset.open = 'true';
-    sidebar.style.transform = 'translateX(0)';
+    return `${header}<div class="fav-list-content">${items}</div>`;
 }
 
 /**
- * Cache la sidebar des favoris
+ * Affiche le panel favoris dédié
  */
-function hideFavoritesSidebar() {
-    const sidebar = document.getElementById('favoritesSidebar');
-    sidebar.dataset.open = 'false';
-    sidebar.style.transform = 'translateX(400px)';
+function showFavoritesPanel() {
+    const panel   = document.getElementById('favorites-panel');
+    const content = document.getElementById('fav-panel-content');
+    if (!panel || !content) return;
+
+    // Sur mobile : fermer la fiche activité si ouverte, avec une petite pause pour animer
+    const isMobile = window.innerWidth < 768;
+    if (isMobile && currentPanelActivityId !== null) {
+        hideActivityPanel();
+        setTimeout(() => {
+            _openFavPanel(panel, content);
+        }, 200);
+    } else {
+        _openFavPanel(panel, content);
+    }
+}
+
+function _openFavPanel(panel, content) {
+    _favPanelOpen = true;
+    content.innerHTML = _buildFavoritesListHtml();
+    panel.classList.remove('panel-expanded');
+    panel.classList.add('panel-open');
+    _bindFavoritesEvents();
+}
+
+/**
+ * Attache les événements de la liste favoris
+ */
+function _bindFavoritesEvents() {
+    const content = document.getElementById('fav-panel-content');
+    if (!content) return;
+
+    content.querySelectorAll('.fav-item[data-lat]').forEach(el => {
+        el.addEventListener('click', (e) => {
+            if (e.target.closest('.remove-favorite')) return;
+
+            const lat = parseFloat(el.dataset.lat);
+            const lng = parseFloat(el.dataset.lng);
+            const id  = parseInt(el.dataset.id);
+
+            // Centrer la carte sur l'activité
+            const zoom = Math.max(map.getZoom(), 15);
+            const markerPoint = map.project([lat, lng], zoom);
+            const offsetLatLng = map.unproject(markerPoint.add([0, computeMarkerOffset()]), zoom);
+            map.setView(offsetLatLng, zoom);
+        });
+    });
+
+    content.querySelectorAll('.remove-favorite').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleFavorite(parseInt(btn.dataset.id));
+        });
+    });
+}
+
+/**
+ * Rafraîchit le contenu du panel favoris s'il est ouvert
+ */
+function _refreshFavPanel() {
+    if (!_favPanelOpen) return;
+    const content = document.getElementById('fav-panel-content');
+    if (!content) return;
+    content.innerHTML = _buildFavoritesListHtml();
+    _bindFavoritesEvents();
+}
+
+/**
+ * Ferme le panel favoris
+ */
+function hideFavoritesPanel() {
+    _favPanelOpen = false;
+    const panel = document.getElementById('favorites-panel');
+    if (panel) panel.classList.remove('panel-open', 'panel-expanded');
+}
+
+/**
+ * Initialise le drag handle et le bouton close du panel favoris
+ */
+function initFavoritesPanel() {
+    const panel  = document.getElementById('favorites-panel');
+    const handle = document.getElementById('fav-drag-handle');
+    const close  = document.getElementById('fav-panel-close');
+    if (!panel) return;
+
+    close?.addEventListener('click', hideFavoritesPanel);
+
+    if (!handle) return;
+
+    let touchStartY = 0;
+    let startExpanded = false;
+
+    handle.addEventListener('touchstart', (e) => {
+        touchStartY = e.touches[0].clientY;
+        startExpanded = panel.classList.contains('panel-expanded');
+    }, { passive: true });
+
+    handle.addEventListener('touchend', (e) => {
+        const delta = touchStartY - e.changedTouches[0].clientY;
+        if (delta > 40) {
+            panel.classList.add('panel-expanded');
+        } else if (delta < -40) {
+            if (startExpanded) {
+                panel.classList.remove('panel-expanded');
+            } else {
+                hideFavoritesPanel();
+            }
+        }
+    }, { passive: true });
+
+    handle.addEventListener('click', () => {
+        panel.classList.toggle('panel-expanded');
+    });
 }
 
 /**
@@ -1504,30 +1574,20 @@ document.addEventListener('DOMContentLoaded', () => {
     initMap();
     initStylePicker();
     initActivityPanel();
+    initFavoritesPanel();
     handleDeepLink();
     loadFavorites();
     
-    // Timestamp pour éviter la fermeture immédiate sur mobile (stopPropagation peu fiable sur iOS)
-    let sidebarOpenedAt = 0;
-
-    // Configuration des événements
-    const favoritesBtn = document.getElementById('favoritesBtn');
-    if (favoritesBtn) {
-        favoritesBtn.addEventListener('click', () => {
-            showFavoritesSidebar();
-            sidebarOpenedAt = Date.now();
+    // Bouton flottant favoris
+    const favToggle = document.getElementById('fav-picker-toggle');
+    if (favToggle) {
+        favToggle.addEventListener('click', () => {
+            if (_favPanelOpen) {
+                hideFavoritesPanel();
+            } else {
+                showFavoritesPanel();
+            }
         });
-    }
-    
-    const closeSidebar = document.getElementById('closeSidebar');
-    if (closeSidebar) {
-        closeSidebar.addEventListener('click', () => hideFavoritesSidebar());
-    }
-
-    // Empêcher les clics à l'intérieur de la sidebar de la fermer
-    const sidebar = document.getElementById('favoritesSidebar');
-    if (sidebar) {
-        sidebar.addEventListener('click', (e) => e.stopPropagation());
     }
     
     // Configuration de la barre de recherche
@@ -1553,17 +1613,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     }
     
-    // Fermer la sidebar en cliquant/touchant en dehors
-    // Le délai de 50ms protège contre l'ouverture+fermeture immédiate sur mobile
-    document.addEventListener('click', (e) => {
-        if (Date.now() - sidebarOpenedAt < 50) return;
-        const sidebarEl = document.getElementById('favoritesSidebar');
-        const isOpen = sidebarEl.dataset.open === 'true';
-        if (isOpen) hideFavoritesSidebar();
-    });
-
     // ── Raccourcis clavier ────────────────────────────────────────────
-    // Ne pas déclencher si l'utilisateur est dans un champ de saisie
     document.addEventListener('keydown', (e) => {
         const tag = document.activeElement?.tagName;
         const isTyping = tag === 'INPUT' || tag === 'TEXTAREA' || document.activeElement?.isContentEditable;
@@ -1576,30 +1626,25 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Échap → fermer fiche, puis sidebar, puis recherche (ordre de priorité)
+        // Échap → fermer favoris, fiche, puis recherche
         if (e.key === 'Escape') {
-            if (currentPanelActivityId !== null) {
+            if (_favPanelOpen) {
+                hideFavoritesPanel();
+            } else if (currentPanelActivityId !== null) {
                 hideActivityPanel();
-            } else {
-                const sidebarEl = document.getElementById('favoritesSidebar');
-                if (sidebarEl?.dataset.open === 'true') {
-                    hideFavoritesSidebar();
-                } else if (isSearchMode && searchInput) {
-                    searchInput.value = '';
-                    exitSearchMode();
-                }
+            } else if (isSearchMode && searchInput) {
+                searchInput.value = '';
+                exitSearchMode();
             }
             return;
         }
 
-        // F → ouvrir / fermer la sidebar des favoris
+        // F → ouvrir / fermer les favoris
         if ((e.key === 'f' || e.key === 'F') && !isTyping) {
-            const sidebarEl = document.getElementById('favoritesSidebar');
-            if (sidebarEl?.dataset.open === 'true') {
-                hideFavoritesSidebar();
+            if (_favPanelOpen) {
+                hideFavoritesPanel();
             } else {
-                showFavoritesSidebar();
-                sidebarOpenedAt = Date.now();
+                showFavoritesPanel();
             }
             return;
         }

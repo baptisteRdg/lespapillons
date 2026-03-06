@@ -41,12 +41,6 @@
 
             <!-- Actions header -->
             <div class="header-actions">
-                <button id="favoritesBtn">
-                    <i class="fas fa-heart"></i>
-                    <span class="hide-mobile" data-t="LABELS.MY_FAVORITES">Mes Favoris</span>
-                    <span id="favCount">0</span>
-                </button>
-
                 <!-- Bouton compte -->
                 <button id="accountBtn" class="account-btn" title="Mon compte" data-t-title="LABELS.MY_ACCOUNT">
                     <i class="fas fa-user-circle"></i>
@@ -75,20 +69,24 @@
         </div>
     </div>
 
-    <!-- Sidebar favoris -->
-    <aside id="favoritesSidebar">
-        <div class="sidebar-header">
-            <h2 class="sidebar-title">
-                <i class="fas fa-heart"></i><span data-t="LABELS.MY_FAVORITES">Mes Favoris</span>
-            </h2>
-            <button id="closeSidebar">
-                <i class="fas fa-times"></i>
-            </button>
+    <!-- Panel favoris (bottom sheet mobile / panneau droit desktop) -->
+    <div id="favorites-panel">
+        <div id="fav-drag-handle"></div>
+        <button id="fav-panel-close" aria-label="Fermer">
+            <i class="fas fa-times"></i>
+        </button>
+        <div id="fav-panel-content">
+            <!-- rempli dynamiquement -->
         </div>
-        <div id="favoritesContent">
-            <p class="fav-empty" data-t="EMPTY.FAVORITES">Aucun favori pour le moment</p>
-        </div>
-    </aside>
+    </div>
+
+    <!-- Bouton flottant favoris -->
+    <div id="fav-picker">
+        <button id="fav-picker-toggle" title="Mes favoris">
+            <i class="fas fa-heart"></i>
+            <span id="favCount" class="fav-count-badge hidden">0</span>
+        </button>
+    </div>
 
     <!-- Sélecteur de style de carte -->
     <div id="style-picker">
