@@ -221,11 +221,17 @@ function initMap() {
 
     map = L.map('map', {
         zoomControl: false,
-        attributionControl: false,
-        tap: false,              // Désactive le tap handler Leaflet (conflits avec le navigateur mobile)
-        tapTolerance: 15,        // Tolérance du tap sur mobile
-        bounceAtZoomLimits: false // Supprime l'animation de rebond aux limites de zoom
+        attributionControl: true,
+        tap: false,
+        tapTolerance: 15,
+        bounceAtZoomLimits: false
     }).setView(userPosition, MAP_CONFIG.zoom);
+
+    map.attributionControl.setPrefix(false);
+    map.attributionControl.addAttribution(
+        '<a href="https://jawg.io?utm_medium=map&utm_source=attribution" target="_blank">&copy; Jawg</a> - ' +
+        '<a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap</a>'
+    );
 
     // Appliquer le style sauvegardé (ou papillon par défaut)
     const savedStyle = localStorage.getItem('map_style') || 'propre';
