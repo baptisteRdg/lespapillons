@@ -69,10 +69,10 @@ const JAWG_TOKEN = 'q8ENjbC5b2HaKNzPYe09LRKGCNFudkoHzE5iHznAfmXmBwohhWjfKj1wuFMD
 
 // Styles de carte disponibles
 const MAP_STYLES = {
-    papillon: {
-        label: T.MAP_STYLES.papillon,
-        url: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}{r}.png',
-        options: { subdomains: 'abcd' }
+    propre: {
+        label: T.MAP_STYLES.propre,
+        url: `https://tile.jawg.io/dfc3a626-e8ca-4cd6-8ad5-0f7e06729444/{z}/{x}/{y}{r}.png?access-token=${JAWG_TOKEN}`,
+        options: {}
     },
     satellite: {
         label: T.MAP_STYLES.satellite,
@@ -87,11 +87,6 @@ const MAP_STYLES = {
     simple: {
         label: T.MAP_STYLES.simple,
         url: `https://tile.jawg.io/jawg-streets/{z}/{x}/{y}{r}.png?access-token=${JAWG_TOKEN}`,
-        options: {}
-    },
-    propre: {
-        label: T.MAP_STYLES.propre,
-        url: `https://tile.jawg.io/jawg-lagoon/{z}/{x}/{y}{r}.png?access-token=${JAWG_TOKEN}`,
         options: {}
     }
 };
