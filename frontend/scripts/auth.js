@@ -76,6 +76,8 @@ async function _restoreSession() {
             const data = await res.json();
             _currentUser = data.user;
             console.log(`👤 Session restaurée : ${_currentUser.pseudo}`);
+            if (typeof loadUserTodo === 'function') loadUserTodo();
+            if (typeof loadFavorites === 'function') loadFavorites();
         } else {
             localStorage.removeItem('auth_token');
         }

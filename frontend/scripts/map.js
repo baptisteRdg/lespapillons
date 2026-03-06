@@ -3,7 +3,7 @@
  */
 
 // Version du localStorage — à incrémenter lors d'un changement de DB ou de format de données
-const STORAGE_VERSION = '2';
+const STORAGE_VERSION = '3';
 
 /**
  * Vérifie la version du localStorage et purge les données si obsolètes
