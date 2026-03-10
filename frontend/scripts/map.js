@@ -108,6 +108,9 @@ const categoryClusterGroups = new Map();  // category → MarkerClusterGroup
 const MAX_POOL = 400;
 let searchMarkers = [];
 let isSearchMode = false;
+let isGroupMode = false;
+let activeGroup = null;
+let groupModeMarkers = [];
 let lastLoadedBounds = null;  // Bounds lors du dernier chargement (avec padding)
 let lastLoadedZoom = null;    // Zoom lors du dernier chargement
 let viewportLoadTimeout = null; // Debounce du rechargement viewport
@@ -352,7 +355,7 @@ function needsReload() {
 }
 
 async function loadActivitiesInViewport() {
-    if (isSearchMode) return;
+    if (isSearchMode || isGroupMode) return;
     if (!needsReload()) {
         console.log('⏭️ Viewport inchangé, pas de rechargement');
         return;
@@ -955,6 +958,11 @@ function createPopupContent(activity) {
                     <i class="fas fa-share-nodes"></i>
                     <span>${T.BUTTONS.SHARE}</span>
                 </button>
+
+                <button class="popup-btn btn-group" data-action="group" data-id="${activity.id}">
+                    <i class="fas fa-layer-group"></i>
+                    <span>${T.BUTTONS.ADD_TO_GROUP}</span>
+                </button>
             </div>
         </div>
     `;
@@ -1019,6 +1027,17 @@ function setupPopupEventListeners(activity) {
     const shareBtn = document.querySelector('[data-action="share"]');
     if (shareBtn) {
         shareBtn.addEventListener('click', () => shareActivity(activity.id, activity.title));
+    }
+
+    const groupBtn = document.querySelector('[data-action="group"]');
+    if (groupBtn) {
+        groupBtn.addEventListener('click', () => {
+            if (typeof addActivityToActiveGroup === 'function') {
+                addActivityToActiveGroup(activity.id, activity.title);
+            } else {
+                showToast(T.TOASTS.ERROR, 'error');
+            }
+        });
     }
 
     // Boutons notation
@@ -1473,6 +1492,7 @@ function showToast(message, type = 'success') {
  * @param {Array} results - Activités trouvées
  */
 function enterSearchMode(results) {
+    if (isGroupMode) exitGroupMode();
     isSearchMode = true;
     // Masquer tous les cluster groups
     categoryClusterGroups.forEach(group => { if (map.hasLayer(group)) map.removeLayer(group); });
@@ -1498,7 +1518,63 @@ function exitSearchMode() {
     loadActivitiesInViewport();
 }
 
+function _clearGroupModeMarkers() {
+    groupModeMarkers.forEach(({ marker }) => map.removeLayer(marker));
+    groupModeMarkers = [];
+}
+
+function enterGroupMode(group) {
+    if (!group || !Array.isArray(group.activities)) return;
+    if (isSearchMode) exitSearchMode();
+
+    isGroupMode = true;
+    activeGroup = group;
+    _clearGroupModeMarkers();
+
+    categoryClusterGroups.forEach(groupLayer => {
+        if (map.hasLayer(groupLayer)) map.removeLayer(groupLayer);
+    });
+
+    const mappedActivities = group.activities
+        .filter((a) => Number.isFinite(a.latitude) && Number.isFinite(a.longitude))
+        .map((a) => ({
+            id: a.id,
+            title: a.name,
+            lat: a.latitude,
+            lng: a.longitude,
+            category: a.type || 'autre'
+        }));
+
+    mappedActivities.forEach((activity) => {
+        const marker = createMarker(activity, false);
+        groupModeMarkers.push({ marker, activity });
+    });
+
+    if (mappedActivities.length === 1) {
+        const a = mappedActivities[0];
+        const zoom = Math.max(map.getZoom(), 15);
+        const markerPoint = map.project([a.lat, a.lng], zoom);
+        const offsetLatLng = map.unproject(markerPoint.add([0, computeMarkerOffset()]), zoom);
+        map.setView(offsetLatLng, zoom);
+    } else if (mappedActivities.length > 1) {
+        const bounds = L.latLngBounds(mappedActivities.map((a) => [a.lat, a.lng]));
+        map.fitBounds(bounds, { padding: [50, 50], maxZoom: 15 });
+    }
+}
+
+function exitGroupMode() {
+    if (!isGroupMode) return;
+    isGroupMode = false;
+    activeGroup = null;
+    _clearGroupModeMarkers();
+    categoryClusterGroups.forEach(groupLayer => {
+        if (!map.hasLayer(groupLayer)) groupLayer.addTo(map);
+    });
+    loadActivitiesInViewport();
+}
+
 async function searchActivities(searchTerm, options = {}) {
+    if (isGroupMode) exitGroupMode();
     if (!searchTerm || searchTerm.trim() === '') {
         searchRequestId++;
         if (geocodeRequestController) geocodeRequestController.abort();
