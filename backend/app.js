@@ -8,6 +8,7 @@ const { PrismaClient } = require('@prisma/client');
 const rateLimit = require('express-rate-limit');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
+const { geocodeQuery, GeocodeError } = require('./services/geocode');
 const {
     geojsonToActivity,
     activityToGeojson,
@@ -42,13 +43,14 @@ app.use(express.json());
 // Souple : ne bloque que les abus automatisés, pas les vrais utilisateurs.
 // Localhost exempté (dev local + benchmarks).
 const isLocalhost = (req) => ['127.0.0.1', '::1', '::ffff:127.0.0.1'].includes(req.ip);
+const isGeocodeRoute = (req) => req.originalUrl.startsWith('/api/geocode');
 
 const globalLimiter = rateLimit({
     windowMs: 60 * 1000,
     max: 300,
     standardHeaders: true,
     legacyHeaders: false,
-    skip: isLocalhost,
+    skip: (req) => isLocalhost(req) || isGeocodeRoute(req),
     message: { success: false, message: 'Trop de requêtes, réessayez dans quelques secondes' }
 });
 const authLimiter = rateLimit({
@@ -67,9 +69,18 @@ const proxyLimiter = rateLimit({
     skip: isLocalhost,
     message: { success: false, message: 'Trop de requêtes proxy, réessayez dans quelques secondes' }
 });
+const geocodeLimiter = rateLimit({
+    windowMs: 1000,
+    max: 10,
+    standardHeaders: true,
+    legacyHeaders: false,
+    skip: isLocalhost,
+    message: { success: false, message: 'Trop de requêtes de géocodage, ralentissez un peu' }
+});
 app.use('/api/', globalLimiter);
 app.use('/api/auth/', authLimiter);
 app.use('/api/og-image', proxyLimiter);
+app.use('/api/geocode', geocodeLimiter);
 
 // Fichiers uploadés (avatars, etc.) servis via /api/uploads (passe par la route /api de Nginx)
 app.use('/api/uploads', require('express').static(require('path').join(__dirname, 'uploads')));
@@ -604,6 +615,38 @@ app.get('/api/og-image', async (req, res) => {
     } catch (error) {
         console.error(`❌ og-image erreur pour ${url}:`, error.message);
         res.json({ imageUrl: null });
+    }
+});
+
+/**
+ * GET /api/geocode?q=...
+ * Géocode une ville ou une adresse et renvoie un format unifié pour le frontend.
+ */
+app.get('/api/geocode', async (req, res) => {
+    try {
+        const result = await geocodeQuery(req.query.q);
+        if (!result) {
+            return res.status(404).json({
+                success: false,
+                message: 'Aucun résultat trouvé'
+            });
+        }
+        return res.json({
+            success: true,
+            data: result
+        });
+    } catch (error) {
+        if (error instanceof GeocodeError) {
+            return res.status(error.statusCode).json({
+                success: false,
+                message: error.message
+            });
+        }
+        console.error('Erreur GET /api/geocode:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Erreur serveur lors du géocodage'
+        });
     }
 });
 
