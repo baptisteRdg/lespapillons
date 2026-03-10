@@ -278,6 +278,30 @@
                     </div>
                 </div>
 
+                <!-- Groupes -->
+                <div class="account-accordion">
+                    <button class="account-accordion-toggle" data-target="section-groups">
+                        <i class="fas fa-layer-group"></i>
+                        <span data-t="LABELS.GROUPS">Groupes</span>
+                        <i class="fas fa-chevron-down accordion-chevron"></i>
+                    </button>
+                    <div class="account-accordion-body hidden" id="section-groups">
+                        <div class="group-create-wrap">
+                            <input type="text" id="group-name-input" class="account-input" placeholder="Nom du groupe" data-t-placeholder="PLACEHOLDERS.GROUP_NAME">
+                            <button id="group-create-btn" class="account-btn-primary" data-t="BUTTONS.CREATE_GROUP">Créer</button>
+                        </div>
+
+                        <div class="group-map-view-actions hidden" id="group-map-view-actions">
+                            <span class="group-map-view-label" id="group-map-view-label"></span>
+                            <button id="group-map-view-exit-btn" class="account-btn-secondary" data-t="BUTTONS.EXIT_GROUP_VIEW">Quitter la vue</button>
+                        </div>
+
+                        <div id="groups-list" class="groups-list">
+                            <p class="account-empty-msg" data-t="EMPTY.GROUPS">Aucun groupe pour l'instant</p>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Activités à faire -->
                 <div class="account-accordion">
                     <button class="account-accordion-toggle" data-target="section-todo">
@@ -313,6 +337,24 @@
                 <i class="fas fa-right-from-bracket"></i>
                 <span data-t="BUTTONS.LOGOUT">Se déconnecter</span>
             </button>
+        </div>
+    </div>
+
+    <!-- Sélecteur de groupe (depuis fiche activité) -->
+    <div id="group-picker-overlay" class="group-picker-overlay">
+        <div id="group-picker-backdrop" class="group-picker-backdrop"></div>
+        <div class="group-picker-sheet">
+            <div class="group-picker-header">
+                <h3 id="group-picker-title" data-t="LABELS.PICK_GROUP">Ajouter à un groupe</h3>
+                <button id="group-picker-close-btn" class="group-picker-close-btn" aria-label="Fermer" data-t-aria="LABELS.CLOSE">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div id="group-picker-list" class="group-picker-list"></div>
+            <div class="group-picker-create">
+                <input type="text" id="group-picker-create-input" class="account-input" placeholder="Nom du groupe" data-t-placeholder="PLACEHOLDERS.GROUP_NAME">
+                <button id="group-picker-create-btn" class="account-btn-primary" data-t="BUTTONS.CREATE_AND_ADD">Créer et ajouter</button>
+            </div>
         </div>
     </div>
 

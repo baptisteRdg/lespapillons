@@ -14,7 +14,16 @@ function openAccountPanel() {
 
 function closeAccountPanel() {
     document.getElementById('account-panel')?.classList.remove('open');
+    _openMemberPickerGroupId = null;
 }
+
+let _friendsCache = [];
+let _groupsCache = [];
+let _expandedGroupId = null;
+let _openMemberPickerGroupId = null;
+let _activeGroupId = null;
+let _groupPickerActivityId = null;
+let _groupPickerActivityTitle = '';
 
 // ── Chargement des données ────────────────────────────────────────────────────
 
@@ -28,6 +37,7 @@ async function _loadAccountData() {
     // Listes (chargées à la demande via accordéons, on précharge quand le panel s'ouvre)
     await Promise.all([
         _loadFriends(),
+        _loadGroups(),
         _loadTodo(),
         _loadDone()
     ]);
@@ -66,8 +76,10 @@ async function _loadFriends() {
         const data = await res.json();
         if (!data.success) return;
 
+        _friendsCache = data.friends || [];
         _renderFriendRequests(data.requests || []);
-        _renderFriends(data.friends || []);
+        _renderFriends(_friendsCache);
+        _renderGroups();
     } catch (err) {
         console.error('Erreur chargement amis:', err);
     }
@@ -169,11 +181,398 @@ async function _removeFriend(friendId) {
         const res  = await _authFetch(`${getApiBaseUrl()}/users/friends/${friendId}`, { method: 'DELETE' });
         const data = await res.json();
         showToast(data.message || T.TOASTS.FRIEND_REMOVED, 'info');
-        if (data.success) await _loadFriends();
+        if (data.success) {
+            await _loadFriends();
+            await _loadGroups();
+        }
     } catch {
         showToast(T.TOASTS.NETWORK_ERROR, 'error');
     }
 }
+
+// ── Groupes ───────────────────────────────────────────────────────────────────
+
+function _upsertGroupInCache(group) {
+    const idx = _groupsCache.findIndex((g) => g.id === group.id);
+    if (idx >= 0) _groupsCache[idx] = group;
+    else _groupsCache.push(group);
+}
+
+async function _loadGroups() {
+    try {
+        const res = await _authFetch(`${getApiBaseUrl()}/groups`);
+        const data = await res.json();
+        if (!data.success) return;
+        _groupsCache = data.data || [];
+
+        if (_expandedGroupId && !_groupsCache.some((g) => g.id === _expandedGroupId)) {
+            _expandedGroupId = null;
+            _openMemberPickerGroupId = null;
+        }
+        if (_activeGroupId && !_groupsCache.some((g) => g.id === _activeGroupId)) {
+            _activeGroupId = null;
+            if (typeof exitGroupMode === 'function') exitGroupMode();
+        }
+
+        _renderGroups();
+        _renderGroupMapViewStatus();
+        if (_activeGroupId) {
+            const active = _groupsCache.find((g) => g.id === _activeGroupId);
+            if (active && typeof enterGroupMode === 'function') enterGroupMode(active);
+        }
+    } catch (err) {
+        console.error('Erreur chargement groupes:', err);
+    }
+}
+
+function _renderGroups() {
+    const container = document.getElementById('groups-list');
+    if (!container) return;
+
+    if (!_groupsCache.length) {
+        container.innerHTML = `<p class="account-empty-msg">${T.EMPTY.GROUPS}</p>`;
+        return;
+    }
+
+    const friendMap = new Map((_friendsCache || []).map((f) => [f.id, f]));
+
+    container.innerHTML = _groupsCache.map((g) => `
+        <div class="group-item ${_activeGroupId === g.id ? 'group-item-active' : ''}" data-id="${g.id}">
+            <button class="group-item-main group-toggle-btn" data-id="${g.id}">
+                <div class="group-item-title-row">
+                    <span class="group-item-title">${escapeHtml(g.name)}</span>
+                    ${g.isOwner ? '<span class="group-owner-badge">créateur</span>' : ''}
+                </div>
+                <div class="group-item-meta">
+                    <span>${g.memberCount} membre(s)</span>
+                    <span>•</span>
+                    <span>${g.activityCount} activité(s)</span>
+                </div>
+            </button>
+            <div class="group-item-actions">
+                <button class="group-view-btn account-btn-primary" data-id="${g.id}">${T.BUTTONS.VIEW_ON_MAP}</button>
+            </div>
+            ${_expandedGroupId === g.id ? (() => {
+                const memberIds = new Set((g.members || []).map((m) => m.id));
+                const addableFriends = [...friendMap.values()].filter((f) => !memberIds.has(f.id));
+                const isMemberPickerOpen = _openMemberPickerGroupId === g.id;
+                return `
+                    <div class="group-inline-detail">
+                        <div class="group-inline-block">
+                            <div class="group-inline-row">
+                                <p class="account-section-label">Membres</p>
+                                <div class="group-member-picker-wrap">
+                                    <button class="account-btn-secondary group-member-picker-toggle" data-id="${g.id}" ${addableFriends.length ? '' : 'disabled'}>
+                                        ${T.BUTTONS.ADD_MEMBER}
+                                    </button>
+                                    ${addableFriends.length ? `
+                                        <div class="group-member-picker ${isMemberPickerOpen ? '' : 'hidden'}" data-id="${g.id}">
+                                            ${addableFriends.map((f) => `
+                                                <button class="group-member-option" data-group-id="${g.id}" data-user-id="${f.id}">
+                                                    ${escapeHtml(f.pseudo)}
+                                                </button>
+                                            `).join('')}
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            </div>
+                            <div class="group-members-list">
+                                ${(g.members || []).map((m) => `
+                                    <div class="group-member-item"><span>${escapeHtml(m.pseudo)}</span></div>
+                                `).join('')}
+                            </div>
+                        </div>
+
+                        <div class="group-inline-block">
+                            <p class="account-section-label">Activités</p>
+                            <div class="group-activities-list">
+                                ${(g.activities || []).length ? (g.activities || []).map((a) => `
+                                    <div class="group-activity-item" data-group-id="${g.id}" data-id="${a.id}" data-lat="${a.latitude}" data-lng="${a.longitude}" data-type="${escapeHtml(a.type)}">
+                                        <div class="group-activity-main">
+                                            <span class="group-activity-name">${escapeHtml(a.name)}</span>
+                                            <span class="group-activity-type">${escapeHtml(a.type)}</span>
+                                        </div>
+                                        <button class="account-activity-remove group-activity-remove-btn" data-group-id="${g.id}" data-id="${a.id}" title="${T.BUTTONS.REMOVE}">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </div>
+                                `).join('') : `<p class="account-empty-msg">${T.EMPTY.GROUP_ACTIVITIES}</p>`}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            })() : ''}
+        </div>
+    `).join('');
+
+    container.querySelectorAll('.group-toggle-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+            const groupId = btn.dataset.id;
+            _expandedGroupId = _expandedGroupId === groupId ? null : groupId;
+            _openMemberPickerGroupId = null;
+            _renderGroups();
+        });
+    });
+
+    container.querySelectorAll('.group-view-btn').forEach((btn) => {
+        btn.addEventListener('click', async () => {
+            await _setGroupMapView(btn.dataset.id);
+            closeAccountPanel();
+        });
+    });
+
+    container.querySelectorAll('.group-member-picker-toggle').forEach((btn) => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const groupId = btn.dataset.id;
+            _openMemberPickerGroupId = _openMemberPickerGroupId === groupId ? null : groupId;
+            _renderGroups();
+        });
+    });
+
+    container.querySelectorAll('.group-member-option').forEach((btn) => {
+        btn.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            const groupId = btn.dataset.groupId;
+            const userId = btn.dataset.userId;
+            _openMemberPickerGroupId = null;
+            await _addMemberToGroup(groupId, userId);
+        });
+    });
+
+    container.querySelectorAll('.group-activity-item').forEach((item) => {
+        item.addEventListener('click', (e) => {
+            if (e.target.closest('.group-activity-remove-btn')) return;
+            const id = parseInt(item.dataset.id, 10);
+            const lat = parseFloat(item.dataset.lat);
+            const lng = parseFloat(item.dataset.lng);
+            if (!id || !lat || !lng || typeof map === 'undefined') return;
+
+            const zoom = Math.max(map.getZoom(), 15);
+            const pt = map.project([lat, lng], zoom);
+            const off = map.unproject(pt.add([0, computeMarkerOffset()]), zoom);
+            map.setView(off, zoom);
+
+            let poolEntry = activityPool.get(id);
+            let marker;
+            if (poolEntry) {
+                marker = poolEntry.marker;
+            } else {
+                const activity = { id, lat, lng, category: item.dataset.type || 'autre' };
+                marker = createMarker(activity, false);
+                activityPool.set(id, { activity, marker });
+            }
+            loadAndShowActivityDetails(id, marker);
+            closeAccountPanel();
+        });
+    });
+
+    container.querySelectorAll('.group-activity-remove-btn').forEach((btn) => {
+        btn.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            await _removeActivityFromGroup(btn.dataset.groupId, parseInt(btn.dataset.id, 10));
+        });
+    });
+}
+
+async function _createGroup() {
+    const input = document.getElementById('group-name-input');
+    const name = input?.value?.trim();
+    if (!name) return;
+
+    try {
+        const res = await _authFetch(`${getApiBaseUrl()}/groups`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name })
+        });
+        const data = await res.json();
+        showToast(data.message || T.TOASTS.GROUP_CREATED, data.success ? 'success' : 'error');
+        if (!data.success) return;
+
+        _upsertGroupInCache(data.data);
+        _expandedGroupId = data.data.id;
+        input.value = '';
+        _renderGroups();
+    } catch {
+        showToast(T.TOASTS.NETWORK_ERROR, 'error');
+    }
+}
+
+async function _addMemberToGroup(groupId, userId) {
+    try {
+        const res = await _authFetch(`${getApiBaseUrl()}/groups/${groupId}/members`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userId })
+        });
+        const data = await res.json();
+        showToast(data.message || T.TOASTS.GROUP_MEMBER_ADDED, data.success ? 'success' : 'error');
+        if (!data.success) return;
+
+        _upsertGroupInCache(data.data);
+        _renderGroups();
+        if (_activeGroupId === groupId && typeof enterGroupMode === 'function') {
+            enterGroupMode(data.data);
+        }
+    } catch {
+        showToast(T.TOASTS.NETWORK_ERROR, 'error');
+    }
+}
+
+async function _removeActivityFromGroup(groupId, activityId) {
+    try {
+        const res = await _authFetch(`${getApiBaseUrl()}/groups/${groupId}/activities/${activityId}`, {
+            method: 'DELETE'
+        });
+        const data = await res.json();
+        showToast(data.message || T.TOASTS.GROUP_ACTIVITY_REMOVED, data.success ? 'success' : 'error');
+        if (!data.success) return;
+
+        _upsertGroupInCache(data.data);
+        _renderGroups();
+        if (_activeGroupId === groupId && typeof enterGroupMode === 'function') {
+            enterGroupMode(data.data);
+        }
+    } catch {
+        showToast(T.TOASTS.NETWORK_ERROR, 'error');
+    }
+}
+
+function _renderGroupMapViewStatus() {
+    const wrap = document.getElementById('group-map-view-actions');
+    const label = document.getElementById('group-map-view-label');
+    if (!wrap || !label) return;
+
+    const active = _groupsCache.find((g) => g.id === _activeGroupId);
+    if (!active) {
+        wrap.classList.add('hidden');
+        label.textContent = '';
+        return;
+    }
+
+    wrap.classList.remove('hidden');
+    label.textContent = `Vue active: ${active.name}`;
+}
+
+async function _setGroupMapView(groupId) {
+    const group = _groupsCache.find((g) => g.id === groupId);
+    if (!group) return;
+    _activeGroupId = group.id;
+    if (typeof enterGroupMode === 'function') enterGroupMode(group);
+    _renderGroups();
+    _renderGroupMapViewStatus();
+    showToast(T.TOASTS.GROUP_VIEW_ENABLED(group.name), 'success');
+}
+
+function _exitGroupMapView() {
+    _activeGroupId = null;
+    if (typeof exitGroupMode === 'function') exitGroupMode();
+    _renderGroups();
+    _renderGroupMapViewStatus();
+    showToast(T.TOASTS.GROUP_VIEW_DISABLED, 'info');
+}
+
+function _closeGroupPicker() {
+    document.getElementById('group-picker-overlay')?.classList.remove('open');
+    _groupPickerActivityId = null;
+    _groupPickerActivityTitle = '';
+    const input = document.getElementById('group-picker-create-input');
+    if (input) input.value = '';
+    const titleEl = document.getElementById('group-picker-title');
+    if (titleEl) titleEl.textContent = T.LABELS.PICK_GROUP;
+}
+
+function _renderGroupPickerList() {
+    const list = document.getElementById('group-picker-list');
+    if (!list) return;
+
+    if (!_groupsCache.length) {
+        list.innerHTML = `<p class="account-empty-msg">${T.EMPTY.GROUPS}</p>`;
+        return;
+    }
+
+    list.innerHTML = _groupsCache.map((g) => `
+        <button class="group-picker-item" data-id="${g.id}">
+            <span class="group-picker-item-name">${escapeHtml(g.name)}</span>
+            <span class="group-picker-item-meta">${g.memberCount} membres · ${g.activityCount} activités</span>
+        </button>
+    `).join('');
+
+    list.querySelectorAll('.group-picker-item').forEach((btn) => {
+        btn.addEventListener('click', async () => {
+            if (!_groupPickerActivityId) return;
+            const groupId = btn.dataset.id;
+            try {
+                const res = await _authFetch(`${getApiBaseUrl()}/groups/${groupId}/activities/${_groupPickerActivityId}`, {
+                    method: 'POST'
+                });
+                const data = await res.json();
+                showToast(data.message || T.TOASTS.GROUP_ACTIVITY_ADDED, data.success ? 'success' : 'error');
+                if (!data.success) return;
+                await _loadGroups();
+                _closeGroupPicker();
+            } catch {
+                showToast(T.TOASTS.NETWORK_ERROR, 'error');
+            }
+        });
+    });
+}
+
+async function _openGroupPicker(activityId, activityTitle = '') {
+    _groupPickerActivityId = activityId;
+    _groupPickerActivityTitle = activityTitle || '';
+    await _loadGroups();
+    _renderGroupPickerList();
+    const titleEl = document.getElementById('group-picker-title');
+    if (titleEl) {
+        titleEl.textContent = _groupPickerActivityTitle
+            ? `${T.LABELS.PICK_GROUP} — ${_groupPickerActivityTitle}`
+            : T.LABELS.PICK_GROUP;
+    }
+    document.getElementById('group-picker-overlay')?.classList.add('open');
+}
+
+async function _createGroupFromPicker() {
+    if (!_groupPickerActivityId) return;
+    const input = document.getElementById('group-picker-create-input');
+    const name = input?.value?.trim();
+    if (!name) return;
+
+    try {
+        const createRes = await _authFetch(`${getApiBaseUrl()}/groups`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name })
+        });
+        const createData = await createRes.json();
+        if (!createData.success) {
+            showToast(createData.message || T.TOASTS.GROUP_CREATED, 'error');
+            return;
+        }
+
+        const addRes = await _authFetch(`${getApiBaseUrl()}/groups/${createData.data.id}/activities/${_groupPickerActivityId}`, {
+            method: 'POST'
+        });
+        const addData = await addRes.json();
+        showToast(addData.message || T.TOASTS.GROUP_ACTIVITY_ADDED, addData.success ? 'success' : 'error');
+        if (!addData.success) return;
+
+        input.value = '';
+        await _loadGroups();
+        _closeGroupPicker();
+    } catch {
+        showToast(T.TOASTS.NETWORK_ERROR, 'error');
+    }
+}
+
+async function addActivityToActiveGroup(activityId, activityTitle = '') {
+    onAuthRequired(async () => {
+        await _openGroupPicker(activityId, activityTitle);
+    });
+}
+
+window.refreshGroupsUI = _loadGroups;
 
 // ── Listes activités ──────────────────────────────────────────────────────────
 
@@ -502,6 +901,26 @@ function initAccountPanel() {
     document.getElementById('friend-add-btn')?.addEventListener('click', _sendFriendRequest);
     document.getElementById('friend-pseudo-input')?.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') _sendFriendRequest();
+    });
+
+    // Groupes
+    document.getElementById('group-create-btn')?.addEventListener('click', _createGroup);
+    document.getElementById('group-name-input')?.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') _createGroup();
+    });
+    document.getElementById('group-map-view-exit-btn')?.addEventListener('click', _exitGroupMapView);
+    document.getElementById('group-picker-close-btn')?.addEventListener('click', _closeGroupPicker);
+    document.getElementById('group-picker-backdrop')?.addEventListener('click', _closeGroupPicker);
+    document.getElementById('group-picker-create-btn')?.addEventListener('click', _createGroupFromPicker);
+    document.getElementById('group-picker-create-input')?.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') _createGroupFromPicker();
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.group-member-picker-wrap') && _openMemberPickerGroupId) {
+            _openMemberPickerGroupId = null;
+            _renderGroups();
+        }
     });
 
     // Accordéons
