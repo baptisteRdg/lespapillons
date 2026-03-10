@@ -624,13 +624,18 @@ app.get('/api/og-image', async (req, res) => {
  */
 app.get('/api/geocode', async (req, res) => {
     try {
-        const result = await geocodeQuery(req.query.q);
+        const providerMode = req.query.provider || 'auto';
+        const result = await geocodeQuery(req.query.q, { provider: providerMode });
         if (!result) {
+            console.log(`geocode query="${String(req.query.q || '').slice(0, 80)}" mode=${providerMode} result=none`);
             return res.status(404).json({
                 success: false,
                 message: 'Aucun résultat trouvé'
             });
         }
+        console.log(
+            `geocode query="${String(req.query.q || '').slice(0, 80)}" mode=${providerMode} provider=${result.provider} cache=${result.cacheHit} durationMs=${result.durationMs}`
+        );
         return res.json({
             success: true,
             data: result

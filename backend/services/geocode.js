@@ -24,8 +24,8 @@ function normalizeQuery(query) {
         .slice(0, MAX_QUERY_LENGTH);
 }
 
-function cacheKey(query) {
-    return query.toLowerCase();
+function cacheKey(query, providerMode = 'auto') {
+    return `${providerMode}:${query.toLowerCase()}`;
 }
 
 function getCache(key) {
@@ -73,7 +73,9 @@ function toLeafletBboxFromMapbox(raw) {
     return { south, west, north, east };
 }
 
-function chooseProviders() {
+function chooseProviders(providerMode = 'auto') {
+    if (providerMode === 'mapbox') return ['mapbox'];
+    if (providerMode === 'nominatim') return ['nominatim'];
     return process.env.MAPBOX_ACCESS_TOKEN
         ? ['mapbox', 'nominatim']
         : ['nominatim'];
@@ -142,7 +144,7 @@ async function geocodeWithNominatim(query) {
 
 async function geocodeWithMapbox(query) {
     const token = process.env.MAPBOX_ACCESS_TOKEN;
-    if (!token) throw new GeocodeError('Mapbox non configuré', 500);
+    if (!token) throw new GeocodeError('Mapbox non configuré', 503);
 
     const endpoint = process.env.MAPBOX_GEOCODING_URL || 'https://api.mapbox.com/geocoding/v5/mapbox.places';
     const params = new URLSearchParams({
@@ -194,13 +196,20 @@ class GeocodeError extends Error {
     }
 }
 
-async function geocodeQuery(rawQuery) {
+function normalizeProviderMode(rawMode) {
+    const mode = String(rawMode || 'auto').toLowerCase();
+    if (mode === 'auto' || mode === 'mapbox' || mode === 'nominatim') return mode;
+    throw new GeocodeError('Provider invalide (valeurs autorisées: auto, mapbox, nominatim)', 400);
+}
+
+async function geocodeQuery(rawQuery, options = {}) {
     const query = normalizeQuery(rawQuery);
     if (!query) throw new GeocodeError('Paramètre "q" manquant', 400);
     if (query.length < 2) throw new GeocodeError('La recherche doit contenir au moins 2 caractères', 400);
 
-    const providers = chooseProviders();
-    const key = cacheKey(query);
+    const providerMode = normalizeProviderMode(options.provider);
+    const providers = chooseProviders(providerMode);
+    const key = cacheKey(query, providerMode);
 
     const cached = getCache(key);
     if (cached) {
@@ -226,7 +235,7 @@ async function geocodeQuery(rawQuery) {
                 } catch (error) {
                     lastError = error;
                     if (isLastProvider(i, providers)) break;
-                    console.warn(`⚠️ Géocodage ${provider} indisponible, fallback vers ${providers[i + 1]}`);
+                    console.warn(`geocode fallback ${provider} -> ${providers[i + 1]}`);
                 }
             }
 

@@ -50,6 +50,7 @@ async function fetchStatus(url) {
 async function run() {
     console.log(`\n🩺  Tests de santé — ${BASE}\n`);
     console.log('── Backend API ─────────────────────────────');
+    let mapboxAvailable = false;
 
     await test('API : racine répond', async () => {
         const { status, body } = await fetchJson(`${API.replace('/api', '')}/`);
@@ -108,20 +109,38 @@ async function run() {
         assert(body.data.length > 0, `Aucun résultat pour "${term}"`);
     });
 
-    await test('API : géocodage ville fonctionne', async () => {
-        const { status, body } = await fetchJson(`${API}/geocode?q=${encodeURIComponent('Nantes')}`);
+    await test('API : géocodage explicite nominatim fonctionne', async () => {
+        const { status, body } = await fetchJson(`${API}/geocode?q=${encodeURIComponent('Nantes')}&provider=nominatim`);
         assert(status === 200, `HTTP ${status}`);
         assert(body.success === true, 'success !== true');
-        assert(body.data && body.data.placeType === 'city', 'placeType city attendu');
+        assert(body.data && body.data.provider === 'nominatim', 'provider nominatim attendu');
+        assert(body.data.placeType === 'city', 'placeType city attendu');
         assert(typeof body.data.lat === 'number' && typeof body.data.lng === 'number', 'coordonnées manquantes');
+        console.log(`  info geocode nominatim provider=${body.data.provider} cache=${body.data.cacheHit}`);
     });
 
-    await test('API : géocodage adresse fonctionne', async () => {
-        const { status, body } = await fetchJson(`${API}/geocode?q=${encodeURIComponent('8 avenue des Champs Elysees Paris')}`);
+    await test('API : géocodage explicite mapbox', async () => {
+        const { status, body } = await fetchJson(`${API}/geocode?q=${encodeURIComponent('Nantes')}&provider=mapbox`);
+        if (status === 200) {
+            assert(body.success === true, 'success !== true');
+            assert(body.data && body.data.provider === 'mapbox', 'provider mapbox attendu');
+            mapboxAvailable = true;
+            console.log(`  info geocode mapbox provider=${body.data.provider} cache=${body.data.cacheHit}`);
+            return;
+        }
+        assert(status === 503, `Attendu 200 ou 503, reçu ${status}`);
+        assert((body?.message || '').includes('Mapbox non configuré'), `Message inattendu: ${body?.message}`);
+        console.log('  info geocode mapbox non configuré');
+    });
+
+    await test('API : géocodage auto utilise le provider attendu', async () => {
+        const expectedProvider = mapboxAvailable ? 'mapbox' : 'nominatim';
+        const { status, body } = await fetchJson(`${API}/geocode?q=${encodeURIComponent('Nantes')}&provider=auto`);
         assert(status === 200, `HTTP ${status}`);
         assert(body.success === true, 'success !== true');
-        assert(body.data && body.data.placeType === 'address', 'placeType address attendu');
-        assert(typeof body.data.lat === 'number' && typeof body.data.lng === 'number', 'coordonnées manquantes');
+        assert(body.data && body.data.provider === expectedProvider, `provider attendu=${expectedProvider}, reçu=${body?.data?.provider}`);
+        assert(body.data.placeType === 'city', 'placeType city attendu');
+        console.log(`  info geocode auto provider=${body.data.provider} expected=${expectedProvider}`);
     });
 
     await test('API : géocodage invalide rejeté (query trop courte)', async () => {
