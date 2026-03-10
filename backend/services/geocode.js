@@ -24,8 +24,8 @@ function normalizeQuery(query) {
         .slice(0, MAX_QUERY_LENGTH);
 }
 
-function cacheKey(query, provider) {
-    return `${provider}:${query.toLowerCase()}`;
+function cacheKey(query) {
+    return query.toLowerCase();
 }
 
 function getCache(key) {
@@ -73,8 +73,20 @@ function toLeafletBboxFromMapbox(raw) {
     return { south, west, north, east };
 }
 
-function chooseProvider() {
-    return process.env.MAPBOX_ACCESS_TOKEN ? 'mapbox' : 'nominatim';
+function chooseProviders() {
+    return process.env.MAPBOX_ACCESS_TOKEN
+        ? ['mapbox', 'nominatim']
+        : ['nominatim'];
+}
+
+function isLastProvider(index, providers) {
+    return index === providers.length - 1;
+}
+
+async function geocodeWithProvider(provider, query) {
+    return provider === 'mapbox'
+        ? geocodeWithMapbox(query)
+        : geocodeWithNominatim(query);
 }
 
 async function geocodeWithNominatim(query) {
@@ -187,8 +199,8 @@ async function geocodeQuery(rawQuery) {
     if (!query) throw new GeocodeError('Paramètre "q" manquant', 400);
     if (query.length < 2) throw new GeocodeError('La recherche doit contenir au moins 2 caractères', 400);
 
-    const provider = chooseProvider();
-    const key = cacheKey(query, provider);
+    const providers = chooseProviders();
+    const key = cacheKey(query);
 
     const cached = getCache(key);
     if (cached) {
@@ -201,11 +213,25 @@ async function geocodeQuery(rawQuery) {
 
     const task = (async () => {
         try {
-            const result = provider === 'mapbox'
-                ? await geocodeWithMapbox(query)
-                : await geocodeWithNominatim(query);
-            if (result) setCache(key, result);
-            return result ? { ...result, cacheHit: false } : null;
+            let lastError = null;
+
+            for (let i = 0; i < providers.length; i++) {
+                const provider = providers[i];
+                try {
+                    const result = await geocodeWithProvider(provider, query);
+                    if (result) {
+                        setCache(key, result);
+                        return { ...result, cacheHit: false };
+                    }
+                } catch (error) {
+                    lastError = error;
+                    if (isLastProvider(i, providers)) break;
+                    console.warn(`⚠️ Géocodage ${provider} indisponible, fallback vers ${providers[i + 1]}`);
+                }
+            }
+
+            if (lastError) throw lastError;
+            return null;
         } catch (error) {
             if (error?.name === 'TimeoutError') {
                 throw new GeocodeError('Le service de géocodage est trop lent', 504);
