@@ -114,6 +114,8 @@ let viewportLoadTimeout = null; // Debounce du rechargement viewport
 let userMarker;
 let userPosition = MAP_CONFIG.center;
 let currentPanelActivityId = null; // ID de l'activité actuellement affichée dans le panel
+let geocodeRequestController = null;
+let searchRequestId = 0;
 
 /**
  * Initialise la carte Leaflet
@@ -1496,16 +1498,44 @@ function exitSearchMode() {
     loadActivitiesInViewport();
 }
 
-async function searchActivities(searchTerm) {
+async function searchActivities(searchTerm, options = {}) {
     if (!searchTerm || searchTerm.trim() === '') {
+        searchRequestId++;
+        if (geocodeRequestController) geocodeRequestController.abort();
         exitSearchMode();
         return;
     }
 
     const term = searchTerm.trim();
+    const preferGeocode = options.preferGeocode === true;
+    const shouldTryGeocode = preferGeocode || looksLikeLocationQuery(term);
+    const currentRequestId = ++searchRequestId;
+
+    if (geocodeRequestController) geocodeRequestController.abort();
+    geocodeRequestController = new AbortController();
+
     console.log(`🔍 Recherche globale côté serveur pour "${term}"`);
     const userPos = userMarker.getLatLng();
-    const results = await searchActivitiesGlobal(term, userPos.lat, userPos.lng);
+
+    const activitiesPromise = searchActivitiesGlobal(term, userPos.lat, userPos.lng);
+    const geocodePromise = shouldTryGeocode
+        ? geocodeLocation(term, { signal: geocodeRequestController.signal })
+        : Promise.resolve(null);
+
+    const [results, geocodeResult] = await Promise.all([activitiesPromise, geocodePromise]);
+    if (currentRequestId !== searchRequestId) return;
+
+    const shouldCenterOnGeocode = !!geocodeResult && (preferGeocode || results.length === 0 || looksLikeLocationQuery(term));
+
+    if (shouldCenterOnGeocode) {
+        if (isSearchMode) exitSearchMode();
+        await centerOnGeocodeResult(geocodeResult);
+        const toastMessage = geocodeResult.placeType === 'address'
+            ? T.TOASTS.SEARCH_ADDRESS_FOUND(geocodeResult.label)
+            : T.TOASTS.SEARCH_CITY_FOUND(geocodeResult.label);
+        showToast(toastMessage, 'success');
+        return;
+    }
 
     enterSearchMode(results);
 
@@ -1515,6 +1545,39 @@ async function searchActivities(searchTerm) {
         showToast(T.TOASTS.SEARCH_RESULTS(results.length), 'success');
         await centerOnSearchResults(results);
     }
+}
+
+function looksLikeLocationQuery(term) {
+    const value = term.toLowerCase().trim();
+    if (!value) return false;
+    return /\d/.test(value) ||
+        /\b(rue|avenue|av\.|boulevard|bd|place|impasse|all[ée]e|chemin|route|quai|square|cours|ville)\b/.test(value);
+}
+
+async function centerOnGeocodeResult(result) {
+    const lat = parseFloat(result.lat);
+    const lng = parseFloat(result.lng);
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
+
+    // Repositionner le marqueur utilisateur permet de "se localiser" en un seul geste.
+    userMarker.setLatLng([lat, lng]);
+    userPosition = [lat, lng];
+    saveUserPosition(lat, lng);
+
+    const bbox = result.bbox;
+    if (result.placeType === 'city' && bbox) {
+        const bounds = L.latLngBounds(
+            [bbox.south, bbox.west],
+            [bbox.north, bbox.east]
+        );
+        map.fitBounds(bounds, {
+            padding: [60, 60],
+            maxZoom: 13
+        });
+        return;
+    }
+
+    map.setView([lat, lng], MAP_CONFIG.maxZoom);
 }
 
 /**
@@ -1598,17 +1661,17 @@ document.addEventListener('DOMContentLoaded', () => {
         searchInput.addEventListener('input', (e) => {
             const val = e.target.value;
             clearTimeout(searchTimeout);
-            // Recherche déclenchée seulement à partir de 4 caractères (ou vide pour réinitialiser)
-            if (val.length > 0 && val.trim().length < 4) return;
+            // Recherche déclenchée à partir de 3 caractères (ou vide pour réinitialiser)
+            if (val.length > 0 && val.trim().length < 3) return;
             searchTimeout = setTimeout(() => {
-                searchActivities(val);
+                searchActivities(val, { preferGeocode: false });
             }, 300);
         });
         
         searchInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 clearTimeout(searchTimeout);
-                searchActivities(e.target.value);
+                searchActivities(e.target.value, { preferGeocode: true });
             }
         });
 

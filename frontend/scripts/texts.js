@@ -28,6 +28,8 @@ const T = Object.freeze({
 
         SEARCH_NO_RESULTS:   (term) => `Aucune activité trouvée pour « ${term} »`,
         SEARCH_RESULTS:      (n) => `${n} activité(s) trouvée(s)`,
+        SEARCH_CITY_FOUND:   (label) => `Ville trouvée : ${label}`,
+        SEARCH_ADDRESS_FOUND:(label) => `Adresse trouvée : ${label}`,
 
         LINK_COPIED:         'Lien copié dans le presse-papier',
         LINK_FALLBACK:       (url) => `Lien : ${url}`,
@@ -109,7 +111,7 @@ const T = Object.freeze({
         FRIEND_REQUESTS: 'Demandes reçues',
         VISIT_WEBSITE:   'Visiter le site web',
         CATEGORY_OTHER:  'Autre',
-        SEARCH:          'Rechercher une activité',
+        SEARCH:          'Rechercher une activité, une ville ou une adresse',
         LEGAL:           'En continuant, tu acceptes nos conditions d\'utilisation. Ton numéro ne sera jamais partagé.',
         STYLE_PICKER:    'Changer le style de la carte',
         AVATAR_HINT:     'Clique ou dépose une image<br><small>JPEG · PNG · WebP · GIF — max 8 Mo</small>',
@@ -122,7 +124,7 @@ const T = Object.freeze({
     PLACEHOLDERS: Object.freeze({
         PHONE:     '+33 6 12 34 56 78',
         OTP:       '123456',
-        SEARCH:    'Rechercher une activité',
+        SEARCH:    'Rechercher une activité, une ville ou une adresse',
         PSEUDO:    'Nouveau pseudo (3 caractères min)',
         FRIEND:    'Pseudo de ton ami',
     }),

@@ -206,6 +206,32 @@ async function searchActivitiesGlobal(searchTerm, centerLat, centerLng) {
     }
 }
 
+/**
+ * Géocode une adresse ou une ville via le backend.
+ * @param {string} query
+ * @param {{signal?: AbortSignal}} options
+ * @returns {Promise<Object|null>}
+ */
+async function geocodeLocation(query, options = {}) {
+    try {
+        const params = new URLSearchParams({ q: query });
+        const response = await fetch(`${API_BASE_URL}/geocode?${params.toString()}`, {
+            signal: options.signal
+        });
+
+        if (response.status === 404) return null;
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+        const payload = await response.json();
+        if (!payload?.success || !payload?.data) return null;
+        return payload.data;
+    } catch (error) {
+        if (error?.name === 'AbortError') return null;
+        console.error('❌ API: Erreur géocodage', error);
+        return null;
+    }
+}
+
 
 // Cache mémoire pour les données Wikidata et og:image (durée de la session)
 const _wikidataCache = new Map();

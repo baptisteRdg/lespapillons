@@ -108,6 +108,27 @@ async function run() {
         assert(body.data.length > 0, `Aucun résultat pour "${term}"`);
     });
 
+    await test('API : géocodage ville fonctionne', async () => {
+        const { status, body } = await fetchJson(`${API}/geocode?q=${encodeURIComponent('Nantes')}`);
+        assert(status === 200, `HTTP ${status}`);
+        assert(body.success === true, 'success !== true');
+        assert(body.data && body.data.placeType === 'city', 'placeType city attendu');
+        assert(typeof body.data.lat === 'number' && typeof body.data.lng === 'number', 'coordonnées manquantes');
+    });
+
+    await test('API : géocodage adresse fonctionne', async () => {
+        const { status, body } = await fetchJson(`${API}/geocode?q=${encodeURIComponent('8 avenue des Champs Elysees Paris')}`);
+        assert(status === 200, `HTTP ${status}`);
+        assert(body.success === true, 'success !== true');
+        assert(body.data && body.data.placeType === 'address', 'placeType address attendu');
+        assert(typeof body.data.lat === 'number' && typeof body.data.lng === 'number', 'coordonnées manquantes');
+    });
+
+    await test('API : géocodage invalide rejeté (query trop courte)', async () => {
+        const { status } = await fetchJson(`${API}/geocode?q=a`);
+        assert(status === 400, `Attendu 400, reçu ${status}`);
+    });
+
     console.log('\n── Base de données ─────────────────────────');
 
     await test('BDD : nombre d\'activités > 0', async () => {
