@@ -232,6 +232,35 @@ async function geocodeLocation(query, options = {}) {
     }
 }
 
+/**
+ * Récupère jusqu'à N suggestions de villes/adresses via le backend.
+ * @param {string} query
+ * @param {{signal?: AbortSignal, limit?: number, provider?: string}} options
+ * @returns {Promise<Array>}
+ */
+async function geocodeSuggestions(query, options = {}) {
+    try {
+        const params = new URLSearchParams({ q: query });
+        if (options.limit) params.set('limit', String(options.limit));
+        if (options.provider) params.set('provider', String(options.provider));
+
+        const response = await fetch(`${API_BASE_URL}/geocode/suggest?${params.toString()}`, {
+            signal: options.signal
+        });
+
+        if (response.status === 404) return [];
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+        const payload = await response.json();
+        if (!payload?.success || !Array.isArray(payload?.data)) return [];
+        return payload.data;
+    } catch (error) {
+        if (error?.name === 'AbortError') return [];
+        console.error('❌ API: Erreur suggestions géocodage', error);
+        return [];
+    }
+}
+
 
 // Cache mémoire pour les données Wikidata et og:image (durée de la session)
 const _wikidataCache = new Map();

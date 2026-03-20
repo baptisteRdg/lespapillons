@@ -50,7 +50,179 @@ function inferPlaceTypeFromLabel(query, label) {
     const looksLikeAddress =
         /\d/.test(value) ||
         /\b(rue|avenue|av\.|boulevard|bd|place|impasse|all[ée]e|chemin|route|quai|square|cours)\b/.test(value);
-    return looksLikeAddress ? 'address' : 'city';
+    return looksLikeAddress ? 'address' : 'poi';
+}
+
+const NOMINATIM_CITY_TYPES = new Set([
+    'city',
+    'town',
+    'village',
+    'municipality',
+    'hamlet',
+    'suburb',
+    'borough',
+    'district',
+    'county',
+    'region',
+    'state'
+]);
+const NOMINATIM_ADDRESS_TYPES = new Set([
+    'house',
+    'building',
+    'road',
+    'street',
+    'residential',
+    'house_number',
+    'postcode'
+]);
+const NOMINATIM_POI_CLASSES = new Set([
+    'amenity',
+    'tourism',
+    'leisure',
+    'shop',
+    'craft',
+    'office',
+    'healthcare',
+    'building'
+]);
+
+const MAPBOX_CITY_TYPES = new Set(['place', 'locality', 'region', 'district', 'country']);
+const MAPBOX_ADDRESS_TYPES = new Set(['address', 'postcode']);
+const MAPBOX_POI_TYPES = new Set(['poi']);
+
+function classifyNominatimPlace(query, top) {
+    const itemType = String(top?.addresstype || top?.type || '').toLowerCase();
+    const itemClass = String(top?.class || '').toLowerCase();
+    if (NOMINATIM_POI_CLASSES.has(itemClass)) return 'poi';
+    if (NOMINATIM_ADDRESS_TYPES.has(itemType)) return 'address';
+    if (NOMINATIM_CITY_TYPES.has(itemType)) return 'city';
+    return inferPlaceTypeFromLabel(query, `${itemType} ${itemClass} ${top?.display_name || ''}`);
+}
+
+function classifyMapboxPlace(query, top) {
+    const placeTypes = Array.isArray(top?.place_type)
+        ? top.place_type.map((type) => String(type || '').toLowerCase())
+        : [];
+
+    if (placeTypes.some((type) => MAPBOX_POI_TYPES.has(type))) return 'poi';
+    if (placeTypes.some((type) => MAPBOX_ADDRESS_TYPES.has(type))) return 'address';
+    if (placeTypes.some((type) => MAPBOX_CITY_TYPES.has(type))) return 'city';
+    return inferPlaceTypeFromLabel(query, `${placeTypes.join(' ')} ${top?.place_name || ''}`);
+}
+
+function toNominatimResult(query, top, durationMs) {
+    const lat = parseFloat(top?.lat);
+    const lng = parseFloat(top?.lon);
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+
+    const label = top.display_name || query;
+    const placeType = classifyNominatimPlace(query, top);
+    const cityName = extractNominatimCityName(top);
+    const postcode = top?.address?.postcode || '';
+    const displayLabel = placeType === 'city'
+        ? (formatCityDisplayLabel(cityName, postcode) || label)
+        : label;
+
+    return {
+        provider: 'nominatim',
+        label,
+        displayLabel,
+        lat,
+        lng,
+        placeType,
+        bbox: toLeafletBboxFromNominatim(top.boundingbox),
+        durationMs
+    };
+}
+
+function toMapboxResult(query, top, durationMs) {
+    const center = top?.center || [];
+    const lng = parseFloat(center[0]);
+    const lat = parseFloat(center[1]);
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+
+    const label = top.place_name || query;
+    const placeType = classifyMapboxPlace(query, top);
+    const placeTypes = Array.isArray(top?.place_type)
+        ? top.place_type.map((type) => String(type || '').toLowerCase())
+        : [];
+    const cityName = top?.text ||
+        extractMapboxContextValue(top, 'place') ||
+        extractMapboxContextValue(top, 'locality') ||
+        firstLabelSegment(top?.place_name);
+    const postcode = placeTypes.includes('postcode')
+        ? String(top?.text || '')
+        : extractMapboxContextValue(top, 'postcode');
+    const displayLabel = placeType === 'city'
+        ? (formatCityDisplayLabel(cityName, postcode) || label)
+        : label;
+
+    return {
+        provider: 'mapbox',
+        label,
+        displayLabel,
+        lat,
+        lng,
+        placeType,
+        bbox: toLeafletBboxFromMapbox(top.bbox),
+        durationMs
+    };
+}
+
+function normalizeGeocodeLimit(rawLimit, fallback) {
+    const parsed = parsePositiveInt(rawLimit, fallback);
+    return Math.min(10, Math.max(1, parsed));
+}
+
+function dedupeGeocodeResults(results) {
+    const seen = new Set();
+    return results.filter((item) => {
+        const key = `${item.label.toLowerCase()}|${item.lat.toFixed(5)}|${item.lng.toFixed(5)}`;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+    });
+}
+
+function isLocationPreviewCandidate(result) {
+    return result.placeType === 'city' || result.placeType === 'address';
+}
+
+function geocodeCacheKey(query, providerMode = 'auto') {
+    return `single:${providerMode}:${query.toLowerCase()}`;
+}
+
+function suggestionCacheKey(query, providerMode = 'auto', limit = 3) {
+    return `suggest:${providerMode}:${limit}:${query.toLowerCase()}`;
+}
+
+function firstLabelSegment(label) {
+    return String(label || '').split(',')[0].trim();
+}
+
+function formatCityDisplayLabel(cityName, postcode) {
+    const city = String(cityName || '').trim();
+    const code = String(postcode || '').trim();
+    if (city && code) return `${city}, ${code}`;
+    return city || code || null;
+}
+
+function extractNominatimCityName(top) {
+    const address = top?.address || {};
+    return address.city ||
+        address.town ||
+        address.village ||
+        address.municipality ||
+        address.hamlet ||
+        address.county ||
+        top?.name ||
+        firstLabelSegment(top?.display_name);
+}
+
+function extractMapboxContextValue(top, prefix) {
+    const context = Array.isArray(top?.context) ? top.context : [];
+    const match = context.find((item) => String(item?.id || '').startsWith(`${prefix}.`));
+    return match?.text || match?.short_code || '';
 }
 
 function toLeafletBboxFromNominatim(raw) {
@@ -85,19 +257,21 @@ function isLastProvider(index, providers) {
     return index === providers.length - 1;
 }
 
-async function geocodeWithProvider(provider, query) {
+async function geocodeWithProvider(provider, query, options = {}) {
     return provider === 'mapbox'
-        ? geocodeWithMapbox(query)
-        : geocodeWithNominatim(query);
+        ? geocodeWithMapbox(query, options)
+        : geocodeWithNominatim(query, options);
 }
 
-async function geocodeWithNominatim(query) {
+async function geocodeWithNominatim(query, options = {}) {
+    const limit = normalizeGeocodeLimit(options.limit, 1);
+    const shouldReturnMany = options.multiple === true;
     const userAgent = process.env.GEOCODE_USER_AGENT || 'LesPapillons/1.0 (contact: admin@beout.fr)';
     const endpoint = process.env.NOMINATIM_URL || 'https://nominatim.openstreetmap.org/search';
     const params = new URLSearchParams({
         q: query,
         format: 'jsonv2',
-        limit: '1',
+        limit: String(limit),
         addressdetails: '1'
     });
     const countryCodes = process.env.GEOCODE_COUNTRY_CODES || 'fr';
@@ -121,28 +295,22 @@ async function geocodeWithNominatim(query) {
     }
 
     const payload = await response.json();
-    if (!Array.isArray(payload) || payload.length === 0) return null;
+    if (!Array.isArray(payload) || payload.length === 0) {
+        return shouldReturnMany ? [] : null;
+    }
 
-    const top = payload[0];
-    const lat = parseFloat(top.lat);
-    const lng = parseFloat(top.lon);
-    if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+    const durationMs = nowMs() - startedAt;
+    const mapped = payload
+        .map((item) => toNominatimResult(query, item, durationMs))
+        .filter(Boolean);
 
-    const label = top.display_name || query;
-    const placeType = inferPlaceTypeFromLabel(query, `${top.type || ''} ${top.class || ''} ${label}`);
-
-    return {
-        provider: 'nominatim',
-        label,
-        lat,
-        lng,
-        placeType,
-        bbox: toLeafletBboxFromNominatim(top.boundingbox),
-        durationMs: nowMs() - startedAt
-    };
+    if (!shouldReturnMany) return mapped[0] || null;
+    return dedupeGeocodeResults(mapped).slice(0, limit);
 }
 
-async function geocodeWithMapbox(query) {
+async function geocodeWithMapbox(query, options = {}) {
+    const limit = normalizeGeocodeLimit(options.limit, 1);
+    const shouldReturnMany = options.multiple === true;
     const token = process.env.MAPBOX_ACCESS_TOKEN;
     if (!token) throw new GeocodeError('Mapbox non configuré', 503);
 
@@ -150,8 +318,8 @@ async function geocodeWithMapbox(query) {
     const params = new URLSearchParams({
         access_token: token,
         language: 'fr',
-        limit: '1',
-        autocomplete: 'false'
+        limit: String(limit),
+        autocomplete: shouldReturnMany ? 'true' : 'false'
     });
 
     const startedAt = nowMs();
@@ -165,27 +333,16 @@ async function geocodeWithMapbox(query) {
     }
 
     const payload = await response.json();
-    const top = payload?.features?.[0];
-    if (!top) return null;
+    const features = Array.isArray(payload?.features) ? payload.features : [];
+    if (features.length === 0) return shouldReturnMany ? [] : null;
 
-    const center = top.center || [];
-    const lng = parseFloat(center[0]);
-    const lat = parseFloat(center[1]);
-    if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+    const durationMs = nowMs() - startedAt;
+    const mapped = features
+        .map((item) => toMapboxResult(query, item, durationMs))
+        .filter(Boolean);
 
-    const label = top.place_name || query;
-    const joinedType = Array.isArray(top.place_type) ? top.place_type.join(' ') : '';
-    const placeType = inferPlaceTypeFromLabel(query, `${joinedType} ${label}`);
-
-    return {
-        provider: 'mapbox',
-        label,
-        lat,
-        lng,
-        placeType,
-        bbox: toLeafletBboxFromMapbox(top.bbox),
-        durationMs: nowMs() - startedAt
-    };
+    if (!shouldReturnMany) return mapped[0] || null;
+    return dedupeGeocodeResults(mapped).slice(0, limit);
 }
 
 class GeocodeError extends Error {
@@ -209,7 +366,7 @@ async function geocodeQuery(rawQuery, options = {}) {
 
     const providerMode = normalizeProviderMode(options.provider);
     const providers = chooseProviders(providerMode);
-    const key = cacheKey(query, providerMode);
+    const key = geocodeCacheKey(query, providerMode);
 
     const cached = getCache(key);
     if (cached) {
@@ -227,7 +384,7 @@ async function geocodeQuery(rawQuery, options = {}) {
             for (let i = 0; i < providers.length; i++) {
                 const provider = providers[i];
                 try {
-                    const result = await geocodeWithProvider(provider, query);
+                    const result = await geocodeWithProvider(provider, query, { limit: 1, multiple: false });
                     if (result) {
                         setCache(key, result);
                         return { ...result, cacheHit: false };
@@ -256,7 +413,74 @@ async function geocodeQuery(rawQuery, options = {}) {
     return task;
 }
 
+async function geocodeSuggestions(rawQuery, options = {}) {
+    const query = normalizeQuery(rawQuery);
+    if (!query) throw new GeocodeError('Paramètre "q" manquant', 400);
+    if (query.length < 3) throw new GeocodeError('La recherche doit contenir au moins 3 caractères', 400);
+
+    const limit = normalizeGeocodeLimit(options.limit, 3);
+    const providerMode = normalizeProviderMode(options.provider);
+    const providers = chooseProviders(providerMode);
+    const key = suggestionCacheKey(query, providerMode, limit);
+
+    const cached = getCache(key);
+    if (cached) {
+        return {
+            results: cached.results,
+            provider: cached.provider,
+            cacheHit: true,
+            durationMs: 0
+        };
+    }
+
+    if (inflightRequests.has(key)) {
+        return inflightRequests.get(key);
+    }
+
+    const task = (async () => {
+        try {
+            let lastError = null;
+            for (let i = 0; i < providers.length; i++) {
+                const provider = providers[i];
+                try {
+                    const results = await geocodeWithProvider(provider, query, { multiple: true, limit });
+                    const filtered = dedupeGeocodeResults(results.filter(isLocationPreviewCandidate)).slice(0, limit);
+                    if (filtered.length > 0) {
+                        const payload = {
+                            results: filtered,
+                            provider,
+                            cacheHit: false,
+                            durationMs: Math.max(...filtered.map((item) => item.durationMs || 0), 0)
+                        };
+                        setCache(key, { results: payload.results, provider: payload.provider });
+                        return payload;
+                    }
+                } catch (error) {
+                    lastError = error;
+                    if (isLastProvider(i, providers)) break;
+                    console.warn(`geocode suggest fallback ${provider} -> ${providers[i + 1]}`);
+                }
+            }
+
+            if (lastError) throw lastError;
+            return { results: [], provider: providers[0], cacheHit: false, durationMs: 0 };
+        } catch (error) {
+            if (error?.name === 'TimeoutError') {
+                throw new GeocodeError('Le service de géocodage est trop lent', 504);
+            }
+            if (error instanceof GeocodeError) throw error;
+            throw new GeocodeError('Erreur de suggestions de géocodage', 500);
+        } finally {
+            inflightRequests.delete(key);
+        }
+    })();
+
+    inflightRequests.set(key, task);
+    return task;
+}
+
 module.exports = {
     geocodeQuery,
+    geocodeSuggestions,
     GeocodeError
 };

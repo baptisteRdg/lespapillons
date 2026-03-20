@@ -119,6 +119,9 @@ let userPosition = MAP_CONFIG.center;
 let currentPanelActivityId = null; // ID de l'activité actuellement affichée dans le panel
 let geocodeRequestController = null;
 let searchRequestId = 0;
+let suggestionRequestController = null;
+let suggestionRequestId = 0;
+let currentSearchSuggestions = [];
 
 /**
  * Initialise la carte Leaflet
@@ -1573,18 +1576,89 @@ function exitGroupMode() {
     loadActivitiesInViewport();
 }
 
+function hideSearchSuggestions() {
+    const container = document.getElementById('searchSuggestions');
+    if (!container) return;
+    container.classList.add('hidden');
+    container.innerHTML = '';
+    currentSearchSuggestions = [];
+}
+
+function getLocationResultLabel(result) {
+    if (!result) return '';
+    return result.displayLabel || result.label || '';
+}
+
+function renderSearchSuggestions(suggestions) {
+    const container = document.getElementById('searchSuggestions');
+    if (!container) return;
+
+    if (!Array.isArray(suggestions) || suggestions.length === 0) {
+        hideSearchSuggestions();
+        return;
+    }
+
+    currentSearchSuggestions = suggestions.slice(0, 3);
+    container.innerHTML = currentSearchSuggestions.map((result, index) => {
+        const typeLabel = result.placeType === 'address' ? 'Adresse' : 'Ville';
+        return `
+            <button type="button" class="search-suggestion-item" data-suggestion-index="${index}">
+                <span class="search-suggestion-label">${escapeHtml(getLocationResultLabel(result))}</span>
+                <span class="search-suggestion-type">${typeLabel}</span>
+            </button>
+        `;
+    }).join('');
+    container.classList.remove('hidden');
+
+    container.querySelectorAll('.search-suggestion-item').forEach((el) => {
+        el.addEventListener('click', () => {
+            const idx = parseInt(el.dataset.suggestionIndex, 10);
+            const result = currentSearchSuggestions[idx];
+            if (!result) return;
+
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) searchInput.value = getLocationResultLabel(result);
+            hideSearchSuggestions();
+            searchActivities(result.label, { preferGeocode: true, forcedGeocodeResult: result });
+        });
+    });
+}
+
+async function updateSearchSuggestions(searchTerm) {
+    const term = String(searchTerm || '').trim();
+    if (term.length < 3) {
+        if (suggestionRequestController) suggestionRequestController.abort();
+        suggestionRequestId++;
+        hideSearchSuggestions();
+        return;
+    }
+
+    const requestId = ++suggestionRequestId;
+    if (suggestionRequestController) suggestionRequestController.abort();
+    suggestionRequestController = new AbortController();
+
+    const suggestions = await geocodeSuggestions(term, {
+        signal: suggestionRequestController.signal,
+        limit: 3
+    });
+    if (requestId !== suggestionRequestId) return;
+    renderSearchSuggestions(suggestions);
+}
+
 async function searchActivities(searchTerm, options = {}) {
     if (isGroupMode) exitGroupMode();
     if (!searchTerm || searchTerm.trim() === '') {
         searchRequestId++;
         if (geocodeRequestController) geocodeRequestController.abort();
+        hideSearchSuggestions();
         exitSearchMode();
         return;
     }
 
     const term = searchTerm.trim();
     const preferGeocode = options.preferGeocode === true;
-    const shouldTryGeocode = preferGeocode || looksLikeLocationQuery(term);
+    const forcedGeocodeResult = options.forcedGeocodeResult || null;
+    const shouldTryGeocode = !!forcedGeocodeResult || preferGeocode || looksLikeLocationQuery(term);
     const currentRequestId = ++searchRequestId;
 
     if (geocodeRequestController) geocodeRequestController.abort();
@@ -1594,21 +1668,25 @@ async function searchActivities(searchTerm, options = {}) {
     const userPos = userMarker.getLatLng();
 
     const activitiesPromise = searchActivitiesGlobal(term, userPos.lat, userPos.lng);
-    const geocodePromise = shouldTryGeocode
+    const geocodePromise = forcedGeocodeResult
+        ? Promise.resolve(forcedGeocodeResult)
+        : shouldTryGeocode
         ? geocodeLocation(term, { signal: geocodeRequestController.signal })
         : Promise.resolve(null);
 
     const [results, geocodeResult] = await Promise.all([activitiesPromise, geocodePromise]);
     if (currentRequestId !== searchRequestId) return;
 
-    const shouldCenterOnGeocode = !!geocodeResult && (preferGeocode || results.length === 0 || looksLikeLocationQuery(term));
+    const isDetectedLocation = geocodeResult && (geocodeResult.placeType === 'city' || geocodeResult.placeType === 'address');
+    const shouldCenterOnGeocode = !!isDetectedLocation;
 
     if (shouldCenterOnGeocode) {
         if (isSearchMode) exitSearchMode();
         await centerOnGeocodeResult(geocodeResult);
+        const locationLabel = getLocationResultLabel(geocodeResult);
         const toastMessage = geocodeResult.placeType === 'address'
-            ? T.TOASTS.SEARCH_ADDRESS_FOUND(geocodeResult.label)
-            : T.TOASTS.SEARCH_CITY_FOUND(geocodeResult.label);
+            ? T.TOASTS.SEARCH_ADDRESS_FOUND(locationLabel)
+            : T.TOASTS.SEARCH_CITY_FOUND(locationLabel);
         showToast(toastMessage, 'success');
         return;
     }
@@ -1733,24 +1811,38 @@ document.addEventListener('DOMContentLoaded', () => {
     // Configuration de la barre de recherche
     const searchInput = document.getElementById('searchInput');
     if (searchInput) {
-        let searchTimeout;
+        let suggestionTimeout;
         searchInput.addEventListener('input', (e) => {
             const val = e.target.value;
-            clearTimeout(searchTimeout);
-            // Recherche déclenchée à partir de 3 caractères (ou vide pour réinitialiser)
-            if (val.length > 0 && val.trim().length < 3) return;
-            searchTimeout = setTimeout(() => {
-                searchActivities(val, { preferGeocode: false });
-            }, 300);
+            const trimmed = val.trim();
+            clearTimeout(suggestionTimeout);
+
+            if (trimmed.length >= 3) {
+                suggestionTimeout = setTimeout(() => {
+                    updateSearchSuggestions(trimmed);
+                }, 180);
+            } else {
+                hideSearchSuggestions();
+            }
+
+            // Pendant la saisie on ne lance plus la recherche automatiquement :
+            // la validation se fait via Enter ou clic sur suggestion.
+            if (val.length === 0) {
+                searchActivities('', { preferGeocode: false });
+            }
         });
         
         searchInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
-                clearTimeout(searchTimeout);
+                clearTimeout(suggestionTimeout);
+                hideSearchSuggestions();
                 searchActivities(e.target.value, { preferGeocode: true });
             }
         });
 
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.search-wrapper')) hideSearchSuggestions();
+        });
     }
     
     // ── Raccourcis clavier ────────────────────────────────────────────
@@ -1772,6 +1864,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 hideFavoritesPanel();
             } else if (currentPanelActivityId !== null) {
                 hideActivityPanel();
+            } else if (currentSearchSuggestions.length > 0) {
+                hideSearchSuggestions();
             } else if (isSearchMode && searchInput) {
                 searchInput.value = '';
                 exitSearchMode();

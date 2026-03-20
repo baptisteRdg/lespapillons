@@ -8,7 +8,7 @@ const { PrismaClient } = require('@prisma/client');
 const rateLimit = require('express-rate-limit');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
-const { geocodeQuery, GeocodeError } = require('./services/geocode');
+const { geocodeQuery, geocodeSuggestions, GeocodeError } = require('./services/geocode');
 const {
     geojsonToActivity,
     activityToGeojson,
@@ -616,6 +616,43 @@ app.get('/api/og-image', async (req, res) => {
     } catch (error) {
         console.error(`❌ og-image erreur pour ${url}:`, error.message);
         res.json({ imageUrl: null });
+    }
+});
+
+/**
+ * GET /api/geocode/suggest?q=...&limit=3
+ * Suggestions de villes/adresses pour la preview de la barre de recherche.
+ */
+app.get('/api/geocode/suggest', async (req, res) => {
+    try {
+        const providerMode = req.query.provider || 'auto';
+        const limit = req.query.limit;
+        const payload = await geocodeSuggestions(req.query.q, {
+            provider: providerMode,
+            limit
+        });
+
+        console.log(
+            `geocode-suggest query="${String(req.query.q || '').slice(0, 80)}" mode=${providerMode} provider=${payload.provider} cache=${payload.cacheHit} count=${payload.results.length} durationMs=${payload.durationMs}`
+        );
+        return res.json({
+            success: true,
+            data: payload.results,
+            provider: payload.provider,
+            cacheHit: payload.cacheHit
+        });
+    } catch (error) {
+        if (error instanceof GeocodeError) {
+            return res.status(error.statusCode).json({
+                success: false,
+                message: error.message
+            });
+        }
+        console.error('Erreur GET /api/geocode/suggest:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Erreur serveur lors des suggestions de géocodage'
+        });
     }
 });
 
