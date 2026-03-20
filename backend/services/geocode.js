@@ -116,12 +116,20 @@ function toNominatimResult(query, top, durationMs) {
     if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
 
     const label = top.display_name || query;
+    const placeType = classifyNominatimPlace(query, top);
+    const cityName = extractNominatimCityName(top);
+    const postcode = top?.address?.postcode || '';
+    const displayLabel = placeType === 'city'
+        ? (formatCityDisplayLabel(cityName, postcode) || label)
+        : label;
+
     return {
         provider: 'nominatim',
         label,
+        displayLabel,
         lat,
         lng,
-        placeType: classifyNominatimPlace(query, top),
+        placeType,
         bbox: toLeafletBboxFromNominatim(top.boundingbox),
         durationMs
     };
@@ -134,12 +142,28 @@ function toMapboxResult(query, top, durationMs) {
     if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
 
     const label = top.place_name || query;
+    const placeType = classifyMapboxPlace(query, top);
+    const placeTypes = Array.isArray(top?.place_type)
+        ? top.place_type.map((type) => String(type || '').toLowerCase())
+        : [];
+    const cityName = top?.text ||
+        extractMapboxContextValue(top, 'place') ||
+        extractMapboxContextValue(top, 'locality') ||
+        firstLabelSegment(top?.place_name);
+    const postcode = placeTypes.includes('postcode')
+        ? String(top?.text || '')
+        : extractMapboxContextValue(top, 'postcode');
+    const displayLabel = placeType === 'city'
+        ? (formatCityDisplayLabel(cityName, postcode) || label)
+        : label;
+
     return {
         provider: 'mapbox',
         label,
+        displayLabel,
         lat,
         lng,
-        placeType: classifyMapboxPlace(query, top),
+        placeType,
         bbox: toLeafletBboxFromMapbox(top.bbox),
         durationMs
     };
@@ -170,6 +194,35 @@ function geocodeCacheKey(query, providerMode = 'auto') {
 
 function suggestionCacheKey(query, providerMode = 'auto', limit = 3) {
     return `suggest:${providerMode}:${limit}:${query.toLowerCase()}`;
+}
+
+function firstLabelSegment(label) {
+    return String(label || '').split(',')[0].trim();
+}
+
+function formatCityDisplayLabel(cityName, postcode) {
+    const city = String(cityName || '').trim();
+    const code = String(postcode || '').trim();
+    if (city && code) return `${city}, ${code}`;
+    return city || code || null;
+}
+
+function extractNominatimCityName(top) {
+    const address = top?.address || {};
+    return address.city ||
+        address.town ||
+        address.village ||
+        address.municipality ||
+        address.hamlet ||
+        address.county ||
+        top?.name ||
+        firstLabelSegment(top?.display_name);
+}
+
+function extractMapboxContextValue(top, prefix) {
+    const context = Array.isArray(top?.context) ? top.context : [];
+    const match = context.find((item) => String(item?.id || '').startsWith(`${prefix}.`));
+    return match?.text || match?.short_code || '';
 }
 
 function toLeafletBboxFromNominatim(raw) {

@@ -1584,6 +1584,11 @@ function hideSearchSuggestions() {
     currentSearchSuggestions = [];
 }
 
+function getLocationResultLabel(result) {
+    if (!result) return '';
+    return result.displayLabel || result.label || '';
+}
+
 function renderSearchSuggestions(suggestions) {
     const container = document.getElementById('searchSuggestions');
     if (!container) return;
@@ -1598,7 +1603,7 @@ function renderSearchSuggestions(suggestions) {
         const typeLabel = result.placeType === 'address' ? 'Adresse' : 'Ville';
         return `
             <button type="button" class="search-suggestion-item" data-suggestion-index="${index}">
-                <span class="search-suggestion-label">${escapeHtml(result.label)}</span>
+                <span class="search-suggestion-label">${escapeHtml(getLocationResultLabel(result))}</span>
                 <span class="search-suggestion-type">${typeLabel}</span>
             </button>
         `;
@@ -1612,7 +1617,7 @@ function renderSearchSuggestions(suggestions) {
             if (!result) return;
 
             const searchInput = document.getElementById('searchInput');
-            if (searchInput) searchInput.value = result.label;
+            if (searchInput) searchInput.value = getLocationResultLabel(result);
             hideSearchSuggestions();
             searchActivities(result.label, { preferGeocode: true, forcedGeocodeResult: result });
         });
@@ -1653,7 +1658,7 @@ async function searchActivities(searchTerm, options = {}) {
     const term = searchTerm.trim();
     const preferGeocode = options.preferGeocode === true;
     const forcedGeocodeResult = options.forcedGeocodeResult || null;
-    const shouldTryGeocode = !!forcedGeocodeResult || preferGeocode || looksLikeLocationQuery(term) || term.length >= 3;
+    const shouldTryGeocode = !!forcedGeocodeResult || preferGeocode || looksLikeLocationQuery(term);
     const currentRequestId = ++searchRequestId;
 
     if (geocodeRequestController) geocodeRequestController.abort();
@@ -1678,9 +1683,10 @@ async function searchActivities(searchTerm, options = {}) {
     if (shouldCenterOnGeocode) {
         if (isSearchMode) exitSearchMode();
         await centerOnGeocodeResult(geocodeResult);
+        const locationLabel = getLocationResultLabel(geocodeResult);
         const toastMessage = geocodeResult.placeType === 'address'
-            ? T.TOASTS.SEARCH_ADDRESS_FOUND(geocodeResult.label)
-            : T.TOASTS.SEARCH_CITY_FOUND(geocodeResult.label);
+            ? T.TOASTS.SEARCH_ADDRESS_FOUND(locationLabel)
+            : T.TOASTS.SEARCH_CITY_FOUND(locationLabel);
         showToast(toastMessage, 'success');
         return;
     }
@@ -1805,12 +1811,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // Configuration de la barre de recherche
     const searchInput = document.getElementById('searchInput');
     if (searchInput) {
-        let searchTimeout;
         let suggestionTimeout;
         searchInput.addEventListener('input', (e) => {
             const val = e.target.value;
             const trimmed = val.trim();
-            clearTimeout(searchTimeout);
             clearTimeout(suggestionTimeout);
 
             if (trimmed.length >= 3) {
@@ -1821,16 +1825,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 hideSearchSuggestions();
             }
 
-            // Recherche déclenchée à partir de 3 caractères (ou vide pour réinitialiser)
-            if (val.length > 0 && trimmed.length < 3) return;
-            searchTimeout = setTimeout(() => {
-                searchActivities(val, { preferGeocode: false });
-            }, 300);
+            // Pendant la saisie on ne lance plus la recherche automatiquement :
+            // la validation se fait via Enter ou clic sur suggestion.
+            if (val.length === 0) {
+                searchActivities('', { preferGeocode: false });
+            }
         });
         
         searchInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
-                clearTimeout(searchTimeout);
                 clearTimeout(suggestionTimeout);
                 hideSearchSuggestions();
                 searchActivities(e.target.value, { preferGeocode: true });
