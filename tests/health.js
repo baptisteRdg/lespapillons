@@ -143,6 +143,18 @@ async function run() {
         console.log(`  info geocode auto provider=${body.data.provider} expected=${expectedProvider}`);
     });
 
+    await test('API : suggestions géocodage (max 3, villes/adresses)', async () => {
+        const { status, body } = await fetchJson(`${API}/geocode/suggest?q=${encodeURIComponent('Par')}&provider=auto&limit=3`);
+        assert(status === 200, `HTTP ${status}`);
+        assert(body.success === true, 'success !== true');
+        assert(Array.isArray(body.data), 'data n\'est pas un tableau');
+        assert(body.data.length <= 3, `Attendu <=3 résultats, reçu ${body.data.length}`);
+        assert(
+            body.data.every((item) => item.placeType === 'city' || item.placeType === 'address'),
+            'placeType invalide dans suggestions'
+        );
+    });
+
     await test('API : géocodage invalide rejeté (query trop courte)', async () => {
         const { status } = await fetchJson(`${API}/geocode?q=a`);
         assert(status === 400, `Attendu 400, reçu ${status}`);
