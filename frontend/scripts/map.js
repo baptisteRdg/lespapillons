@@ -69,24 +69,34 @@ const JAWG_TOKEN = 'q8ENjbC5b2HaKNzPYe09LRKGCNFudkoHzE5iHznAfmXmBwohhWjfKj1wuFMD
 
 // Styles de carte disponibles
 const MAP_STYLES = {
+    // Fond discret MAIS informatif (doctrine, principe 2 : le fond oriente,
+    // il ne raconte pas). Jawg Light était trop loin dans l'autre sens —
+    // un blanc uniforme où l'on ne distinguait ni parc, ni eau, ni voirie.
+    // On part donc d'un style complet, désaturé par filtre CSS (voir
+    // .leaflet-tile-pane sous .map-quiet dans main.css) : la structure
+    // reste lisible, la saturation redescend au niveau du système.
     propre: {
         label: T.MAP_STYLES.propre,
-        url: `https://tile.jawg.io/dfc3a626-e8ca-4cd6-8ad5-0f7e06729444/{z}/{x}/{y}{r}.png?access-token=${JAWG_TOKEN}`,
-        options: {}
+        url: `https://tile.jawg.io/jawg-sunny/{z}/{x}/{y}{r}.png?access-token=${JAWG_TOKEN}&lang=fr`,
+        options: { maxZoom: 19 },
+        quiet: true
     },
     satellite: {
         label: T.MAP_STYLES.satellite,
         url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
         options: { maxZoom: 19 }
     },
+    // Le scénario principal du produit (doctrine, principe 1).
+    // Passé sur Jawg pour la même raison que "propre" : Carto filigrane
+    // désormais ses tuiles sans clé.
     nuit: {
         label: T.MAP_STYLES.nuit,
-        url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
-        options: { subdomains: 'abcd' }
+        url: `https://tile.jawg.io/jawg-dark/{z}/{x}/{y}{r}.png?access-token=${JAWG_TOKEN}&lang=fr`,
+        options: { maxZoom: 19 }
     },
     simple: {
         label: T.MAP_STYLES.simple,
-        url: `https://tile.jawg.io/jawg-streets/{z}/{x}/{y}{r}.png?access-token=${JAWG_TOKEN}`,
+        url: `https://tile.jawg.io/jawg-streets/{z}/{x}/{y}{r}.png?access-token=${JAWG_TOKEN}&lang=fr`,
         options: {}
     }
 };
@@ -123,6 +133,273 @@ let suggestionRequestController = null;
 let suggestionRequestId = 0;
 let currentSearchSuggestions = [];
 
+/* ═══════════════════════════════════════════════════════════════════════════
+   ÉTAT UTILISATEUR SUR LA CARTE
+   ───────────────────────────────────────────────────────────────────────────
+   Sur la carte, la couleur ne dit pas ce qu'EST un lieu — le pictogramme s'en
+   charge. Elle dit ce qu'il REPRÉSENTE POUR VOUS :
+
+     neutre  → un lieu quelconque, il fait partie du décor
+     ambre   → une envie  (« à faire »)
+     sauge   → un souvenir (« réalisée »)
+
+   D'où ces deux ensembles, chargés une fois à la connexion : sans eux, aucun
+   marqueur ne peut connaître son état au moment où il est créé.
+   ═══════════════════════════════════════════════════════════════════════════ */
+const userTodoIds = new Set();
+const userDoneIds = new Set();
+/* La note elle-même, pas seulement le fait d'avoir noté : c'est elle
+   qui donne sa couleur au marqueur sur la carte. */
+const userRatings = new Map();   // activityId → 1..5
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   FILTRES PAR FAMILLE
+   ───────────────────────────────────────────────────────────────────────────
+   Les marqueurs ne portent plus la couleur de leur catégorie : le tri doit
+   donc devenir explicite. Les douze types OSM sont regroupés en cinq
+   familles, parce que personne ne se demande « où sont les escape games ET
+   les laser games » — on se demande « on fait quoi ce soir ».
+
+   Le filtrage s'appuie sur les MarkerClusterGroup déjà créés par catégorie :
+   filtrer revient à retirer ou remettre des couches, ce qui est instantané
+   et ne déclenche aucun rechargement réseau.
+   ═══════════════════════════════════════════════════════════════════════════ */
+const CATEGORY_FAMILIES = {
+    pleinair: ['park', 'parc', 'accrobranche', 'randonnee'],
+    culture:  ['musee', 'musée', 'castle', 'chateau', 'cinema', 'cinéma'],
+    sport:    ['golf', 'escalade', 'iceskating', 'bowling'],
+    jeux:     ['escapegame', 'lasergame'],
+    nuit:     ['nightclub', 'bar'],
+};
+
+let activeFilter = 'all';
+
+/* Teinte du pictogramme, par famille. Le FOND du marqueur continue de
+   dire l'état (encre / orange / sauge) ; c'est l'INTÉRIEUR de l'icône
+   qui dit la famille. Deux canaux, deux informations — la hiérarchie
+   d'état reste intacte, et la carte cesse d'être uniformément noire.
+
+   Volontairement à l'écart de l'orange, réservé à l'intention. */
+const FAMILY_TINTS = {
+    pleinair: '#6FD08C',   // vert
+    culture:  '#9BB8FF',   // bleu clair
+    sport:    '#4FD2C2',   // turquoise
+    jeux:     '#C39BF0',   // violet
+    nuit:     '#FF8FB1',   // rose
+};
+
+/** Teinte du pictogramme pour une catégorie donnée. */
+function tintFor(category) {
+    return FAMILY_TINTS[familyOf(category)] || '#FFFFFF';
+}
+
+/** Normalise une catégorie pour la comparaison (accents, casse, espaces). */
+function normalizeCategory(category) {
+    return (category || '').toLowerCase().normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '').trim();
+}
+
+/** La famille d'une catégorie, ou null si elle n'est rattachée à aucune. */
+function familyOf(category) {
+    const key = normalizeCategory(category);
+    for (const [family, types] of Object.entries(CATEGORY_FAMILIES)) {
+        if (types.some(t => normalizeCategory(t) === key)) return family;
+    }
+    return null;
+}
+
+/** Une catégorie passe-t-elle le filtre courant ? */
+function matchesFilter(category) {
+    if (activeFilter === 'all') return true;
+    return familyOf(category) === activeFilter;
+}
+
+/** Construit la barre de filtres. Appelée une fois à l'initialisation. */
+function buildFilterBar() {
+    const bar = document.getElementById('category-filters');
+    if (!bar) return;
+
+    const families = ['all', ...Object.keys(CATEGORY_FAMILIES)];
+    bar.innerHTML = families.map(key => `
+        <button type="button" class="filter-chip bo-chip bo-surface--tight${key === activeFilter ? ' bo-chip--active' : ''}"
+                data-filter="${key}" aria-pressed="${key === activeFilter}">
+            ${T.FILTERS[key]}
+        </button>`).join('');
+
+    bar.addEventListener('click', (e) => {
+        const chip = e.target.closest('[data-filter]');
+        if (chip) setCategoryFilter(chip.dataset.filter);
+    });
+}
+
+/**
+ * Applique un filtre de famille.
+ * @param {string} family - 'all' ou une clé de CATEGORY_FAMILIES
+ */
+function setCategoryFilter(family) {
+    activeFilter = family;
+
+    document.querySelectorAll('#category-filters [data-filter]').forEach(chip => {
+        const on = chip.dataset.filter === family;
+        chip.classList.toggle('bo-chip--active', on);
+        chip.setAttribute('aria-pressed', String(on));
+    });
+
+    applyCategoryFilter();
+}
+
+/**
+ * Synchronise la carte avec le filtre courant.
+ * Les catégories hors filtre sont RETIRÉES de la carte, pas estompées :
+ * des marqueurs à demi transparents restent lisibles et continuent de
+ * charger l'écran, ce qui va contre l'intérêt même du filtre.
+ * On retire la couche entière plutôt que marqueur par marqueur —
+ * instantané, et sans toucher au regroupement.
+ */
+function applyCategoryFilter() {
+    let visibles = 0;
+
+    categoryClusterGroups.forEach((group, category) => {
+        const ok = matchesFilter(category);
+        if (ok) {
+            if (!map.hasLayer(group)) group.addTo(map);
+            visibles += group.getLayers().length;
+        } else if (map.hasLayer(group)) {
+            map.removeLayer(group);
+        }
+    });
+
+    const bar = document.getElementById('category-filters');
+    if (bar) bar.classList.toggle('has-no-result', activeFilter !== 'all' && visibles === 0);
+}
+
+/**
+ * Retourne l'état d'une activité pour l'utilisateur courant.
+ * @param {number|string} activityId
+ * @returns {'todo'|'done'|'plain'}
+ */
+function getActivityState(activityId) {
+    const id = Number(activityId);
+    if (userDoneIds.has(id)) return 'done';
+    if (userTodoIds.has(id)) return 'todo';
+    return 'plain';
+}
+
+/**
+ * Charge « à faire » et « réalisées » et rafraîchit les marqueurs déjà posés.
+ * Silencieux si l'utilisateur n'est pas connecté : tout reste neutre.
+ */
+async function loadUserActivityState() {
+    userTodoIds.clear();
+    userDoneIds.clear();
+    userRatings.clear();
+
+    if (typeof isLoggedIn !== 'function' || !isLoggedIn()) {
+        refreshAllMarkerStates();
+        return;
+    }
+
+    try {
+        const [todoRes, doneRes] = await Promise.all([
+            _authFetch(`${getApiBaseUrl()}/users/me/todo`),
+            _authFetch(`${getApiBaseUrl()}/users/me/done`)
+        ]);
+        const [todo, done] = await Promise.all([todoRes.json(), doneRes.json()]);
+
+        (todo?.data || []).forEach(a => userTodoIds.add(Number(a.id)));
+        (done?.data || []).forEach(a => {
+            userDoneIds.add(Number(a.id));
+            if (a.rating) userRatings.set(Number(a.id), Number(a.rating));
+        });
+
+        console.log(`🎯 État utilisateur : ${userTodoIds.size} envie(s), ${userDoneIds.size} réalisée(s)`);
+    } catch (err) {
+        console.warn('⚠️ État utilisateur non chargé :', err.message);
+    }
+
+    refreshAllMarkerStates();
+}
+
+/**
+ * Met à jour localement l'état d'une activité, puis repeint son marqueur.
+ * À appeler après un ajout/retrait « à faire » ou une notation.
+ * @param {number|string} activityId
+ * @param {'todo'|'done'|'plain'} state
+ */
+function setActivityState(activityId, state, rating = null) {
+    const id = Number(activityId);
+    userTodoIds.delete(id);
+    userDoneIds.delete(id);
+    if (state === 'todo') userTodoIds.add(id);
+    if (state === 'done') {
+        userDoneIds.add(id);
+        if (rating) userRatings.set(id, Number(rating));
+    } else {
+        userRatings.delete(id);
+    }
+    refreshMarkerState(id);
+}
+
+/**
+ * Réapplique l'icône d'un marqueur selon son état courant.
+ * @param {number|string} activityId
+ */
+function refreshMarkerState(activityId) {
+    const entry = activityPool.get(Number(activityId)) || activityPool.get(String(activityId));
+    if (!entry?.marker) return;
+    const category = entry.activity?.category;
+    entry.marker.setIcon(buildActivityIcon(getIconConfig(category), getActivityState(activityId), category, activityId));
+}
+
+/** Repeint tous les marqueurs du pool. */
+function refreshAllMarkerStates() {
+    activityPool.forEach((entry, id) => {
+        if (!entry?.marker) return;
+        entry.marker.setIcon(buildActivityIcon(getIconConfig(entry.activity?.category), getActivityState(id), entry.activity?.category, id));
+    });
+}
+
+/**
+ * Construit l'icône Leaflet d'une activité.
+ * La catégorie passe par le pictogramme ; l'état passe par la couleur.
+ * @param {Object} iconConfig - { svg, icon } issu de getIconConfig()
+ * @param {'todo'|'done'|'plain'} state
+ * @returns {L.DivIcon}
+ */
+function buildActivityIcon(iconConfig, state = 'plain', category = '', idForVerdict = null) {
+    const fallbackIcon = iconConfig.icon || 'map-marker-alt';
+    // Masque plutôt qu'image : un <img> ne se recolore pas, un masque si.
+    // Le chemin est posé DIRECTEMENT sur mask-image, pas via une variable :
+    // une url() dans une propriété personnalisée se résout par rapport à
+    // la feuille de styles, ce qui donnait /styles/assets/icon/… — donc
+    // un masque vide, et un marqueur tout noir.
+    const glyph = iconConfig.svg
+        ? `<span class="marker-glyph" style="-webkit-mask-image:url('${iconConfig.svg}');mask-image:url('${iconConfig.svg}')"></span>`
+        : `<i class="fas fa-${fallbackIcon}"></i>`;
+
+    const size = state === 'plain' ? 34 : 38;
+
+    // Le pin est un carré pivoté de 45° : sa pointe tombe à une
+    // demi-diagonale sous le centre, donc à size × (0,5 + √2/2) du haut.
+    // C'est là que doit se poser l'ancre, pour que la goutte DÉSIGNE
+    // la coordonnée au lieu d'être posée dessus.
+    const tipY = Math.round(size * 1.207);
+
+    // Une activité notée porte la couleur de SON verdict : rouge si on l'a
+    // déconseillée, vert franc si on la recommande. Une sauge uniforme
+    // disait « vous y êtes allé » sans dire ce que vous en aviez pensé.
+    const note = userRatings.get(Number(idForVerdict));
+    const fond = (state === 'done' && note) ? `;--verdict:${RATING_COLORS[note]}` : '';
+
+    return L.divIcon({
+        html: `<div class="activity-marker-pin is-${state}" style="--marker-tint:${tintFor(category)}${fond}">${glyph}</div>`,
+        className: 'custom-marker',
+        iconSize: [size, size],
+        iconAnchor: [size / 2, tipY],
+        popupAnchor: [0, -tipY]
+    });
+}
+
 /**
  * Initialise la carte Leaflet
  */
@@ -131,6 +408,25 @@ let currentSearchSuggestions = [];
  * @param {string} styleKey - Clé dans MAP_STYLES
  * @param {boolean} save - Sauvegarder dans localStorage (défaut: true)
  */
+/** Style de carte à utiliser tant que l'utilisateur n'a rien choisi. */
+function defaultStyleForTheme() {
+    const nuit = window.matchMedia
+        && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    return nuit ? 'nuit' : 'propre';
+}
+
+/** Suit les bascules jour/nuit du système, sauf choix explicite. */
+function watchThemeForMapStyle() {
+    if (!window.matchMedia) return;
+    const mq = window.matchMedia('(prefers-color-scheme: dark)');
+    const onChange = () => {
+        if (localStorage.getItem('map_style')) return;   // choix utilisateur
+        setMapStyle(defaultStyleForTheme(), false);
+    };
+    mq.addEventListener ? mq.addEventListener('change', onChange)
+                        : mq.addListener(onChange);
+}
+
 function setMapStyle(styleKey, save = true) {
     const style = MAP_STYLES[styleKey];
     if (!style) return;
@@ -150,6 +446,10 @@ function setMapStyle(styleKey, save = true) {
         maxZoom: MAP_CONFIG.maxZoom,
         ...style.options
     }).addTo(map);
+
+    // Désaturation réservée au style "propre" : les autres sont choisis
+    // explicitement par l'utilisateur pour ce qu'ils montrent.
+    map.getContainer().classList.toggle('map-quiet', !!style.quiet);
 
     currentStyleKey = styleKey;
     if (save) localStorage.setItem('map_style', styleKey);
@@ -242,8 +542,12 @@ function initMap() {
     );
 
     // Appliquer le style sauvegardé (ou papillon par défaut)
-    const savedStyle = localStorage.getItem('map_style') || 'propre';
-    setMapStyle(savedStyle, false);
+    // Le fond de carte suit le thème du système tant que l'utilisateur
+    // n'a pas choisi lui-même. Sans ça, en thème nuit les marqueurs
+    // s'inversent (encre → clair) au-dessus d'un fond resté clair :
+    // ils deviennent invisibles. La charte fait du mode sombre un
+    // scénario principal, il doit donc valoir aussi pour la carte.
+    setMapStyle(localStorage.getItem('map_style') || defaultStyleForTheme(), false);
     
     createUserMarker();
 
@@ -299,6 +603,14 @@ function trySetUserPositionFromBrowser() {
  * Crée le marqueur de position utilisateur (draggable)
  */
 function createUserMarker() {
+    // Volet dédié : les volets par catégorie sont à 620, donc au-dessus
+    // du volet de marqueurs par défaut (600). Sans ce volet, le repère
+    // passerait DERRIÈRE les activités — ce qui est arrivé.
+    if (!map.getPane('userPane')) {
+        const pane = map.createPane('userPane');
+        pane.style.zIndex = 660;
+    }
+
     const userIcon = L.divIcon({
         html: '<div class="user-marker"><img src="assets/icon/you.svg" alt="" class="user-marker-icon"></div>',
         className: 'user-marker-container',
@@ -309,6 +621,7 @@ function createUserMarker() {
     userMarker = L.marker(userPosition, {
         icon: userIcon,
         draggable: true,
+        pane: 'userPane',
         zIndexOffset: 1000
     }).addTo(map);
     
@@ -320,8 +633,117 @@ function createUserMarker() {
     userMarker.on('dragend', function(e) {
         const newPos = e.target.getLatLng();
         userPosition = [newPos.lat, newPos.lng];
+        userMovedByHand = true;
         saveUserPosition(newPos.lat, newPos.lng);
     });
+
+    userMarker.on('click', onUserMarkerClick);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   REPÈRE « VOUS » — recentrage puis relocalisation
+   ───────────────────────────────────────────────────────────────────────────
+   Un clic recentre la carte dessus. Un second clic, alors qu'on y est déjà,
+   ouvre la seule option qui reste utile à ce moment-là : retrouver sa vraie
+   position — utile justement quand on a déplacé le point à la main.
+
+   Deux gestes distincts pour deux intentions distinctes, sans bouton
+   permanent posé sur la carte.
+   ═══════════════════════════════════════════════════════════════════════════ */
+const USER_FOCUS_ZOOM = 15;     // zoom de recentrage
+let userMovedByHand = false;
+
+/** La carte est-elle déjà cadrée sur le repère ? */
+function isCenteredOnUser() {
+    if (!map || !userMarker) return false;
+    const centre = map.getCenter();
+    const pos    = userMarker.getLatLng();
+    // Tolérance en pixels plutôt qu'en degrés : un écart de 0,001°
+    // ne veut pas dire la même chose au zoom 3 et au zoom 18.
+    const a = map.latLngToContainerPoint(centre);
+    const b = map.latLngToContainerPoint(pos);
+    const proche = Math.hypot(a.x - b.x, a.y - b.y) < 40;
+    return proche && map.getZoom() >= USER_FOCUS_ZOOM;
+}
+
+/** Recadre la carte sur un point, en respectant le mouvement réduit. */
+function focusOn(latlng, zoom) {
+    const sansMouvement = window.matchMedia
+        && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (sansMouvement) {
+        map.setView(latlng, zoom, { animate: false });
+    } else {
+        map.flyTo(latlng, zoom, { duration: 0.6 });
+    }
+}
+
+function onUserMarkerClick() {
+    if (isCenteredOnUser()) {
+        openUserOptions();
+        return;
+    }
+    userMarker.closePopup();
+    focusOn(userMarker.getLatLng(), Math.max(map.getZoom(), USER_FOCUS_ZOOM));
+}
+
+/** Bulle d'options du repère. */
+function openUserOptions() {
+    const etat = userMovedByHand ? T.LABELS.YOU_MOVED : T.LABELS.YOU_HERE;
+    const html = `
+        <div class="user-popup">
+            <span class="user-popup-state">${escapeHtml(etat)}</span>
+            <button type="button" class="bo-btn bo-btn--secondary bo-btn--sm bo-btn--block"
+                    data-action="relocate">
+                <i class="fas fa-location-crosshairs"></i>${T.BUTTONS.RELOCATE}
+            </button>
+        </div>`;
+
+    userMarker.bindPopup(html, {
+        className: 'user-popup-wrapper',
+        closeButton: false,
+        offset: [0, -6]
+    });
+
+    // On se branche sur l'ouverture plutôt que sur un délai : le contenu
+    // n'existe qu'à ce moment, et on cible CE popup, pas le premier venu.
+    userMarker.once('popupopen', (e) => {
+        e.popup.getElement()
+            ?.querySelector('[data-action="relocate"]')
+            ?.addEventListener('click', relocateUser);
+    });
+
+    userMarker.openPopup();
+}
+
+/** Ramène le repère sur la position réelle du navigateur. */
+function relocateUser() {
+    if (!navigator.geolocation) {
+        showToast(T.TOASTS.RELOCATE_FAILED, 'error');
+        return;
+    }
+    showToast(T.TOASTS.RELOCATING, 'info');
+    userMarker.closePopup();
+
+    navigator.geolocation.getCurrentPosition(
+        (pos) => {
+            const lat = pos.coords.latitude;
+            const lng = pos.coords.longitude;
+            userPosition   = [lat, lng];
+            userMovedByHand = false;
+            userMarker.setLatLng(userPosition);
+            saveUserPosition(lat, lng);
+            focusOn(userPosition, Math.max(map.getZoom(), USER_FOCUS_ZOOM));
+            loadActivitiesInViewport();
+            showToast(T.TOASTS.RELOCATED, 'success');
+        },
+        (err) => {
+            showToast(err.code === err.PERMISSION_DENIED
+                ? T.TOASTS.RELOCATE_DENIED
+                : T.TOASTS.RELOCATE_FAILED, 'error');
+        },
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+    );
 }
 
 
@@ -437,11 +859,28 @@ function cleanupPool() {
  * @param {string} category
  * @returns {L.MarkerClusterGroup}
  */
+function categoryPaneName(category) {
+    return 'cat-' + String(category || 'autre').replace(/[^a-z0-9]/gi, '_');
+}
+
+/** Crée (une fois) le volet Leaflet dédié à une catégorie. */
+function ensureCategoryPane(category) {
+    const name = categoryPaneName(category);
+    if (!map.getPane(name)) {
+        const pane = map.createPane(name);
+        pane.style.zIndex = 620;                     // au-dessus des marqueurs
+        pane.style.transition = 'opacity var(--bo-in, 240ms) var(--bo-ease, ease)';
+    }
+    return name;
+}
+
 function getOrCreateClusterGroup(category) {
     const key = category || 'autre';
     if (!categoryClusterGroups.has(key)) {
         const iconConfig = getIconConfig(key);
+        const pane = ensureCategoryPane(key);
         const group = L.markerClusterGroup({
+            clusterPane: pane,
             maxClusterRadius: 60,
             disableClusteringAtZoom: 16,
             spiderfyOnMaxZoom: true,
@@ -449,7 +888,7 @@ function getOrCreateClusterGroup(category) {
             zoomToBoundsOnClick: true,
             iconCreateFunction: (cluster) => createClusterIcon(cluster, iconConfig)
         });
-        group.addTo(map);
+        if (matchesFilter(key)) group.addTo(map);
         categoryClusterGroups.set(key, group);
     }
     return categoryClusterGroups.get(key);
@@ -461,24 +900,20 @@ function getOrCreateClusterGroup(category) {
 function createClusterIcon(cluster, iconConfig) {
     const count = cluster.getChildCount();
     const fallbackIcon = iconConfig.icon || 'map-marker-alt';
-    const iconHtml = iconConfig.svg
-        ? `<img src="${iconConfig.svg}" alt="" style="width:18px;height:18px;filter:invert(1);">`
+    const glyph = iconConfig.svg
+        ? `<span class="marker-glyph" style="-webkit-mask-image:url('${iconConfig.svg}');mask-image:url('${iconConfig.svg}')"></span>`
         : `<i class="fas fa-${fallbackIcon}" style="font-size:15px"></i>`;
 
-    const COLORS = {
-        blue:'#3b82f6', gray:'#6b7280', green:'#22c55e', red:'#ef4444',
-        yellow:'#eab308', purple:'#a855f7', orange:'#f97316', pink:'#ec4899', cyan:'#06b6d4'
-    };
-    const bg = COLORS[iconConfig.color] || COLORS.blue;
-
+    // Neutre comme les marqueurs qu'il regroupe : un amas de lieux
+    // quelconques ne doit pas peser plus lourd qu'eux à l'écran.
     return L.divIcon({
-        html: `<div class="activity-cluster-pin" style="background-color:${bg}">
-                 ${iconHtml}
+        html: `<div class="activity-cluster-pin">
+                 ${glyph}
                  <span class="cluster-count">${count}</span>
                </div>`,
         className: 'custom-cluster',
-        iconSize: [48, 48],
-        iconAnchor: [24, 24]
+        iconSize: [44, 44],
+        iconAnchor: [22, 22]
     });
 }
 
@@ -489,36 +924,12 @@ function createClusterIcon(cluster, iconConfig) {
  * @returns {L.Marker} Le marker créé
  */
 function createMarker(activity, addToCluster = true) {
-    // Icône personnalisée selon la catégorie
+    // La catégorie donne le pictogramme, l'état donne la couleur.
     const iconConfig = getIconConfig(activity.category);
-    
-    const fallbackIcon = iconConfig.icon || 'map-marker-alt';
-    const iconHtml = iconConfig.svg
-        ? `<img src="${iconConfig.svg}" alt="" style="width:20px;height:20px;filter:invert(1);" onerror="this.style.display='none';this.nextElementSibling.style.display='inline';"><i class="fas fa-${fallbackIcon}" style="display:none"></i>`
-        : `<i class="fas fa-${iconConfig.icon}"></i>`;
+    const customIcon = buildActivityIcon(iconConfig, getActivityState(activity.id), activity.category, activity.id);
+    const pane = ensureCategoryPane(activity.category);
 
-    const MARKER_COLORS = {
-        blue:   '#476e99',
-        gray:   '#a7a7a7',
-        green:  '#58763a',
-        red:    '#cf0a1d',
-        yellow: '#fce883',
-        purple: '#cc99ff',
-        orange: '#fea347',
-        pink:   '#e9ace9',
-        cyan:   '#87d3f8',
-    };
-    const bgColor = MARKER_COLORS[iconConfig.color] || MARKER_COLORS.blue;
-
-    const customIcon = L.divIcon({
-        html: `<div class="activity-marker-pin" style="background-color:${bgColor}">${iconHtml}</div>`,
-        className: 'custom-marker',
-        iconSize: [40, 40],
-        iconAnchor: [20, 20],
-        popupAnchor: [0, -20]
-    });
-    
-    const marker = L.marker([activity.lat, activity.lng], { icon: customIcon });
+    const marker = L.marker([activity.lat, activity.lng], { icon: customIcon, pane });
 
     if (addToCluster) {
         getOrCreateClusterGroup(activity.category).addLayer(marker);
@@ -549,6 +960,37 @@ function createMarker(activity, addToCluster = true) {
  * @param {string} html - Contenu HTML à injecter
  * @param {number} activityId - ID de l'activité affichée
  */
+/* ═══════════════════════════════════════════════════════════════════════════
+   FEUILLE GLISSANTE — TROIS ARRÊTS
+   ───────────────────────────────────────────────────────────────────────────
+   Aperçu 28 svh · demi 55 svh · plein 92 svh (charte).
+   Le glissement suit le doigt puis s'aligne sur l'arrêt le plus proche ;
+   on ne saute jamais d'un état à l'autre.
+
+   Le déplacement passe par la variable --stop plutôt que par un transform
+   écrit en JS : la formule reste dans le CSS, donc la version ordinateur
+   (centrée, avec son translate(-50%)) fonctionne sans code séparé.
+   ═══════════════════════════════════════════════════════════════════════════ */
+const SHEET_STOPS = { peek: 28, half: 55, full: 92 };   // en svh
+const SHEET_ORDER = ['peek', 'half', 'full'];
+
+/** Hauteur d'une unité svh en pixels. */
+function svhToPx(v) {
+    return window.innerHeight * v / 100;
+}
+
+/** Applique un arrêt nommé à la feuille. */
+function setSheetStop(panel, stop) {
+    panel.style.removeProperty('--stop');          // rendre la main au CSS
+    if (stop === 'peek') panel.removeAttribute('data-stop');
+    else panel.setAttribute('data-stop', stop);
+}
+
+/** L'arrêt courant de la feuille. */
+function currentSheetStop(panel) {
+    return panel.getAttribute('data-stop') || 'peek';
+}
+
 function showActivityPanel(html, activityId) {
     const panel   = document.getElementById('activity-panel');
     const content = document.getElementById('panel-content');
@@ -557,23 +999,24 @@ function showActivityPanel(html, activityId) {
     content.innerHTML = html;
     currentPanelActivityId = activityId;
 
-    // Remettre en état compact à chaque nouvelle ouverture
-    panel.classList.remove('panel-expanded');
+    // On ouvre à mi-hauteur : l'aperçu 28 svh ne montrerait que le titre,
+    // alors que l'action principale doit être atteignable sans geste.
+    setSheetStop(panel, 'half');
     panel.classList.add('panel-open');
 }
 
-/**
- * Cache le panel activité
- */
 function hideActivityPanel() {
     const panel = document.getElementById('activity-panel');
     if (!panel) return;
-    panel.classList.remove('panel-open', 'panel-expanded');
+    panel.classList.remove('panel-open');
+    panel.style.removeProperty('--stop');
+    panel.removeAttribute('data-stop');
     currentPanelActivityId = null;
 }
 
 /**
- * Initialise le drag handle du panel (toggle compact ↔ étendu)
+ * Initialise la poignée : glissement suivi, puis alignement sur l'arrêt
+ * le plus proche. Un glissement sous l'aperçu ferme la feuille.
  */
 function initActivityPanel() {
     const panel  = document.getElementById('activity-panel');
@@ -581,36 +1024,72 @@ function initActivityPanel() {
     const close  = document.getElementById('panel-close');
     if (!panel) return;
 
-    // Bouton fermer
     close?.addEventListener('click', hideActivityPanel);
-
     if (!handle) return;
 
-    // ── Touch drag : glisser vers le haut pour étendre, vers le bas pour fermer ──
-    let touchStartY = 0;
-    let startExpanded = false;
+    let dragging = false;
+    let startY = 0;
+    let startPx = 0;
+    let movedPx = 0;
 
-    handle.addEventListener('touchstart', (e) => {
-        touchStartY = e.touches[0].clientY;
-        startExpanded = panel.classList.contains('panel-expanded');
-    }, { passive: true });
+    const onDown = (e) => {
+        dragging = true;
+        movedPx  = 0;
+        startY   = e.clientY;
+        startPx  = svhToPx(SHEET_STOPS[currentSheetStop(panel)]);
+        panel.style.transition = 'none';            // suivre le doigt
+        handle.setPointerCapture?.(e.pointerId);
+    };
 
-    handle.addEventListener('touchend', (e) => {
-        const delta = touchStartY - e.changedTouches[0].clientY; // positif = glisse vers le haut
-        if (delta > 40) {
-            panel.classList.add('panel-expanded');
-        } else if (delta < -40) {
-            if (startExpanded) {
-                panel.classList.remove('panel-expanded');
-            } else {
-                hideActivityPanel();
-            }
+    const onMove = (e) => {
+        if (!dragging) return;
+        movedPx = startY - e.clientY;               // positif = vers le haut
+        const px = Math.min(
+            svhToPx(SHEET_STOPS.full),
+            Math.max(0, startPx + movedPx)
+        );
+        panel.style.setProperty('--stop', px + 'px');
+    };
+
+    const onUp = () => {
+        if (!dragging) return;
+        dragging = false;
+        panel.style.transition = '';                // rendre la transition
+
+        const px = startPx + movedPx;
+
+        // Tiré nettement sous l'aperçu : on ferme.
+        if (px < svhToPx(SHEET_STOPS.peek) * 0.6) {
+            hideActivityPanel();
+            return;
         }
-    }, { passive: true });
 
-    // Clic sur le handle = toggle compact / étendu (fallback desktop & tap rapide)
+        // Sinon : l'arrêt le plus proche.
+        const nearest = SHEET_ORDER.reduce((best, name) =>
+            Math.abs(svhToPx(SHEET_STOPS[name]) - px) <
+            Math.abs(svhToPx(SHEET_STOPS[best]) - px) ? name : best,
+        SHEET_ORDER[0]);
+
+        setSheetStop(panel, nearest);
+    };
+
+    handle.addEventListener('pointerdown', onDown);
+    handle.addEventListener('pointermove', onMove);
+    handle.addEventListener('pointerup', onUp);
+    handle.addEventListener('pointercancel', onUp);
+
+    // Tap sans glissement : on avance d'un arrêt, et on boucle.
     handle.addEventListener('click', () => {
-        panel.classList.toggle('panel-expanded');
+        if (Math.abs(movedPx) > 6) return;          // c'était un glissement
+        const i = SHEET_ORDER.indexOf(currentSheetStop(panel));
+        setSheetStop(panel, SHEET_ORDER[(i + 1) % SHEET_ORDER.length]);
+    });
+
+    // Échap ferme la feuille.
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && panel.classList.contains('panel-open')) {
+            hideActivityPanel();
+        }
     });
 }
 
@@ -694,7 +1173,6 @@ const ICON_COLORS = {
     // Vie nocturne
     'nightclub':       'purple',
     'bar':             'purple',
-    'queen':           'pink',
 
     // Sport & patinoire
     'iceskating':      'cyan',
@@ -860,6 +1338,49 @@ function _ratingBadgeHtml(avg, total) {
  * @param {number|null} userRating — note actuelle de l'utilisateur (ou null)
  * @param {number} activityId
  */
+/* ═══════════════════════════════════════════════════════════════════════════
+   LES CINQ VISAGES
+   ───────────────────────────────────────────────────────────────────────────
+   Un cercle et une bouche, rien d'autre. Pas d'yeux : ils n'ajoutent aucune
+   information et alourdissent le dessin à 20 px. Toute l'expression tient
+   dans la courbure de la bouche, du renversé (mécontent) au creux (ravi).
+
+   Tracé seul, en currentColor : le visage prend la couleur de son contexte,
+   ce qui évite d'avoir un fichier par teinte et par état.
+   ═══════════════════════════════════════════════════════════════════════════ */
+/* Couleur de chaque verdict. Une seule table : la barre, le repère de la
+   fiche et le marqueur sur la carte y puisent tous. */
+const RATING_COLORS = {
+    1: '#C22F2A',   // brique — déconseille
+    2: '#F2A25C',   // orange clair — pas fan
+    3: '#8E8E93',   // gris — normal
+    4: '#7CC46F',   // vert clair — bien
+    5: '#35785A'    // sauge — recommande
+};
+
+const RATING_MOUTHS = {
+    1: 'M7.2 16.4 Q12 9.5 16.8 16.4',  // franchement mécontent — bouche renversée
+    2: 'M8 15 Q12 13 16 15',           // peu convaincu — courbe légère
+    3: 'M8.4 14.4 H15.6',              // neutre — trait droit
+    4: 'M8 13.4 Q12 15.4 16 13.4',     // content — sourire discret
+    5: 'M7.2 12 Q12 19.5 16.8 12'      // ravi — franc sourire
+};
+
+/**
+ * Visage d'une note, en SVG inline.
+ * @param {number} value 1 à 5
+ * @param {number} size  côté en pixels
+ */
+function ratingFaceSvg(value, size = 20) {
+    const mouth = RATING_MOUTHS[value] || RATING_MOUTHS[3];
+    return `<svg class="rating-face" viewBox="0 0 24 24" width="${size}" height="${size}"
+        fill="none" stroke="currentColor" stroke-width="1.8"
+        stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="9"/>
+        <path d="${mouth}"/>
+    </svg>`;
+}
+
 function _ratingBarHtml(userRating, activityId) {
     const LABELS = [
         { v: 1, label: T.RATING_LABELS[1], cls: 'rating-btn-1' },
@@ -870,7 +1391,12 @@ function _ratingBarHtml(userRating, activityId) {
     ];
     const buttons = LABELS.map(({ v, label, cls }) => {
         const active = userRating === v ? ' rating-btn-active' : '';
-        return `<button class="rating-btn ${cls}${active}" data-action="rate" data-id="${activityId}" data-value="${v}">${label}</button>`;
+        return `<button class="rating-btn ${cls}${active}" data-action="rate"
+                    data-id="${activityId}" data-value="${v}"
+                    title="${label}" aria-label="${label}">
+                    ${ratingFaceSvg(v, 24)}
+                    <span class="rating-label">${label}</span>
+                </button>`;
     }).join('');
     return `<div class="rating-bar" id="rating-bar-${activityId}">${buttons}</div>`;
 }
@@ -901,10 +1427,13 @@ function createPopupContent(activity) {
         <div class="popup-content">
             <div class="popup-header" id="popup-header-${activity.id}">
                 <img class="popup-header-img" id="popup-header-img-${activity.id}" alt="" aria-hidden="true">
+                <!-- Votre note, en haut à gauche : c'est la première chose
+                     à savoir en rouvrant un lieu où vous êtes déjà allé. -->
+                <span class="popup-my-rating hidden" id="my-rating-${activity.id}"></span>
                 <div class="popup-header-text">
                     <h3 class="popup-title">${safeTitle}</h3>
                     <div class="popup-header-meta">
-                        <span class="category-badge category-${categoryClass}">${safeCategory}</span>
+                        <span class="bo-chip bo-chip--static">${safeCategory}</span>
                         <span id="rating-avg-badge-${activity.id}">${avgBadge}</span>
                     </div>
                 </div>
@@ -936,36 +1465,39 @@ function createPopupContent(activity) {
                 ${_ratingBarHtml(null, activity.id)}
             </div>
 
+            <!-- Trois niveaux d'action (doctrine, principe 3 : une intention
+                 par écran). Un seul bouton plein, et c'est "À faire" —
+                 l'intention du moment. "Similaires" est retiré tant que la
+                 fonctionnalité n'existe pas. -->
             <div class="popup-footer">
-                <button class="popup-btn btn-favorite ${favoriteClass}" data-action="favorite" data-id="${activity.id}">
-                    <i class="${favoriteIcon} fa-heart"></i>
-                    <span>${isFavorite ? T.BUTTONS.FAVORITE : T.BUTTONS.ADD}</span>
-                </button>
-
-                <button class="popup-btn btn-todo" data-action="todo" data-id="${activity.id}" id="todo-btn-${activity.id}">
+                <button class="bo-btn bo-btn--primary bo-btn--block btn-todo" data-action="todo" data-id="${activity.id}" id="todo-btn-${activity.id}">
                     <i class="fas fa-clipboard-list"></i>
                     <span>${T.BUTTONS.TODO}</span>
                 </button>
 
-                <button class="popup-btn btn-itinerary" data-action="itinerary" data-id="${activity.id}">
-                    <i class="fas fa-route"></i>
-                    <span>${T.BUTTONS.ITINERARY}</span>
-                </button>
+                <div class="popup-actions-secondary">
+                    <button class="bo-btn bo-btn--secondary btn-itinerary" data-action="itinerary" data-id="${activity.id}">
+                        <i class="fas fa-route"></i>
+                        <span>${T.BUTTONS.ITINERARY}</span>
+                    </button>
 
-                <button class="popup-btn btn-similar" data-action="similar" data-id="${activity.id}">
-                    <i class="fas fa-search"></i>
-                    <span>${T.BUTTONS.SIMILAR}</span>
-                </button>
+                    <button class="bo-btn bo-btn--secondary btn-group" data-action="group" data-id="${activity.id}">
+                        <i class="fas fa-layer-group"></i>
+                        <span>${T.BUTTONS.ADD_TO_GROUP}</span>
+                    </button>
+                </div>
 
-                <button class="popup-btn btn-share" data-action="share" data-id="${activity.id}" data-title="${escapeHtml(activity.title)}">
-                    <i class="fas fa-share-nodes"></i>
-                    <span>${T.BUTTONS.SHARE}</span>
-                </button>
+                <div class="popup-actions-tertiary">
+                    <button class="bo-btn bo-btn--tertiary btn-favorite ${favoriteClass}" data-action="favorite" data-id="${activity.id}">
+                        <i class="${favoriteIcon} fa-heart"></i>
+                        <span>${isFavorite ? T.BUTTONS.FAVORITE : T.BUTTONS.ADD}</span>
+                    </button>
 
-                <button class="popup-btn btn-group" data-action="group" data-id="${activity.id}">
-                    <i class="fas fa-layer-group"></i>
-                    <span>${T.BUTTONS.ADD_TO_GROUP}</span>
-                </button>
+                    <button class="bo-btn bo-btn--tertiary btn-share" data-action="share" data-id="${activity.id}" data-title="${escapeHtml(activity.title)}">
+                        <i class="fas fa-share-nodes"></i>
+                        <span>${T.BUTTONS.SHARE}</span>
+                    </button>
+                </div>
             </div>
         </div>
     `;
@@ -1003,6 +1535,8 @@ function setupPopupEventListeners(activity) {
                     if (data.success) {
                         const nowActive = !isActive;
                         _updateTodoBtn(activity.id, nowActive);
+                        // Repeint le marqueur : neutre ⇄ ambre
+                        setActivityState(activity.id, nowActive ? 'todo' : 'plain');
                     }
                     showToast(data.message || (isActive ? T.TOASTS.TODO_REMOVED : T.TOASTS.TODO_ADDED), data.success ? 'success' : 'error');
                 } catch {
@@ -1129,6 +1663,10 @@ async function submitRating(activityId, value) {
 
         _updateRatingBar(activityId, value);
 
+        // Noter, c'est attester : le serveur bascule l'activité en "réalisée"
+        // et la retire des "à faire". Le marqueur suit — ambre → sauge.
+        setActivityState(activityId, 'done', value);
+
         // Mettre à jour le badge moyenne
         if (data.average) {
             const badgeEl = document.getElementById(`rating-avg-badge-${activityId}`);
@@ -1149,10 +1687,35 @@ async function submitRating(activityId, value) {
  */
 function _updateRatingBar(activityId, selectedValue) {
     const bar = document.getElementById(`rating-bar-${activityId}`);
-    if (!bar) return;
-    bar.querySelectorAll('.rating-btn').forEach(btn => {
-        btn.classList.toggle('rating-btn-active', parseInt(btn.dataset.value) === selectedValue);
-    });
+    if (bar) {
+        bar.querySelectorAll('.rating-btn').forEach(btn => {
+            btn.classList.toggle('rating-btn-active', parseInt(btn.dataset.value) === selectedValue);
+        });
+    }
+    _updateMyRatingBadge(activityId, selectedValue);
+}
+
+/**
+ * Repère de note personnelle, en haut à gauche de la fiche.
+ * Masqué tant qu'on n'a pas noté : un emplacement vide vaut mieux
+ * qu'un visage neutre, qui se lirait comme un avis « moyen ».
+ * @param {number} activityId
+ * @param {number|null} value
+ */
+function _updateMyRatingBadge(activityId, value) {
+    const badge = document.getElementById(`my-rating-${activityId}`);
+    if (!badge) return;
+
+    if (!value) {
+        badge.classList.add('hidden');
+        badge.innerHTML = '';
+        return;
+    }
+
+    badge.className = `popup-my-rating verdict-${value}`;
+    badge.title     = T.RATING_LABELS[value];
+    badge.setAttribute('aria-label', `Votre note : ${T.RATING_LABELS[value]}`);
+    badge.innerHTML = ratingFaceSvg(value, 20);
 }
 
 /**
@@ -1334,7 +1897,7 @@ function _buildFavoritesListHtml() {
                     <button class="remove-favorite" data-id="${fav.id}" aria-label="Retirer"><i class="fas fa-heart-broken"></i></button>
                 </div>
                 <div class="fav-item-meta">
-                    <span class="category-badge category-${catClass}">${escapeHtml(fav.type || 'Autre')}</span>
+                    <span class="bo-chip bo-chip--static">${escapeHtml(fav.type || 'Autre')}</span>
                 </div>
             </div>`;
     }).join('');
@@ -1482,7 +2045,8 @@ function showToast(message, type = 'success') {
 
     clearTimeout(toast._hideTimer);
     toast._hideTimer = setTimeout(() => {
-        toast.style.transform = 'translateX(-50%) translateY(-8rem)';
+        // Le toast est ancré en bas : il se retire vers le bas.
+        toast.style.transform = 'translateX(-50%) translateY(8rem)';
     }, 3000);
 }
 
@@ -1790,6 +2354,8 @@ document.addEventListener('DOMContentLoaded', () => {
     checkStorageVersion();
     lockViewport();
     initMap();
+    watchThemeForMapStyle();
+    buildFilterBar();
     initStylePicker();
     initActivityPanel();
     initFavoritesPanel();

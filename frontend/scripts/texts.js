@@ -59,6 +59,10 @@ const T = Object.freeze({
         GROUP_VIEW_ENABLED:  (name) => `Vue groupe activée : ${name}`,
         GROUP_VIEW_DISABLED: 'Vue groupe désactivée',
         REMOVED:             'Retiré',
+        RELOCATING:          'Recherche de votre position…',
+        RELOCATED:           'Position mise à jour',
+        RELOCATE_DENIED:     'Localisation refusée — vous pouvez déplacer le point à la main',
+        RELOCATE_FAILED:     'Position introuvable — vous pouvez déplacer le point à la main',
         DEFAULT:             'Action réussie !',
     }),
 
@@ -88,7 +92,7 @@ const T = Object.freeze({
         ITINERARY:       'Itinéraire',
         SIMILAR:         'Similaires',
         SHARE:           'Partager',
-        ADD_TO_GROUP:    'Ajouter au groupe',
+        ADD_TO_GROUP:    'Groupe',
         CLOSE:           'Fermer',
         SAVE:            'Enregistrer',
         CANCEL:          'Annuler',
@@ -107,6 +111,7 @@ const T = Object.freeze({
         REMOVE:          'Retirer',
         DELETE:           'Supprimer',
         SENDING:         'Envoi…',
+        RELOCATE:        'Me relocaliser',
     }),
 
     // ── Labels / titres ──────────────────────────────────────────────────────
@@ -131,6 +136,8 @@ const T = Object.freeze({
         PICK_GROUP:      'Ajouter à un groupe',
         AVATAR_HINT:     'Clique ou dépose une image<br><small>JPEG · PNG · WebP · GIF — max 8 Mo</small>',
         AVATAR_PREVIEW:  'Aperçu',
+        YOU_HERE:        'Vous êtes ici',
+        YOU_MOVED:       'Point déplacé à la main',
         NEW_PSEUDO:      'Nouveau pseudo (3 caractères min)',
         FRIEND_PSEUDO:   'Pseudo de ton ami',
         GROUP_NAME:      'Nom du groupe',
@@ -140,20 +147,23 @@ const T = Object.freeze({
     PLACEHOLDERS: Object.freeze({
         PHONE:     '+33 6 12 34 56 78',
         OTP:       '123456',
-        SEARCH:    'Rechercher une activité, une ville ou une adresse',
+        SEARCH:    'Une activité, une ville, une adresse…',
         PSEUDO:    'Nouveau pseudo (3 caractères min)',
         FRIEND:    'Pseudo de ton ami',
         GROUP_NAME:'Nom du groupe',
     }),
 
     // ── États vides ──────────────────────────────────────────────────────────
+    // Un état vide qui se contente de constater est une occasion perdue :
+    // c'est le seul moment où l'on a toute l'attention de l'utilisateur.
+    // Chacun dit donc quoi faire, et où.
     EMPTY: Object.freeze({
-        FAVORITES:  'Aucun favori pour le moment',
-        FRIENDS:    'Aucun ami pour l\'instant',
-        GROUPS:     'Aucun groupe pour l\'instant',
-        GROUP_ACTIVITIES: 'Aucune activité dans ce groupe',
-        TODO:       'Aucune activité à faire',
-        DONE:       'Aucune activité réalisée',
+        FAVORITES:  'Touche le cœur d\'une fiche pour la retrouver ici.',
+        FRIENDS:    'Ajoute un ami par son pseudo pour voir ce qu\'il recommande.',
+        GROUPS:     'Crée un groupe pour préparer une sortie à plusieurs.',
+        GROUP_ACTIVITIES: 'Ajoute une activité depuis sa fiche pour la partager au groupe.',
+        TODO:       'Repère un lieu sur la carte et ajoute-le à tes envies.',
+        DONE:       'Note une activité après y être allé : elle atterrira ici.',
     }),
 
     // ── Chargement ───────────────────────────────────────────────────────────
@@ -161,6 +171,20 @@ const T = Object.freeze({
 
     // ── Notation ─────────────────────────────────────────────────────────────
     RATING_LABELS: Object.freeze(['', 'Déconseille', 'Pas fan', 'Normal', 'Bien', 'Recommande']),
+
+    // ── Familles de filtres ──────────────────────────────────────────────────
+    // Les douze types OSM regroupés en cinq familles : c'est ainsi qu'on
+    // choisit une sortie (« on fait quoi ce soir ? »), pas type par type.
+    FILTERS: Object.freeze({
+        all:      'Tout',
+        pleinair: 'Plein air',
+        culture:  'Culture',
+        sport:    'Sport',
+        jeux:     'Jeux',
+        nuit:     'Nuit',
+    }),
+
+    FILTER_EMPTY: (label) => `Aucune activité « ${label} » dans cette zone`,
 
     // ── Styles de carte ──────────────────────────────────────────────────────
     MAP_STYLES: Object.freeze({

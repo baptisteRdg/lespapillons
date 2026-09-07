@@ -11,7 +11,10 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
+    <!-- Ordre imposé : jetons → composants → écrans.
+         main.css ne doit garder que ce qui est propre à un écran. -->
     <link rel="stylesheet" href="styles/variables.css">
+    <link rel="stylesheet" href="styles/components.css">
     <link rel="stylesheet" href="styles/main.css">
 </head>
 <body>
@@ -19,19 +22,18 @@
     <!-- Header -->
     <header>
         <div class="header-container">
-            <!-- Logo -->
-            <div class="header-logo">
-                <i class="fas fa-butterfly header-logo-icon"></i>
-                <h1 class="header-title idiqlat-regular" data-t="APP_NAME">BeOut</h1>
-            </div>
+            <!-- Marque -->
+            <a class="header-logo" href="/" aria-label="BeOut, accueil">
+                <span class="header-title" data-t="APP_NAME">BeOut</span><span class="header-dot" aria-hidden="true">.</span>
+            </a>
 
-            <!-- Barre de recherche -->
+            <!-- Recherche -->
             <div class="header-search">
                 <div class="search-wrapper">
                     <input
                         type="text"
                         id="searchInput"
-                        placeholder="Rechercher une activité, une ville ou une adresse…"
+                        placeholder="Une activité, une ville…"
                         data-t-placeholder="PLACEHOLDERS.SEARCH"
                         class="search-input"
                     >
@@ -40,11 +42,18 @@
                 </div>
             </div>
 
-            <!-- Actions header -->
+            <!-- Menu : les trois destinations qu'on ouvre le plus souvent.
+                 Les avoir ici évite de passer par le tiroir compte. -->
+            <nav class="header-nav" aria-label="Navigation principale">
+                <button type="button" class="header-nav-link" data-nav="favoris">Favoris</button>
+                <button type="button" class="header-nav-link" data-nav="amis">Amis</button>
+                <button type="button" class="header-nav-link" data-nav="groupes">Groupes</button>
+            </nav>
+
+            <!-- Compte -->
             <div class="header-actions">
-                <!-- Bouton compte -->
                 <button id="accountBtn" class="account-btn" title="Mon compte" data-t-title="LABELS.MY_ACCOUNT">
-                    <i class="fas fa-user-circle"></i>
+                    <i class="fas fa-user"></i>
                 </button>
             </div>
         </div>
@@ -52,6 +61,12 @@
 
     <!-- Carte -->
     <div id="map"></div>
+
+    <!-- Filtres par famille : contrepartie du retrait de la couleur de
+         catégorie sur les marqueurs. Le tri devient explicite au lieu
+         de demander à l'utilisateur de décoder des teintes. -->
+    <div id="category-filters" class="category-filters" role="group"
+         aria-label="Filtrer les activités par type"></div>
 
     <!-- Loader carte (non bloquant) -->
     <div id="map-loader">
@@ -122,7 +137,7 @@
     <!-- ══ POPUP LOGIN ══════════════════════════════════════════════════════════ -->
     <div id="login-popup" class="overlay-backdrop" role="dialog" aria-modal="true" aria-label="Connexion" data-t-aria="LABELS.LOGIN">
         <div class="login-modal">
-            <button id="login-close" class="login-close-btn" aria-label="Fermer" data-t-aria="LABELS.CLOSE">
+            <button id="login-close" class="login-close-btn bo-icon-btn bo-icon-btn--sm" aria-label="Fermer" data-t-aria="LABELS.CLOSE">
                 <i class="fas fa-times"></i>
             </button>
 
@@ -139,14 +154,14 @@
                     <input
                         type="tel"
                         id="login-phone-input"
-                        class="login-input"
+                        class="bo-field"
                         placeholder="+33 6 12 34 56 78"
                         data-t-placeholder="PLACEHOLDERS.PHONE"
                         inputmode="tel"
                         autocomplete="tel"
                     >
                 </div>
-                <button id="login-send-btn" class="login-btn login-btn-primary">
+                <button id="login-send-btn" class="bo-btn bo-btn--primary bo-btn--block">
                     <span class="btn-text" data-t="BUTTONS.SEND_CODE">Recevoir le code SMS</span>
                     <span class="btn-spinner hidden"><i class="fas fa-spinner fa-spin"></i></span>
                 </button>
@@ -161,7 +176,7 @@
                     <input
                         type="text"
                         id="login-otp-input"
-                        class="login-input login-input-otp"
+                        class="bo-field bo-field--code"
                         placeholder="123456"
                         data-t-placeholder="PLACEHOLDERS.OTP"
                         inputmode="numeric"
@@ -169,11 +184,11 @@
                         maxlength="6"
                     >
                 </div>
-                <button id="login-verify-btn" class="login-btn login-btn-primary">
+                <button id="login-verify-btn" class="bo-btn bo-btn--primary bo-btn--block">
                     <span class="btn-text" data-t="BUTTONS.VERIFY_CODE">Valider le code</span>
                     <span class="btn-spinner hidden"><i class="fas fa-spinner fa-spin"></i></span>
                 </button>
-                <button id="login-back-btn" class="login-btn login-btn-secondary" data-t="BUTTONS.CHANGE_PHONE">
+                <button id="login-back-btn" class="bo-btn bo-btn--tertiary bo-btn--block" data-t="BUTTONS.CHANGE_PHONE">
                     Changer de numéro
                 </button>
             </div>
@@ -195,7 +210,7 @@
             <!-- En-tête profil -->
             <div class="account-drawer-header">
                 <h2 class="account-drawer-title" data-t="LABELS.MY_ACCOUNT">Mon compte</h2>
-                <button id="account-close-btn" class="account-close-btn" aria-label="Fermer" data-t-aria="LABELS.CLOSE">
+                <button id="account-close-btn" class="account-close-btn bo-icon-btn bo-icon-btn--sm" aria-label="Fermer" data-t-aria="LABELS.CLOSE">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
@@ -214,7 +229,7 @@
                 <div class="account-info">
                     <div class="account-pseudo-wrap" id="account-pseudo-wrap">
                         <span class="account-pseudo" id="account-pseudo-display"></span>
-                        <button class="account-edit-btn" id="account-pseudo-edit-btn" title="Modifier le pseudo" data-t-title="BUTTONS.EDIT_PSEUDO">
+                        <button class="account-edit-btn bo-icon-btn bo-icon-btn--sm" id="account-pseudo-edit-btn" title="Modifier le pseudo" data-t-title="BUTTONS.EDIT_PSEUDO">
                             <i class="fas fa-pencil"></i>
                         </button>
                     </div>
@@ -224,10 +239,10 @@
 
             <!-- Formulaire modifier pseudo (caché par défaut) -->
             <div class="account-edit-form hidden" id="account-pseudo-form">
-                <input type="text" id="account-pseudo-input" class="account-input" placeholder="Nouveau pseudo (3 caractères min)" maxlength="30" data-t-placeholder="PLACEHOLDERS.PSEUDO">
+                <input type="text" id="account-pseudo-input" class="account-input bo-field" placeholder="Nouveau pseudo (3 caractères min)" maxlength="30" data-t-placeholder="PLACEHOLDERS.PSEUDO">
                 <div class="account-edit-actions">
-                    <button id="account-pseudo-save-btn" class="account-btn-primary" data-t="BUTTONS.SAVE">Enregistrer</button>
-                    <button id="account-pseudo-cancel-btn" class="account-btn-secondary" data-t="BUTTONS.CANCEL">Annuler</button>
+                    <button id="account-pseudo-save-btn" class="bo-btn bo-btn--primary bo-btn--sm" data-t="BUTTONS.SAVE">Enregistrer</button>
+                    <button id="account-pseudo-cancel-btn" class="bo-btn bo-btn--secondary bo-btn--sm" data-t="BUTTONS.CANCEL">Annuler</button>
                 </div>
             </div>
 
@@ -247,8 +262,8 @@
                     style="display:none"
                 >
                 <div class="account-edit-actions">
-                    <button id="account-avatar-save-btn" class="account-btn-primary" disabled data-t="BUTTONS.SAVE">Enregistrer</button>
-                    <button id="account-avatar-cancel-btn" class="account-btn-secondary" data-t="BUTTONS.CANCEL">Annuler</button>
+                    <button id="account-avatar-save-btn" class="bo-btn bo-btn--primary bo-btn--sm" disabled data-t="BUTTONS.SAVE">Enregistrer</button>
+                    <button id="account-avatar-cancel-btn" class="bo-btn bo-btn--secondary bo-btn--sm" data-t="BUTTONS.CANCEL">Annuler</button>
                 </div>
             </div>
 
@@ -261,12 +276,13 @@
                         <i class="fas fa-user-group"></i>
                         <span data-t="LABELS.FRIENDS">Amis</span>
                         <i class="fas fa-chevron-down accordion-chevron"></i>
+                        <span class="account-count" id="count-friends" hidden></span>
                     </button>
                     <div class="account-accordion-body hidden" id="section-friends">
                         <!-- Ajouter un ami -->
                         <div class="friend-add-wrap">
-                            <input type="text" id="friend-pseudo-input" class="account-input" placeholder="Pseudo de ton ami" data-t-placeholder="PLACEHOLDERS.FRIEND">
-                            <button id="friend-add-btn" class="account-btn-primary">
+                            <input type="text" id="friend-pseudo-input" class="account-input bo-field" placeholder="Pseudo de ton ami" data-t-placeholder="PLACEHOLDERS.FRIEND">
+                            <button id="friend-add-btn" class="bo-btn bo-btn--primary bo-btn--sm">
                                 <i class="fas fa-user-plus"></i>
                             </button>
                         </div>
@@ -285,16 +301,17 @@
                         <i class="fas fa-layer-group"></i>
                         <span data-t="LABELS.GROUPS">Groupes</span>
                         <i class="fas fa-chevron-down accordion-chevron"></i>
+                        <span class="account-count" id="count-groups" hidden></span>
                     </button>
                     <div class="account-accordion-body hidden" id="section-groups">
                         <div class="group-create-wrap">
-                            <input type="text" id="group-name-input" class="account-input" placeholder="Nom du groupe" data-t-placeholder="PLACEHOLDERS.GROUP_NAME">
-                            <button id="group-create-btn" class="account-btn-primary" data-t="BUTTONS.CREATE_GROUP">Créer</button>
+                            <input type="text" id="group-name-input" class="account-input bo-field" placeholder="Nom du groupe" data-t-placeholder="PLACEHOLDERS.GROUP_NAME">
+                            <button id="group-create-btn" class="bo-btn bo-btn--primary bo-btn--sm" data-t="BUTTONS.CREATE_GROUP">Créer</button>
                         </div>
 
                         <div class="group-map-view-actions hidden" id="group-map-view-actions">
                             <span class="group-map-view-label" id="group-map-view-label"></span>
-                            <button id="group-map-view-exit-btn" class="account-btn-secondary" data-t="BUTTONS.EXIT_GROUP_VIEW">Quitter la vue</button>
+                            <button id="group-map-view-exit-btn" class="bo-btn bo-btn--secondary bo-btn--sm" data-t="BUTTONS.EXIT_GROUP_VIEW">Quitter la vue</button>
                         </div>
 
                         <div id="groups-list" class="groups-list">
@@ -309,6 +326,7 @@
                         <i class="fas fa-bookmark"></i>
                         <span data-t="LABELS.TODO">À faire</span>
                         <i class="fas fa-chevron-down accordion-chevron"></i>
+                        <span class="account-count" id="count-todo" hidden></span>
                     </button>
                     <div class="account-accordion-body hidden" id="section-todo">
                         <div id="todo-list" class="account-activity-list">
@@ -323,6 +341,7 @@
                         <i class="fas fa-circle-check"></i>
                         <span data-t="LABELS.DONE">Réalisées</span>
                         <i class="fas fa-chevron-down accordion-chevron"></i>
+                        <span class="account-count" id="count-done" hidden></span>
                     </button>
                     <div class="account-accordion-body hidden" id="section-done">
                         <div id="done-list" class="account-activity-list">
@@ -334,7 +353,7 @@
             </div>
 
             <!-- Déconnexion -->
-            <button id="account-logout-btn" class="account-logout-btn">
+            <button id="account-logout-btn" class="account-logout-btn bo-btn bo-btn--danger-quiet bo-btn--block">
                 <i class="fas fa-right-from-bracket"></i>
                 <span data-t="BUTTONS.LOGOUT">Se déconnecter</span>
             </button>
@@ -347,14 +366,14 @@
         <div class="group-picker-sheet">
             <div class="group-picker-header">
                 <h3 id="group-picker-title" data-t="LABELS.PICK_GROUP">Ajouter à un groupe</h3>
-                <button id="group-picker-close-btn" class="group-picker-close-btn" aria-label="Fermer" data-t-aria="LABELS.CLOSE">
+                <button id="group-picker-close-btn" class="group-picker-close-btn bo-icon-btn bo-icon-btn--sm" aria-label="Fermer" data-t-aria="LABELS.CLOSE">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
             <div id="group-picker-list" class="group-picker-list"></div>
             <div class="group-picker-create">
-                <input type="text" id="group-picker-create-input" class="account-input" placeholder="Nom du groupe" data-t-placeholder="PLACEHOLDERS.GROUP_NAME">
-                <button id="group-picker-create-btn" class="account-btn-primary" data-t="BUTTONS.CREATE_AND_ADD">Créer et ajouter</button>
+                <input type="text" id="group-picker-create-input" class="account-input bo-field" placeholder="Nom du groupe" data-t-placeholder="PLACEHOLDERS.GROUP_NAME">
+                <button id="group-picker-create-btn" class="bo-btn bo-btn--primary bo-btn--sm" data-t="BUTTONS.CREATE_AND_ADD">Créer et ajouter</button>
             </div>
         </div>
     </div>

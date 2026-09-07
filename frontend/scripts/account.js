@@ -101,10 +101,10 @@ function _renderFriendRequests(requests) {
                 <div class="friend-avatar-sm">${r.from.pseudo.slice(0, 2).toUpperCase()}</div>
                 <span class="friend-name">${escapeHtml(r.from.pseudo)}</span>
                 <div class="friend-request-actions">
-                    <button class="fq-accept-btn account-btn-primary-sm" data-id="${r.id}">
+                    <button class="fq-accept-btn bo-btn bo-btn--primary bo-btn--sm" data-id="${r.id}">
                         <i class="fas fa-check"></i>
                     </button>
-                    <button class="fq-reject-btn account-btn-danger-sm" data-id="${r.id}">
+                    <button class="fq-reject-btn bo-btn bo-btn--danger bo-btn--sm" data-id="${r.id}">
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
@@ -120,6 +120,8 @@ function _renderFriendRequests(requests) {
 }
 
 function _renderFriends(friends) {
+    _setSectionCount('count-friends', (friends || []).length);
+
     const container = document.getElementById('friends-list');
     if (!container) return;
 
@@ -132,7 +134,7 @@ function _renderFriends(friends) {
         <div class="friend-item" data-id="${f.id}">
             <div class="friend-avatar-sm">${f.pseudo.slice(0, 2).toUpperCase()}</div>
             <span class="friend-name">${escapeHtml(f.pseudo)}</span>
-            <button class="friend-remove-btn" data-id="${f.id}" title="${T.BUTTONS.DELETE}">
+            <button class="friend-remove-btn bo-icon-btn bo-icon-btn--sm bo-icon-btn--danger" data-id="${f.id}" title="${T.BUTTONS.DELETE}">
                 <i class="fas fa-user-minus"></i>
             </button>
         </div>
@@ -226,6 +228,8 @@ async function _loadGroups() {
 }
 
 function _renderGroups() {
+    _setSectionCount('count-groups', (_groupsCache || []).length);
+
     const container = document.getElementById('groups-list');
     if (!container) return;
 
@@ -250,7 +254,7 @@ function _renderGroups() {
                 </div>
             </button>
             <div class="group-item-actions">
-                <button class="group-view-btn account-btn-primary" data-id="${g.id}">${T.BUTTONS.VIEW_ON_MAP}</button>
+                <button class="group-view-btn bo-btn bo-btn--primary bo-btn--sm" data-id="${g.id}">${T.BUTTONS.VIEW_ON_MAP}</button>
             </div>
             ${_expandedGroupId === g.id ? (() => {
                 const memberIds = new Set((g.members || []).map((m) => m.id));
@@ -262,7 +266,7 @@ function _renderGroups() {
                             <div class="group-inline-row">
                                 <p class="account-section-label">Membres</p>
                                 <div class="group-member-picker-wrap">
-                                    <button class="account-btn-secondary group-member-picker-toggle" data-id="${g.id}" ${addableFriends.length ? '' : 'disabled'}>
+                                    <button class="group-member-picker-toggle bo-btn bo-btn--secondary bo-btn--sm" data-id="${g.id}" ${addableFriends.length ? '' : 'disabled'}>
                                         ${T.BUTTONS.ADD_MEMBER}
                                     </button>
                                     ${addableFriends.length ? `
@@ -292,7 +296,7 @@ function _renderGroups() {
                                             <span class="group-activity-name">${escapeHtml(a.name)}</span>
                                             <span class="group-activity-type">${escapeHtml(a.type)}</span>
                                         </div>
-                                        <button class="account-activity-remove group-activity-remove-btn" data-group-id="${g.id}" data-id="${a.id}" title="${T.BUTTONS.REMOVE}">
+                                        <button class="account-activity-remove group-activity-remove-btn bo-icon-btn bo-icon-btn--sm bo-icon-btn--danger" data-group-id="${g.id}" data-id="${a.id}" title="${T.BUTTONS.REMOVE}">
                                             <i class="fas fa-trash-alt"></i>
                                         </button>
                                     </div>
@@ -594,9 +598,24 @@ async function _loadDone() {
 
 const RATING_LABELS = T.RATING_LABELS;
 
+/**
+ * Met à jour la pastille de compteur d'une section du panneau compte.
+ * Masquée quand c'est vide : un « 0 » n'apprend rien et fait du bruit.
+ * @param {string} id - id de la pastille (count-friends, count-todo, …)
+ * @param {number} n
+ */
+function _setSectionCount(id, n) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = n > 0 ? String(n) : '';
+    el.hidden = n === 0;
+}
+
 function _renderActivityList(containerId, activities, listType) {
     const container = document.getElementById(containerId);
     if (!container) return;
+
+    _setSectionCount(listType === 'todo' ? 'count-todo' : 'count-done', activities.length);
 
     if (!activities.length) {
         container.innerHTML = `<p class="account-empty-msg">${listType === 'todo' ? T.EMPTY.TODO : T.EMPTY.DONE}</p>`;
@@ -837,6 +856,46 @@ function _authFetch(url, options = {}) {
     });
 }
 
+/**
+ * Ouvre une destination du menu d'en-tête.
+ * L'intérêt du menu est d'atteindre une section en un clic : on ouvre
+ * donc le tiroir ET on déplie l'accordéon visé, plutôt que de laisser
+ * l'utilisateur chercher.
+ * @param {'favoris'|'amis'|'groupes'} destination
+ */
+function openHeaderDestination(destination) {
+    if (destination === 'favoris') {
+        if (typeof showFavoritesPanel === 'function') showFavoritesPanel();
+        return;
+    }
+
+    const sections = { amis: 'section-friends', groupes: 'section-groups' };
+    const targetId = sections[destination];
+    if (!targetId) return;
+
+    openAccountPanel();
+
+    // Replier les autres : une seule section ouverte à la fois, sinon
+    // le tiroir devient un mur de contenu.
+    document.querySelectorAll('.account-accordion-toggle').forEach(toggle => {
+        const body = document.getElementById(toggle.dataset.target);
+        if (!body) return;
+        const isTarget = toggle.dataset.target === targetId;
+        body.classList.toggle('hidden', !isTarget);
+        toggle.querySelector('.accordion-chevron')?.classList.toggle('rotated', isTarget);
+    });
+
+    document.getElementById(targetId)
+        ?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+}
+
+/** Branche les liens du menu d'en-tête. */
+function initHeaderNav() {
+    document.querySelectorAll('[data-nav]').forEach(link => {
+        link.addEventListener('click', () => openHeaderDestination(link.dataset.nav));
+    });
+}
+
 // ── Accordéons ────────────────────────────────────────────────────────────────
 
 function _initAccordions() {
@@ -856,6 +915,8 @@ function _initAccordions() {
 // ── Initialisation ─────────────────────────────────────────────────────────────
 
 function initAccountPanel() {
+    initHeaderNav();
+
     // Fermer
     document.getElementById('account-close-btn')?.addEventListener('click', closeAccountPanel);
     document.getElementById('account-backdrop')?.addEventListener('click', closeAccountPanel);

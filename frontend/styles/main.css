@@ -44,94 +44,170 @@ input, button, select, textarea {
 }
 
 /* ===== HEADER ===== */
+/* ===== BARRE D'EN-TÊTE ==========================================
+   Verre dépoli, repris de la page en ligne : la carte reste
+   devinable dessous. Structure de la charte — marque, recherche,
+   menu, avatar. Les filtres et le sélecteur de fond restent EN
+   DEHORS, posés sur la carte.  Hauteur 68 px = 10 + 48 + 10.     */
 header {
     position: absolute;
     top: 0; left: 0; right: 0;
     z-index: 1000;
-    background: rgba(255, 255, 255, 0.4);
-    backdrop-filter: blur(40px);
-    -webkit-backdrop-filter: blur(40px);
-    box-shadow: 0 2px 8px rgba(167, 167, 167, 0.6);
+    background: var(--bo-glass);
+    backdrop-filter: blur(40px) saturate(1.4);
+    -webkit-backdrop-filter: blur(40px) saturate(1.4);
+    box-shadow: var(--bo-glass-shadow);
+    border-bottom: 1px solid var(--bo-line);
 }
 
-@supports not (backdrop-filter: blur(12px)) {
-    header { background: rgba(255, 255, 255, 0.95); }
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    header { background: var(--bo-glass-solid); }
 }
 
 .header-container {
     display: flex;
     align-items: center;
-    gap: 1rem;
-    padding: 0.75rem 1rem;
+    gap: var(--bo-3);
+    padding: 10px var(--bo-4);
+    max-width: 1180px;            /* limite de contenu, charte */
+    margin: 0 auto;
 }
 
+/* ── Marque ─────────────────────────────────────────────────── */
 .header-logo {
     display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    flex-shrink: 0;
-}
-
-.header-logo-icon {
-    font-size: 1.875rem;
-    color: var(--color-primary);
+    align-items: baseline;
+    flex: none;
+    text-decoration: none;
 }
 
 .header-title {
-    font-size: 1.5rem;
+    font-size: 24px;
     font-weight: 700;
-    color: var(--color-text-primary);
+    letter-spacing: -.02em;
+    line-height: 1;
+    color: var(--bo-ink);
 }
 
+/* Le point est le seul endroit de la marque qui porte l'orange. */
+.header-dot {
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--bo-orange);
+}
+
+.header-logo-icon { display: none; }
+
+/* ── Recherche : pastille pleine, sans ombre — elle est DANS la
+      barre, elle ne flotte plus sur la carte. ─────────────────── */
 .header-search {
-    flex: 1;
-    max-width: 42rem;
+    flex: 1 1 auto;
+    min-width: 0;
+    max-width: 420px;
 }
 
-.search-wrapper {
-    position: relative;
+/* ── Menu ───────────────────────────────────────────────────── */
+.header-nav {
+    display: none;                /* apparaît à partir de 1024 */
+    align-items: center;
+    gap: var(--bo-1);
+    margin-left: auto;
 }
+
+.header-nav-link {
+    height: 40px;
+    padding: 0 var(--bo-3);
+    border: none;
+    background: transparent;
+    border-radius: var(--bo-radius-control);
+
+    font: 500 14.5px/1 "Outfit", sans-serif;
+    color: var(--bo-ink-2);
+    cursor: pointer;
+    white-space: nowrap;
+
+    transition: background var(--bo-out) var(--bo-ease),
+                color var(--bo-out) var(--bo-ease);
+}
+
+.header-nav-link:hover {
+    background: var(--bo-surface-2);
+    color: var(--bo-ink);
+}
+
+.header-nav-link[aria-current="page"] {
+    color: var(--bo-ink);
+    font-weight: 600;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--bo-2);
+    flex: none;
+    margin-left: auto;
+}
+
+/* Le menu prend le relais de la marge automatique quand il est là. */
+.header-nav ~ .header-actions { margin-left: var(--bo-2); }
+
+
+/* ── Recherche ──────────────────────────────────────────────────
+   Pastille pleine : elle est DANS la barre, elle ne flotte plus
+   sur la carte — donc pas d'ombre, pas de bordure au repos.     */
+.search-wrapper { position: relative; }
 
 .search-input {
     width: 100%;
-    padding: 0.5rem 1rem 0.5rem 2.5rem;
-    border-radius: 0.5rem;
-    border: 1px solid rgba(255, 255, 255, 0.4);
+    height: var(--touch-target);
+    padding: 0 var(--bo-4) 0 44px;
+    /* Pastille, y compris au focus. C'est la seule saisie du produit
+       qui déroge au rayon rectangulaire de la charte : elle est posée
+       sur la carte, pas dans un formulaire. */
+    border-radius: var(--bo-radius-pill);
+    border: 1px solid var(--bo-line);
     outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
-    background: rgba(255, 255, 255, 0.6);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-    font-size: 0.9375rem;
+    background: var(--bo-surface);
+    font-size: 15px;
+    color: var(--bo-ink);
+    transition: border-color var(--bo-out) var(--bo-ease),
+                box-shadow var(--bo-out) var(--bo-ease);
 }
 
+.search-input::placeholder { color: var(--color-text-placeholder); }
+
 .search-input:focus {
-    background: rgba(255, 255, 255, 0.8);
-    border-color: var(--color-primary-light);
-    box-shadow: 0 0 0 2px rgba(147, 197, 253, 0.4);
+    border-color: var(--bo-orange);
+    box-shadow: 0 0 0 3px rgba(249, 115, 22, .22);
+}
+
+/* Le halo de focus épouse la pastille, il ne la redécoupe pas. */
+.search-input:focus-visible {
+    outline: none;
+    border-radius: var(--bo-radius-pill);
 }
 
 .search-icon {
     position: absolute;
-    left: 0.75rem;
+    left: 17px;
     top: 50%;
     transform: translateY(-50%);
     color: var(--color-text-placeholder);
+    font-size: 14px;
     pointer-events: none;
 }
 
+/* ── Suggestions ────────────────────────────────────────────── */
 .search-suggestions {
     position: absolute;
-    top: calc(100% + 0.35rem);
+    top: calc(100% + 6px);
     left: 0;
     right: 0;
-    background: rgba(255, 255, 255, 0.96);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    border-radius: 10px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    background: var(--bo-surface);
+    border: 1px solid var(--bo-line);
+    border-radius: var(--bo-radius);
+    box-shadow: var(--bo-shadow-float);
     z-index: 1200;
     overflow: hidden;
 }
@@ -140,26 +216,23 @@ header {
     width: 100%;
     border: none;
     background: transparent;
-    padding: 0.55rem 0.75rem;
+    min-height: 44px;
+    padding: 0 14px;
     text-align: left;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 0.5rem;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    gap: var(--bo-2);
+    border-bottom: 1px solid var(--bo-line);
+    cursor: pointer;
 }
 
-.search-suggestion-item:last-child {
-    border-bottom: none;
-}
-
-.search-suggestion-item:hover {
-    background: rgba(59, 130, 246, 0.08);
-}
+.search-suggestion-item:last-child { border-bottom: none; }
+.search-suggestion-item:hover      { background: var(--bo-surface-2); }
 
 .search-suggestion-label {
-    font-size: 0.85rem;
-    color: var(--color-text-primary);
+    font-size: 14px;
+    color: var(--bo-ink);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -167,22 +240,36 @@ header {
 
 .search-suggestion-type {
     flex-shrink: 0;
-    font-size: 0.68rem;
+    font-size: 10.5px;
     text-transform: uppercase;
-    letter-spacing: 0.03em;
+    letter-spacing: .04em;
     font-weight: 700;
-    color: var(--color-primary-dark);
-    background: rgba(59, 130, 246, 0.12);
-    border-radius: 999px;
-    padding: 0.18rem 0.45rem;
+    color: var(--bo-ink-3);
+    background: var(--bo-surface-2);
+    border-radius: var(--bo-radius-pill);
+    padding: 3px 8px;
 }
 
-.header-actions {
+/* ── Avatar : un rond. C'est une identité, pas une commande —
+      il ne prend donc ni le rayon ni la surface des boutons.    */
+.account-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid var(--bo-line);
+    background: var(--bo-surface-2);
+    color: var(--bo-ink-2);
+    font-size: 15px;
     display: flex;
     align-items: center;
-    gap: 1rem;
-    flex-shrink: 0;
+    justify-content: center;
+    overflow: hidden;
+    padding: 0;
+    flex: none;
+    cursor: pointer;
+    transition: border-color var(--bo-out) var(--bo-ease);
 }
+.account-btn:hover { border-color: var(--bo-line-2); }
 
 /* Texte masqué sur mobile */
 .hide-mobile { display: inline; }
@@ -191,23 +278,21 @@ header {
 /* ── Bouton flottant favoris ────────────────────────────────────────── */
 #fav-picker {
     position: fixed;
-    top: calc(var(--header-h, 60px) + 10px);
-    right: 68px;
+    top: calc(var(--header-h, 60px) + 12px);
+    right: 72px;
     z-index: 1000;
     pointer-events: none;
 }
 
 #fav-picker-toggle {
     pointer-events: auto;
-    width: 44px;
-    height: 44px;
-    border-radius: 12px;
-    background: rgba(255, 255, 255, 0.92);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.6);
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
-    color: #ef4444;
+    width: var(--touch-target);
+    height: var(--touch-target);
+    border-radius: var(--border-radius-md);
+    background: var(--bo-surface);
+    border: 1px solid var(--color-bg-border);
+    box-shadow: var(--shadow-float);
+    color: var(--clay);
     font-size: 16px;
     cursor: pointer;
     display: flex;
@@ -218,8 +303,8 @@ header {
 }
 
 #fav-picker-toggle:hover {
-    background: rgba(255, 255, 255, 1);
-    transform: scale(1.05);
+    border-color: var(--color-border-default);
+    transform: scale(1.04);
 }
 
 .fav-count-badge {
@@ -229,7 +314,7 @@ header {
     min-width: 18px;
     height: 18px;
     border-radius: 9px;
-    background: #ef4444;
+    background: var(--clay);
     color: white;
     font-size: 11px;
     font-weight: 700;
@@ -350,7 +435,7 @@ header {
     color: var(--color-text-primary);
 }
 
-.fav-list-header i { color: #ef4444; }
+.fav-list-header i { color: var(--clay); }
 
 .fav-item {
     padding: 0.75rem;
@@ -380,7 +465,7 @@ header {
 .remove-favorite {
     background: none;
     border: none;
-    color: #ef4444;
+    color: var(--clay);
     padding: 0.35rem;
     line-height: 1;
     transition: color 0.2s, transform 0.15s;
@@ -388,7 +473,7 @@ header {
     touch-action: manipulation;
 }
 
-.remove-favorite:hover { color: #b91c1c; transform: scale(1.15); }
+.remove-favorite:hover { color: var(--clay); transform: scale(1.15); }
 
 .fav-item-meta {
     margin-top: 0.35rem;
@@ -403,17 +488,20 @@ header {
 
 /* Scrollbar sidebar */
 #favoritesContent::-webkit-scrollbar { width: 6px; }
-#favoritesContent::-webkit-scrollbar-track { background: #f1f1f1; }
+#favoritesContent::-webkit-scrollbar-track { background: var(--color-bg-muted); }
 #favoritesContent::-webkit-scrollbar-thumb { background: var(--color-primary); border-radius: 3px; }
 #favoritesContent::-webkit-scrollbar-thumb:hover { background: var(--color-primary-dark); }
 
 /* ===== TOAST ===== */
+/* En bas : en haut, il percutait la rangée de filtres. Et au-dessus de
+   tout le reste — un message qui s'efface au bout de 3 s ne doit jamais
+   passer derrière un panneau. */
 #toast {
     position: fixed;
-    top: calc(var(--header-h, 60px) + 0.75rem);
+    bottom: 1.5rem;
     left: 50%;
-    transform: translateX(-50%) translateY(-8rem);
-    z-index: 800;
+    transform: translateX(-50%) translateY(8rem);
+    z-index: 3000;
     color: white;
     padding: 0.75rem 1.5rem;
     border-radius: 0.5rem;
@@ -428,29 +516,45 @@ header {
 
 #toast.toast-success { background-color: var(--color-success); }
 #toast.toast-error   { background-color: var(--color-error); }
-#toast.toast-info    { background-color: var(--color-primary); }
+/* Encre plutôt qu'ambre : le blanc ne passe pas le contraste sur l'ambre. */
+#toast.toast-info    { background-color: var(--color-text-heading); }
 
 /* ===== MARQUEUR UTILISATEUR ===== */
 .user-marker-container { z-index: 1000; }
 
+/* Un point cerclé de blanc, posé dans un halo — la forme convenue
+   pour « vous êtes ici ». Elle se distingue au premier coup d'œil
+   des gouttes, qui désignent des lieux : ici c'est une position, pas
+   une destination. Le halo double aussi la surface de préhension,
+   puisque le repère reste déplaçable. */
 .user-marker {
     width: 36px;
     height: 36px;
-    background: var(--color-user-marker);
-    border: 3px solid var(--color-user-marker-border);
     border-radius: 50%;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    cursor: move;
+    background: var(--bo-you-halo);
+    cursor: grab;
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: transform var(--bo-out) var(--bo-ease);
 }
 
-.user-marker-icon {
-    width: 22px;
-    height: 22px;
-    object-fit: contain;
+.user-marker:active { cursor: grabbing; }
+.user-marker:hover  { transform: scale(1.08); }
+
+.user-marker::after {
+    content: '';
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--bo-you);
+    border: 3px solid var(--bo-you-ring);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.30);
 }
+
+/* Le pictogramme du bonhomme n'a plus lieu d'être : le point se
+   suffit, et il restait illisible à 22 px dans un rond de 36. */
+.user-marker-icon { display: none; }
 
 @keyframes pulse {
     0%, 100% { transform: scale(1); }
@@ -459,20 +563,111 @@ header {
 
 .marker-active { animation: pulse 2s infinite; }
 
-/* ===== MARQUEUR ACTIVITÉ ===== */
+/* ===== MARQUEUR ACTIVITÉ =====================================
+   La couleur n'encode PAS la catégorie (le pictogramme s'en charge)
+   mais l'état de l'activité pour l'utilisateur.
+
+   Le neutre est ENCRE, pas blanc : sur un fond de carte pâle, un pin
+   blanc disparaît, or les marqueurs sont le contenu. La hiérarchie se
+   joue donc sur « sans teinte » contre « avec teinte » — l'ambre et la
+   sauge restent les seules choses colorées à l'écran.
+
+   Un anneau blanc détache chaque pin du fond, quel que soit ce qu'il
+   y a dessous (parc, eau, route).                                  */
+/* Une goutte, pas un disque : elle DÉSIGNE un point précis, là où un
+   cercle se contente d'être posé dessus. Le coin net est en bas.
+   L'ombre portée est appliquée au conteneur non pivoté (via filter)
+   pour qu'elle reste verticale malgré la rotation du pin. */
+.custom-marker {
+    filter: drop-shadow(0 2px 3px rgba(26, 29, 22, 0.35));
+}
+
 .activity-marker-pin {
-    width: 2.5rem;
-    height: 2.5rem;
-    border-radius: 50%;
-    border: 4px solid white;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-    color: white;
-    font-size: 1.25rem;
+    width: 100%;
+    height: 100%;
+    border-radius: 50% 50% 50% 3px;
+    transform: rotate(-45deg);
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: var(--color-primary); /* couleur par défaut */
+    transition: transform var(--duration-out) var(--ease);
 }
+
+/* Le contenu se remet droit */
+.activity-marker-pin > * {
+    transform: rotate(45deg);
+}
+
+/* Le disque de la goutte fait `size` de diamètre ; à 17 px le glyphe
+   n'en occupait que la moitié et laissait trop de vide. */
+/* Masque plutôt qu'image : la forme vient du SVG, la couleur du fond.
+   C'est le seul moyen de recolorer un pictogramme externe sans dupliquer
+   un fichier par teinte. */
+.marker-glyph {
+    width: 20px;
+    height: 20px;
+    display: block;
+    background-color: var(--marker-tint, #FFFFFF);
+    /* Propriétés longues, pas le raccourci `mask` : plusieurs moteurs
+       refusent une variable comme image dans le raccourci, et le
+       pictogramme disparaît sans erreur. */
+    -webkit-mask-size: contain;
+            mask-size: contain;
+    -webkit-mask-position: center;
+            mask-position: center;
+    -webkit-mask-repeat: no-repeat;
+            mask-repeat: no-repeat;
+}
+
+/* Quelconque — sans teinte, donc en retrait, mais parfaitement lisible */
+.activity-marker-pin.is-plain {
+    background: var(--bo-ink);
+    color: var(--bo-surface);
+    font-size: 0.95rem;
+    box-shadow: 0 0 0 2px var(--bo-surface);
+}
+
+/* Une envie — la seule chose chaude de la carte */
+/* Une envie garde le fond encre des autres marqueurs : seul son CONTOUR
+   passe en orange. Le pictogramme conserve donc sa teinte de famille,
+   et la carte ne se couvre pas d'aplats orange. */
+.activity-marker-pin.is-todo {
+    background: var(--bo-ink);
+    color: var(--bo-surface);
+    font-size: 1.05rem;
+    box-shadow: 0 0 0 3px var(--bo-orange),
+                0 0 10px rgba(249, 115, 22, 0.55);
+}
+/* Sur un marqueur d'état, la teinte de famille s'efface : c'est l'état
+   qui prime, et une couleur de famille sur de l'orange se battrait avec. */
+.activity-marker-pin.is-todo .marker-glyph {
+    width: 23px;
+    height: 23px;
+}
+
+.activity-marker-pin.is-done .marker-glyph {
+    background-color: #FFFFFF;
+}
+
+/* Un amas mêle les familles : son pictogramme reste neutre. */
+.activity-cluster-pin .marker-glyph {
+    width: 18px;
+    height: 18px;
+    background-color: var(--bo-surface);
+}
+
+/* Un souvenir — coloré, mais posé */
+/* Une activité notée porte la couleur de SON verdict (--verdict, posé
+   par le JS). La sauge ne sert plus que de repli, quand on est passé
+   en « réalisée » sans avoir encore noté. */
+.activity-marker-pin.is-done {
+    background: var(--verdict, var(--bo-sage));
+    color: var(--bo-surface);
+    font-size: 1.05rem;
+    box-shadow: 0 0 0 2px var(--bo-surface);
+}
+
+.custom-marker:hover .activity-marker-pin { transform: rotate(-45deg) scale(1.12); }
 
 /* ===== CLUSTERS PAR CATÉGORIE ===== */
 .custom-cluster {
@@ -480,26 +675,31 @@ header {
     border: none !important;
 }
 
+/* Le cluster garde le disque : il désigne une zone, pas un point précis.
+   La différence de forme dit d'emblée « plusieurs » contre « un ». */
 .activity-cluster-pin {
-    width: 48px;
-    height: 48px;
+    width: 44px;
+    height: 44px;
     border-radius: 50%;
-    border: 3px solid white;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.22);
-    color: white;
-    font-size: 1.1rem;
+    background: var(--bo-ink);
+    box-shadow: 0 0 0 2px var(--bo-surface),
+                0 2px 8px rgba(0, 0, 0, 0.30);
+    color: var(--bo-surface);
+    font-size: 1rem;
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
 }
 
+/* Le marqueur est désormais blanc : le compteur s'inverse pour rester lisible. */
+
 .cluster-count {
     position: absolute;
-    top: -5px;
-    right: -5px;
-    background: white;
-    color: var(--color-text-primary);
+    top: -4px;
+    right: -4px;
+    background: var(--bo-surface);
+    color: var(--color-text-heading);
     border-radius: 50%;
     width: 20px;
     height: 20px;
@@ -521,8 +721,8 @@ header {
 /* ===== SÉLECTEUR DE STYLE DE CARTE ===== */
 #style-picker {
     position: fixed;
-    top: calc(var(--header-h, 60px) + 10px);
-    right: 16px;
+    top: calc(var(--header-h, 60px) + 12px);
+    right: 12px;
     z-index: 1000;
     display: flex;
     flex-direction: column;
@@ -538,15 +738,15 @@ header {
 }
 
 #style-picker-toggle {
-    width: 44px;
-    height: 44px;
-    border-radius: 12px;
-    background: rgba(255, 255, 255, 0.92);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.6);
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
+    pointer-events: auto;
+    width: var(--touch-target);
+    height: var(--touch-target);
+    border-radius: var(--border-radius-md);
+    background: var(--bo-surface);
+    border: 1px solid var(--color-bg-border);
+    box-shadow: var(--shadow-float);
     color: var(--color-text-secondary);
+
     font-size: 16px;
     cursor: pointer;
     display: flex;
@@ -556,15 +756,15 @@ header {
 }
 
 #style-picker-toggle:hover {
-    background: rgba(255, 255, 255, 1);
-    transform: scale(1.05);
+    border-color: var(--color-border-default);
+    transform: scale(1.04);
 }
 
 #style-picker-panel {
-    background: rgba(255, 255, 255, 0.92);
+    background: var(--bo-surface);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.6);
+    border: 1px solid var(--bo-line);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
     border-radius: 14px;
     padding: 8px;
@@ -619,9 +819,10 @@ header {
 
 .style-preview--papillon { background: linear-gradient(135deg, #e8f0de, #c8ddc8); }
 .style-preview--satellite { background: linear-gradient(135deg, #2d4a1e, #5a8a3a); }
-.style-preview--nuit      { background: linear-gradient(135deg, #1a1a2e, #16213e); }
-.style-preview--simple    { background: linear-gradient(135deg, #f0f4f8, #b8d4e8); }
-.style-preview--propre    { background: linear-gradient(135deg, #006994, #00b8d4); }
+/* Les aperçus doivent montrer ce que le style rend vraiment. */
+.style-preview--nuit      { background: linear-gradient(135deg, #14170F, #252A1F); }
+.style-preview--simple    { background: linear-gradient(135deg, #F0F4F8, #B8D4E8); }
+.style-preview--propre    { background: linear-gradient(135deg, #EFEFEA, #D5D5CE); }
 
 .style-label {
     font-size: 13px;
@@ -636,7 +837,7 @@ header {
     left: 50%;
     transform: translateX(-50%) translateY(72px);
     z-index: 999;
-    background: rgba(255, 255, 255, 0.95);
+    background: var(--bo-surface);
     border-radius: 20px;
     padding: 7px 16px;
     display: flex;
@@ -673,83 +874,106 @@ header {
 
 .leaflet-control-attribution {
     font-size: 10px;
-    background: rgba(255, 255, 255, 0.6) !important;
+    background: var(--bo-surface) !important;
     padding: 2px 6px !important;
 }
-.leaflet-control-attribution a { color: #555; }
+.leaflet-control-attribution a { color: var(--color-text-muted); }
 
 /* ===== ACTIVITY PANEL — bottom sheet mobile / side panel desktop ===== */
+/* ═══════════════════════════════════════════════════════════════
+   FICHE ACTIVITÉ — FEUILLE GLISSANTE
+   ───────────────────────────────────────────────────────────────
+   Elle monte du bas, à toutes les tailles. La carte reste visible
+   derrière l'aperçu : c'est ce qui distingue une feuille d'une
+   modale — on continue de voir le territoire pendant qu'on lit.
+
+   Trois arrêts (charte) : aperçu 28 svh, demi 55 svh, plein 92 svh.
+   On glisse de l'un à l'autre, on ne saute jamais.
+   `svh` plutôt que `vh` : sur mobile, `vh` inclut la barre d'URL
+   et la feuille se retrouve tronquée quand elle se rétracte.
+   ═══════════════════════════════════════════════════════════════ */
 #activity-panel {
     position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
+    inset: auto 0 0;
     z-index: 2000;
-    background: var(--color-bg-activity-panel);
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
-    border-radius: 16px 16px 0 0;
-    box-shadow: 0 -4px 32px rgba(0, 0, 0, 0.14);
-    height: 38vh;
+
+    height: 92svh;                       /* la feuille fait sa hauteur max… */
     display: flex;
     flex-direction: column;
-    transform: translateY(102%);
-    transition: transform 0.38s cubic-bezier(0.32, 0.72, 0, 1),
-                height 0.28s ease;
+
+    background: var(--bo-surface);
+    border-top: 1px solid var(--bo-line);
+    border-radius: var(--bo-radius-sheet) var(--bo-radius-sheet) 0 0;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, .09),
+                0 -18px 44px rgba(0, 0, 0, .10);
+
+    transform: translateY(100%);         /* …et c'est l'arrêt qui la découvre */
+    transition: transform var(--bo-in) var(--bo-ease);
+    padding-bottom: env(safe-area-inset-bottom);
     overflow: hidden;
     will-change: transform;
 }
 
 #activity-panel.panel-open {
-    transform: translateY(0);
+    transform: translateY(calc(100% - var(--stop, 28svh)));
 }
 
-#activity-panel.panel-expanded {
-    height: 56vh;
-}
+#activity-panel[data-stop="half"] { --stop: 55svh; }
+#activity-panel[data-stop="full"] { --stop: 92svh; }
 
+/* La poignée est le seul ornement (charte). */
 #panel-drag-handle {
-    width: 36px;
+    width: 34px;
     height: 4px;
-    background: var(--color-border-default);
     border-radius: 2px;
-    margin: 10px auto 4px;
+    background: var(--bo-line-2);
+    margin: 9px auto 0;
     flex-shrink: 0;
-    cursor: pointer;
+    cursor: grab;
     touch-action: none;
+}
+#panel-drag-handle:active { cursor: grabbing; }
+
+/* Zone de préhension confortable autour du trait de 4 px. */
+#panel-drag-handle::before {
+    content: '';
+    position: absolute;
+    left: 0; right: 0;
+    height: 28px;
+    margin-top: -12px;
 }
 
 #panel-close {
     position: absolute;
-    top: 10px;
+    top: 14px;
     right: 14px;
-    width: 30px;
-    height: 30px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
-    background: var(--color-bg-muted);
+    background: var(--bo-surface-2);
     border: none;
-    color: var(--color-text-muted);
+    color: var(--bo-ink-3);
     font-size: 13px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background 0.15s;
+    transition: background var(--bo-out) var(--bo-ease);
     z-index: 10;
 }
 
-#panel-close:hover { background: var(--color-bg-border); }
+#panel-close:hover { background: var(--bo-line); }
 
 #panel-content {
     flex: 1;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
 }
 
 /* Le contenu du panel prend toujours toute la largeur disponible */
 #panel-content .popup-content {
     width: 100%;
-    max-width: none;
     box-sizing: border-box;
 }
 
@@ -760,7 +984,6 @@ header {
     box-sizing: border-box;
 }
 
-/* Image de la fiche : hauteur réduite */
 #panel-content .popup-header {
     min-height: 72px;
     padding: 0.65rem 1rem;
@@ -772,28 +995,47 @@ header {
     overflow: hidden;
 }
 
-/* Sur desktop → panneau latéral gauche */
-@media (min-width: 768px) {
+/* ── Ordinateur : une CARTE flottante, pas un panneau plein format.
+      Elle est posée à gauche avec une marge, arrondie sur les quatre
+      coins et haute de son seul contenu — comme le reste de
+      l'interface, qui fonctionne par surfaces flottantes.          */
+@media (min-width: 1024px) {
     #activity-panel {
-        top: 64px; /* hauteur du header */
-        bottom: 0;
-        left: 0;
-        right: auto;
+        /* haut · droite · bas · gauche — `bas: auto` pour que la
+           hauteur suive le contenu au lieu d'être étirée. */
+        /* Sous la rangée de filtres, toujours. Faire bouger les filtres
+           à l'ouverture de la carte revenait à faire dépendre deux
+           éléments l'un de l'autre pour une raison purement visuelle :
+           l'un des deux devait céder, et c'est le contenu qui se range
+           sous la barre d'outils, pas l'inverse. */
+        inset: calc(var(--header-h) + var(--bo-filters-h) + var(--bo-3)) auto auto var(--bo-4);
         width: 380px;
         height: auto;
-        border-radius: 0;
-        box-shadow: 4px 0 24px rgba(0, 0, 0, 0.10);
-        transform: translateX(-100%);
-        transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+        max-height: calc(100svh - var(--header-h) - var(--bo-filters-h) - var(--bo-3) - var(--bo-4));
+
+        border: 1px solid var(--bo-line);
+        border-radius: var(--bo-radius);
+        box-shadow: var(--bo-shadow-float);
+
+        transform: translateX(calc(-100% - var(--bo-5)));
+        padding-bottom: 0;
     }
 
-    #activity-panel.panel-open  { transform: translateX(0); }
-    #activity-panel.panel-expanded { height: auto; } /* pas de snap sur desktop */
+    #activity-panel.panel-open { transform: translateX(0); }
 
+    /* Pas d'arrêts sur une carte : elle a la taille de son contenu. */
     #panel-drag-handle { display: none; }
 
-    /* Le popup-header n'a plus de coins arrondis sur desktop */
-    #activity-panel .popup-header { border-radius: 0; }
+    /* Le bandeau de titre suit l'arrondi de la carte. */
+    #activity-panel .popup-header {
+        border-radius: var(--bo-radius) var(--bo-radius) 0 0;
+    }
+
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #activity-panel { transition: none; }
 }
 
 /* Ajustement du popup-header à l'intérieur du panel */
@@ -824,13 +1066,17 @@ header {
 }
 
 /* ===== POPUP CONTENU ===== */
+/* Sans image : surface neutre, titre en encre.
+   Le bandeau de marque coloré disparaît — la couleur est réservée
+   à ce qui porte une information (cf. doctrine, principe 4). */
 .popup-header {
     position: relative;
     overflow: hidden;
-    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
-    color: white;
+    background: var(--color-bg-subtle);
+    color: var(--color-text-heading);
     padding: 1rem;
     border-radius: 12px 12px 0 0;
+    border-bottom: 1px solid var(--color-bg-border);
 }
 
 /* Image (Wikidata / og:image) — couvre le rectangle, invisible par défaut */
@@ -847,6 +1093,13 @@ header {
 }
 
 .popup-header-text { position: relative; z-index: 2; }
+
+/* Avec image : le voile sombre ::after reprend la main,
+   le texte blanc redevient le bon choix. */
+.popup-header.has-image {
+    color: var(--bo-on-orange);
+    border-bottom-color: transparent;
+}
 
 .popup-header.has-image .popup-header-img { opacity: 1; }
 
@@ -875,7 +1128,7 @@ header {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    color: #4b5563;
+    color: var(--color-text-secondary);
     font-size: 0.875rem;
     margin-bottom: 0.5rem;
 }
@@ -902,75 +1155,55 @@ header {
     transition: color 0.2s;
 }
 
-.popup-link:hover { color: #1e40af; }
+.popup-link:hover { color: var(--amber-deep); }
 .popup-link-label { text-decoration: underline; }
 
+/* ===== PIED DE FICHE — TROIS NIVEAUX D'ACTION ==================
+   Principe 3 : une intention par écran. Un seul bouton plein,
+   deux secondaires en contour, le reste en tertiaire discret.   */
 .popup-footer {
     padding: 0 1rem 1rem 1rem;
     display: flex;
+    flex-direction: column;
     gap: 0.5rem;
-    flex-wrap: wrap;
 }
 
-/* Boutons du popup */
-.popup-btn {
-    flex: 1;
-    min-width: 120px;
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    font-size: 0.875rem;
-    font-weight: 500;
-    transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s, color 0.2s;
-    border: none;
+.popup-actions-secondary,
+.popup-actions-tertiary {
     display: flex;
-    align-items: center;
-    justify-content: center;
     gap: 0.5rem;
 }
 
-.popup-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+
+
+
+
+/* Favori : tertiaire au repos, ambre une fois activé — c'est le seul
+   moment où il porte une information. */
+.btn-favorite.active {
+    color: var(--amber-deep);
+    background-color: var(--amber-wash);
 }
 
-.btn-favorite        { background-color: var(--color-btn-favorite); color: var(--color-btn-favorite-text); }
-.btn-favorite:hover  { background-color: var(--color-btn-favorite-hover); }
-.btn-favorite.active { background-color: var(--color-btn-favorite-active); color: white; }
-
-.btn-todo            { background-color: var(--color-btn-todo); color: var(--color-btn-todo-text); }
-.btn-todo:hover      { background-color: var(--color-btn-todo-hover); }
-.btn-todo.active     { background-color: var(--color-btn-todo-active); color: white; }
-
-.btn-itinerary       { background-color: var(--color-btn-itinerary); color: var(--color-btn-itinerary-text); }
-.btn-itinerary:hover { background-color: var(--color-btn-itinerary-hover); }
-
-.btn-similar         { background-color: var(--color-btn-similar); color: var(--color-btn-similar-text); }
-.btn-similar:hover   { background-color: var(--color-btn-similar-hover); }
-
-.btn-group           { background-color: #e0e7ff; color: #3730a3; }
-.btn-group:hover     { background-color: #c7d2fe; }
-
-/* Badge catégorie */
-.category-badge {
-    display: inline-block;
-    padding: 0.25rem 0.75rem;
-    border-radius: 9999px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: capitalize;
-    background-color: var(--color-bg-border);
-    color: var(--color-text-secondary);
+/* "À faire" déjà coché : on passe en contour pour signaler que
+   l'intention est enregistrée et que le bouton devient un retrait. */
+.btn-todo.active {
+    background-color: var(--amber-wash);
+    border-color: var(--amber);
+    color: var(--amber-deep);
 }
 
-.category-musee,
-.category-musée     { background-color: #dbeafe; color: #1e40af; }
-.category-parc      { background-color: #d1fae5; color: #065f46; }
-.category-cinema,
-.category-cinéma    { background-color: #e0e7ff; color: #4338ca; }
-.category-vie-nocturne,
-.category-nightclub { background-color: #f3e8ff; color: #6b21a8; }
-.category-restaurant{ background-color: #fed7aa; color: #9a3412; }
-.category-golf      { background-color: #d1fae5; color: #065f46; }
+
+
+
+
+
+
+
+/* Pas de couleur par catégorie : le mot suffit à la dire, et la couleur
+   est réservée à ce qui porte une information d'état (principe 4).
+   Les classes .category-* restent émises par le JS mais n'habillent plus. */
 
 /* ===== ANIMATION ===== */
 @keyframes fadeInUp {
@@ -988,9 +1221,9 @@ header {
         padding: 0.55rem 0.75rem;
     }
 
-    .header-logo {
-        flex-shrink: 0;
-    }
+    /* La recherche prime : la marque cède la place sous 480 px. */
+    .header-container { gap: var(--bo-2); padding: 10px var(--bo-3); }
+    .header-search    { max-width: none; }
 
     .header-search {
         flex: 1;
@@ -1021,8 +1254,7 @@ header {
     .popup-btn { width: 100%; justify-content: center; }
 
     /* Marqueur utilisateur */
-    .user-marker      { width: 32px; height: 32px; }
-    .user-marker-icon { width: 20px; height: 20px; }
+    .user-marker { width: 34px; height: 34px; }
 }
 
 /* ===================================================================
@@ -1030,33 +1262,9 @@ header {
    =================================================================== */
 
 /* ── Bouton compte dans le header ──────────────────────────────────── */
-.account-btn {
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    border: 2px solid rgba(255, 255, 255, 0.5);
-    background: rgba(255, 255, 255, 0.7);
-    color: var(--color-text-secondary);
-    font-size: 1.25rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    transition: background 0.2s, border-color 0.2s;
-    overflow: hidden;
-    padding: 0;
-}
 
-.account-btn:hover {
-    background: rgba(255, 255, 255, 0.95);
-    border-color: var(--color-primary);
-}
 
-.account-btn.logged-in {
-    background: var(--color-primary);
-    border-color: var(--color-primary-dark);
-    color: white;
-}
+/* Connecté : ambre, la seule teinte d'état du chrome */
 
 .account-avatar-img {
     width: 100%;
@@ -1068,7 +1276,7 @@ header {
 .account-initials {
     font-size: 0.875rem;
     font-weight: 700;
-    color: white;
+    color: var(--on-amber);
 }
 
 /* ── Backdrop commun aux overlays ──────────────────────────────────── */
@@ -1110,17 +1318,10 @@ header {
 
 .login-close-btn {
     position: absolute;
-    top: 1rem;
-    right: 1rem;
-    background: none;
-    border: none;
-    font-size: 1.125rem;
-    color: var(--color-text-placeholder);
-    padding: 0.25rem;
-    transition: color 0.2s;
+    top: 0.75rem;
+    right: 0.75rem;
 }
 
-.login-close-btn:hover { color: var(--color-text-secondary); }
 
 .login-header {
     text-align: center;
@@ -1158,47 +1359,9 @@ header {
     margin-bottom: 0.375rem;
 }
 
-.login-input {
-    width: 100%;
-    padding: 0.625rem 0.875rem;
-    border: 1.5px solid var(--color-border-default);
-    border-radius: 8px;
-    font-size: 1rem;
-    outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
-    background: white;
-}
 
-.login-input:focus {
-    border-color: var(--color-primary);
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
-}
 
-.login-input-otp {
-    text-align: center;
-    font-size: 1.5rem;
-    letter-spacing: 0.5rem;
-    font-weight: 700;
-}
 
-.login-btn {
-    width: 100%;
-    padding: 0.75rem;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: 600;
-    border: none;
-    cursor: pointer;
-    margin-bottom: 0.625rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    transition: background 0.2s, opacity 0.2s;
-    touch-action: manipulation;
-    position: relative;
-    z-index: 10;
-}
 
 /* Empêche le container reCAPTCHA d'intercepter les taps sur les boutons */
 #login-recaptcha-container {
@@ -1214,26 +1377,15 @@ header {
     pointer-events: auto;
 }
 
-.login-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
-.login-btn-primary {
-    background: var(--color-primary);
-    color: white;
-}
 
-.login-btn-primary:hover:not(:disabled) { background: var(--color-primary-dark); }
 
-.login-btn-secondary {
-    background: var(--color-bg-muted);
-    color: var(--color-text-secondary);
-}
 
-.login-btn-secondary:hover:not(:disabled) { background: var(--color-bg-border); }
 
 .login-error {
-    background: #fef2f2;
+    background: var(--clay-wash);
     color: var(--color-error-dark);
-    border: 1px solid #fecaca;
+    border: 1px solid var(--clay-mid);
     border-radius: 6px;
     padding: 0.5rem 0.75rem;
     font-size: 0.875rem;
@@ -1307,16 +1459,7 @@ header {
     color: var(--color-text-heading);
 }
 
-.account-close-btn {
-    background: none;
-    border: none;
-    font-size: 1.125rem;
-    color: var(--color-text-placeholder);
-    padding: 0.25rem;
-    transition: color 0.2s;
-}
 
-.account-close-btn:hover { color: var(--color-text-secondary); }
 
 /* Profil */
 .account-profile {
@@ -1324,7 +1467,7 @@ header {
     align-items: center;
     gap: 1rem;
     padding: 1.25rem;
-    background: linear-gradient(135deg, #eff6ff, #dbeafe);
+    background: var(--color-bg-subtle);
     flex-shrink: 0;
 }
 
@@ -1333,12 +1476,14 @@ header {
     flex-shrink: 0;
 }
 
+/* Neutre, pas ambre : un avatar est une identité, pas une action.
+   L'ambre est réservé à l'intention (cf. grammaire des couleurs). */
 .account-avatar {
     width: 64px;
     height: 64px;
     border-radius: 50%;
-    background: var(--color-primary);
-    color: white;
+    background: var(--color-bg-border);
+    color: var(--color-text-secondary);
     font-size: 1.5rem;
     display: flex;
     align-items: center;
@@ -1387,17 +1532,7 @@ header {
     color: var(--color-text-heading);
 }
 
-.account-edit-btn {
-    background: none;
-    border: none;
-    color: var(--color-text-muted);
-    font-size: 0.875rem;
-    padding: 0.125rem 0.25rem;
-    cursor: pointer;
-    transition: color 0.2s;
-}
 
-.account-edit-btn:hover { color: var(--color-primary); }
 
 .account-phone {
     font-size: 0.875rem;
@@ -1412,16 +1547,6 @@ header {
     border-bottom: 1px solid var(--color-bg-muted);
 }
 
-.account-input {
-    width: 100%;
-    padding: 0.5rem 0.75rem;
-    border: 1.5px solid var(--color-border-default);
-    border-radius: 8px;
-    font-size: 0.9375rem;
-    outline: none;
-    margin-bottom: 0.5rem;
-    transition: border-color 0.2s;
-}
 
 .account-input:focus { border-color: var(--color-primary); }
 
@@ -1447,14 +1572,14 @@ header {
     justify-content: center;
     gap: 0.5rem;
     padding: 1rem;
-    background: #ffffff;
+    background: var(--bo-surface);
     transition: border-color 0.2s, background 0.2s;
 }
 
 .avatar-upload-label:hover .avatar-upload-preview,
 .avatar-upload-label.drag-over .avatar-upload-preview {
     border-color: var(--color-primary);
-    background: #eff6ff;
+    background: var(--color-bg-subtle);
 }
 
 .avatar-upload-icon {
@@ -1481,37 +1606,10 @@ header {
     border-radius: 8px;
 }
 
-.account-btn-primary:disabled {
-    background: #93c5fd;
-    cursor: not-allowed;
-}
 
-.account-btn-primary {
-    padding: 0.375rem 0.875rem;
-    background: var(--color-primary);
-    color: white;
-    border: none;
-    border-radius: 6px;
-    font-size: 0.875rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.2s;
-}
 
-.account-btn-primary:hover { background: var(--color-primary-dark); }
 
-.account-btn-secondary {
-    padding: 0.375rem 0.875rem;
-    background: var(--color-bg-muted);
-    color: var(--color-text-secondary);
-    border: none;
-    border-radius: 6px;
-    font-size: 0.875rem;
-    cursor: pointer;
-    transition: background 0.2s;
-}
 
-.account-btn-secondary:hover { background: var(--color-bg-border); }
 
 /* Accordéons */
 .account-sections {
@@ -1576,33 +1674,9 @@ header {
     margin-bottom: 0;
 }
 
-.account-btn-primary-sm {
-    padding: 0.375rem 0.625rem;
-    background: var(--color-primary);
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 0.875rem;
-    flex-shrink: 0;
-    transition: background 0.2s;
-}
 
-.account-btn-primary-sm:hover { background: var(--color-primary-dark); }
 
-.account-btn-danger-sm {
-    padding: 0.375rem 0.625rem;
-    background: #fee2e2;
-    color: var(--color-error-dark);
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 0.875rem;
-    flex-shrink: 0;
-    transition: background 0.2s;
-}
 
-.account-btn-danger-sm:hover { background: #fecaca; }
 
 .account-section-label {
     font-size: 0.75rem;
@@ -1626,8 +1700,8 @@ header {
     width: 32px;
     height: 32px;
     border-radius: 50%;
-    background: #dbeafe;
-    color: #1e40af;
+    background: var(--color-bg-subtle);
+    color: var(--amber-deep);
     font-size: 0.75rem;
     font-weight: 700;
     display: flex;
@@ -1648,17 +1722,7 @@ header {
     gap: 0.375rem;
 }
 
-.friend-remove-btn {
-    background: none;
-    border: none;
-    color: var(--color-border-default);
-    font-size: 0.875rem;
-    cursor: pointer;
-    padding: 0.25rem;
-    transition: color 0.2s;
-}
 
-.friend-remove-btn:hover { color: var(--color-error); }
 
 /* Groupes */
 .group-create-wrap {
@@ -1682,11 +1746,11 @@ header {
     border: 1px solid var(--color-bg-border);
     border-radius: 10px;
     padding: 0.625rem;
-    background: #fff;
+    background: var(--bo-surface);
 }
 
 .group-item-active {
-    border-color: #4f46e5;
+    border-color: var(--amber);
     box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.15);
 }
 
@@ -1716,8 +1780,8 @@ header {
     text-transform: uppercase;
     padding: 0.1rem 0.35rem;
     border-radius: 999px;
-    background: #ede9fe;
-    color: #5b21b6;
+    background: var(--color-bg-subtle);
+    color: var(--color-text-secondary);
     font-weight: 700;
 }
 
@@ -1782,7 +1846,7 @@ header {
     top: calc(100% + 4px);
     right: 0;
     min-width: 170px;
-    background: #fff;
+    background: var(--bo-surface);
     border: 1px solid var(--color-bg-border);
     border-radius: 8px;
     box-shadow: 0 10px 24px rgba(0, 0, 0, 0.1);
@@ -1876,7 +1940,7 @@ header {
     left: 0;
     right: 0;
     bottom: 0;
-    background: #fff;
+    background: var(--bo-surface);
     border-radius: 16px 16px 0 0;
     box-shadow: 0 -8px 28px rgba(0, 0, 0, 0.2);
     transform: translateY(102%);
@@ -1904,14 +1968,6 @@ header {
     color: var(--color-text-heading);
 }
 
-.group-picker-close-btn {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    border: none;
-    background: var(--color-bg-muted);
-    color: var(--color-text-muted);
-}
 
 .group-picker-list {
     padding: 0.7rem 0.9rem;
@@ -1924,7 +1980,7 @@ header {
 .group-picker-item {
     border: 1px solid var(--color-bg-border);
     border-radius: 8px;
-    background: #fff;
+    background: var(--bo-surface);
     text-align: left;
     padding: 0.5rem 0.65rem;
     display: flex;
@@ -1967,13 +2023,13 @@ header {
     gap: 0.5rem;
     padding: 0.45rem 0.55rem;
     border-radius: 8px;
-    background: #eef2ff;
-    border: 1px solid #c7d2fe;
+    background: var(--color-bg-subtle);
+    border: 1px solid var(--color-border-default);
 }
 
 .group-map-view-label {
     font-size: 0.8rem;
-    color: #3730a3;
+    color: var(--color-text-secondary);
     font-weight: 600;
 }
 
@@ -2040,31 +2096,19 @@ header {
 }
 
 .activity-rating-badge.rating-1,
-.activity-rating-badge.rating-2 { background: #fee2e2; color: #b91c1c; }
-.activity-rating-badge.rating-3  { background: #fef3c7; color: #92400e; }
+.activity-rating-badge.rating-2 { background: var(--clay-wash); color: var(--clay); }
+.activity-rating-badge.rating-3  { background: var(--color-bg-subtle); color: var(--color-text-secondary); }
 .activity-rating-badge.rating-4,
-.activity-rating-badge.rating-5  { background: #d1fae5; color: #065f46; }
+.activity-rating-badge.rating-5  { background: var(--sage-wash); color: var(--sage); }
 
 /* Déconnexion */
+/* Démoté en tertiaire : se déconnecter est l'action la MOINS probable
+   du panneau, elle n'a rien à faire en bloc plein pleine largeur. */
 .account-logout-btn {
-    margin: 1rem 1.25rem 1.5rem;
-    padding: 0.75rem;
-    background: #fee2e2;
-    color: var(--color-error-dark);
-    border: none;
-    border-radius: 8px;
-    font-size: 0.9375rem;
-    font-weight: 600;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.625rem;
-    transition: background 0.2s;
+    margin: 0.5rem 1.25rem 1.5rem;
     flex-shrink: 0;
 }
 
-.account-logout-btn:hover { background: #fecaca; }
 
 /* ── Note moyenne — badge dans le header du popup ──────────────────── */
 .popup-header-meta {
@@ -2091,46 +2135,73 @@ header {
     padding: 0.75rem 1rem 0.75rem;
 }
 
+/* ===== ÉCHELLE DE VERDICT ======================================
+   Noter, c'est attester d'y être allé (principe 5). Le geste passe
+   d'un bandeau soudé à cinq cartes distinctes, hautes de 48 px.
+   Argile → neutre → sauge : un conseil, pas un niveau d'alerte.   */
 .rating-bar {
     display: flex;
-    border-radius: 8px;
-    overflow: hidden;
-    border: 1px solid var(--color-bg-border);
+    gap: 3px;
 }
 
 .rating-btn {
     flex: 1;
-    padding: 0.5rem 0.25rem;
-    border: none;
-    border-right: 1px solid var(--color-bg-border);
-    font-size: 0.7rem;
+    min-width: 0;
+    min-height: 60px;
+    padding: 6px 2px;
+    border: 1px solid var(--bo-line);
+    border-radius: var(--bo-radius-control);
+    background: var(--bo-surface);
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+
+    font-size: 0.6rem;
     font-weight: 600;
-    cursor: pointer;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    color: var(--bo-ink-3);
     text-align: center;
-    transition: transform 0.15s, filter 0.15s, font-weight 0.15s;
-    transition: filter 0.15s;
-    line-height: 1.2;
+    cursor: pointer;
+
+    transition: background var(--bo-out) var(--bo-ease),
+                border-color var(--bo-out) var(--bo-ease),
+                color var(--bo-out) var(--bo-ease),
+                transform var(--bo-out) var(--bo-ease);
 }
 
-.rating-btn:last-child { border-right: none; }
+.rating-face { flex: none; }
 
-.rating-btn:hover { filter: brightness(0.92); }
+.rating-btn:hover { border-color: var(--bo-line-2); transform: translateY(-1px); }
 
-.rating-btn-1 { background: var(--color-rating-1); color: var(--color-rating-1-text); }
-.rating-btn-2 { background: var(--color-rating-2); color: var(--color-rating-2-text); }
-.rating-btn-3 { background: var(--color-rating-3); color: var(--color-rating-3-text); }
-.rating-btn-4 { background: var(--color-rating-4); color: var(--color-rating-4-text); }
-.rating-btn-5 { background: var(--color-rating-5); color: var(--color-rating-5-text); }
+.rating-btn:focus-visible {
+    outline: 2px solid var(--bo-ink);
+    outline-offset: 2px;
+}
 
+/* Au repos, le visage porte déjà le sens : la teinte reste sourde
+   pour ne pas transformer la rangée en arc-en-ciel. */
+.rating-btn-1 { color: #C22F2A; }   /* brique */
+.rating-btn-2 { color: #D98136; }   /* orange, assombri pour rester lisible */
+.rating-btn-3 { color: #8E8E93; }   /* gris */
+.rating-btn-4 { color: #4E9C42; }   /* vert, assombri pour rester lisible */
+.rating-btn-5 { color: #35785A; }   /* sauge */
+
+/* Le verdict retenu : plein, franc. C'est le seul de la rangée. */
+/* Le verdict retenu est le seul plein de la rangée, dans SA couleur. */
 .rating-btn-active {
-    outline: 2.5px solid currentColor;
-    outline-offset: -2.5px;
-    filter: brightness(0.85);
-    font-weight: 800;
-    transform: scale(1.05);
-    z-index: 1;
-    position: relative;
+    color: #FFFFFF;
+    transform: translateY(-1px);
 }
+
+.rating-btn-1.rating-btn-active { background: #C22F2A; border-color: #C22F2A; box-shadow: 0 2px 8px rgba(194, 47, 42, .30); }
+.rating-btn-2.rating-btn-active { background: #F2A25C; border-color: #E08B3F; box-shadow: 0 2px 8px rgba(224, 139, 63, .35); color: #46270D; }
+.rating-btn-3.rating-btn-active { background: #8E8E93; border-color: #8E8E93; box-shadow: 0 2px 8px rgba(0, 0, 0, .20); }
+.rating-btn-4.rating-btn-active { background: #7CC46F; border-color: #62A957; box-shadow: 0 2px 8px rgba(98, 169, 87, .35); color: #17300F; }
+.rating-btn-5.rating-btn-active { background: #35785A; border-color: #35785A; box-shadow: 0 2px 8px rgba(53, 120, 90, .30); }
 
 /* Bouton spinner d'attente */
 .hidden { display: none !important; }
@@ -2162,3 +2233,302 @@ header {
 
     .rating-btn { font-size: 0.65rem; padding: 0.5rem 0.1rem; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   FILTRES PAR FAMILLE
+   ───────────────────────────────────────────────────────────────────────
+   Contrepartie du retrait de la couleur de catégorie sur les marqueurs :
+   le tri redevient explicite. Rangée défilante sous le chrome, dans la
+   même famille de surfaces flottantes que la recherche et le compte.
+   ═══════════════════════════════════════════════════════════════════════ */
+/* `overflow-x: auto` force `overflow-y` à `auto` : le conteneur découpe
+   donc les ombres de ses puces, d'où la coupure nette en bas. La seule
+   parade est de lui donner du rembourrage pour les accueillir, et de
+   reculer sa position d'autant pour que le rendu ne bouge pas. */
+.category-filters {
+    position: fixed;
+    top: calc(var(--header-h, 60px) + 6px);
+    left: 0;
+    right: 118px;                 /* laisse la place aux deux boutons flottants */
+    z-index: 999;
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 6px 12px 18px;       /* le bas accueille l'ombre */
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x proximity;
+}
+
+.category-filters::-webkit-scrollbar { display: none; }
+
+.filter-chip {
+    scroll-snap-align: start;
+}
+
+/* Filtre actif mais aucun résultat dans la zone : on le signale sur la
+   puce plutôt que par un toast qui disparaîtrait. */
+.category-filters.has-no-result .filter-chip.is-active {
+    background: var(--clay);
+    border-color: var(--clay);
+}
+
+@media (max-width: 640px) {
+    /* Les boutons favoris/styles occupent 68+12 → 128 px. La rangée
+       de filtres se pose en dessous, sinon elle passe derrière eux. */
+    .category-filters {
+        top: calc(var(--header-h, 68px) + 68px);   /* dégage les boutons flottants */
+        right: 0;
+    }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   COMPTEURS DE SECTION
+   ───────────────────────────────────────────────────────────────────────
+   Principe 5 — garder la trace. Sans chiffre, les quatre sections sont
+   quatre lignes identiques : l'utilisateur ne voit rien de ce qu'il a
+   construit sans les ouvrir une par une.
+   ═══════════════════════════════════════════════════════════════════════ */
+.account-count {
+    margin-left: auto;
+    margin-right: 0.6rem;
+    min-width: 22px;
+    height: 22px;
+    padding: 0 7px;
+    border-radius: var(--border-radius-pill);
+    background: var(--color-bg-subtle);
+    color: var(--color-text-secondary);
+    font-size: 0.75rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.account-count[hidden] { display: none; }
+
+/* Les envies sont la seule section qui appelle une action : elle seule
+   porte l'ambre. Les réalisées sont un acquis : sauge. */
+#count-todo:not(:empty) { background: var(--amber-wash); color: var(--amber-deep); }
+#count-done:not(:empty) { background: var(--sage-wash);  color: var(--sage); }
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   FOCUS CLAVIER
+   ───────────────────────────────────────────────────────────────────────
+   Il n'existait aucun style de focus dans l'application : au clavier, on
+   naviguait à l'aveugle. Un anneau unique, ambre, appliqué partout — le
+   :focus-visible ne se déclenche pas au clic souris, donc il n'ajoute
+   aucun bruit visuel à l'usage courant.
+   ═══════════════════════════════════════════════════════════════════════ */
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+    outline: 2px solid var(--amber-deep);
+    outline-offset: 2px;
+    /* Surtout PAS de border-radius ici : il écraserait la forme propre
+       de l'élément — la barre de recherche perdait sa pastille et
+       devenait rectangulaire au clic. Le contour suit de lui-même le
+       rayon de l'élément. */
+}
+
+/* Sur fond encre, l'ambre profond manque de contraste : on éclaircit. */
+.bo-chip--active:focus-visible,
+.bo-btn--primary:focus-visible,
+
+/* Les marqueurs Leaflet sont focusables : ils doivent le montrer. */
+.leaflet-marker-icon:focus-visible {
+    outline: 2px solid var(--amber);
+    outline-offset: 3px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   MOUVEMENT RÉDUIT
+   ───────────────────────────────────────────────────────────────────────
+   Les feuilles glissantes, les mises à l'échelle au survol et les
+   transitions de panneau peuvent déclencher des troubles vestibulaires.
+   On coupe tout sauf l'opacité, qui reste confortable et préserve la
+   lisibilité des changements d'état.
+   ═══════════════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+
+    /* Le survol ne doit plus déplacer ni agrandir. */
+    .custom-marker:hover .activity-marker-pin { transform: rotate(-45deg); }
+    .rating-btn:hover { transform: none; }
+    #fav-picker-toggle:hover,
+    #style-picker-toggle:hover { transform: none; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   FOND DE CARTE DISCRET
+   ───────────────────────────────────────────────────────────────────────
+   Le style "propre" part d'un fond complet (parcs, eau, hiérarchie de
+   voirie) puis descend sa saturation par filtre. C'est le seul moyen
+   d'obtenir à la fois un fond QUI ORIENTE et un fond QUI SE TAIT :
+   les styles « light » du marché suppriment l'information au lieu de
+   l'atténuer, et on perd les repères.
+
+   Le léger éclaircissement compense l'assombrissement perçu que produit
+   la désaturation, pour que les marqueurs encre gardent leur contraste.
+   ═══════════════════════════════════════════════════════════════════════ */
+/* Saturation SEULE. J'avais ajouté brightness() et contrast() pour
+   compenser l'assombrissement perçu — mais contrast(.94) délave les
+   libellés de rue, qui deviennent pénibles à lire. La désaturation
+   ne touche pas au contraste : elle suffit. */
+.map-quiet .leaflet-tile-pane {
+    filter: saturate(0.45);
+}
+
+/* Le fond nuit est déjà sobre : le désaturer le rendrait illisible. */
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .map-quiet .leaflet-tile-pane { filter: none; }
+}
+:root[data-theme="dark"] .map-quiet .leaflet-tile-pane { filter: none; }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   CHROME CENTRÉ — À PARTIR DE LA TABLETTE
+   ───────────────────────────────────────────────────────────────────────
+   Sur grand écran, la recherche collée au logo laissait un vide à droite
+   et déséquilibrait le haut de page. Une grille en trois colonnes la
+   centre sur le viewport, indépendamment de la largeur du logo, et les
+   filtres se calent sur le même axe pour former une colonne cohérente.
+   ═══════════════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════
+   ORDINATEUR — le menu apparaît (charte : ≥ 1024)
+   ───────────────────────────────────────────────────────────────
+   Favoris, Amis et Groupes deviennent des destinations directes.
+   Le bouton favoris volant disparaît donc : il ferait doublon.
+   Seul le sélecteur de fond de carte reste posé sur la carte.
+   ═══════════════════════════════════════════════════════════════ */
+@media (min-width: 1024px) {
+    .header-nav { display: flex; }
+    #fav-picker { display: none; }
+
+    /* La recherche est centrée sur la FENÊTRE, pas sur l'espace laissé
+       entre la marque et le menu : elle est donc sortie du flux. Sinon
+       elle se décalerait dès que le menu change de largeur. */
+    .header-container { position: relative; justify-content: space-between; }
+
+    .header-search {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 420px;
+        max-width: none;
+        flex: none;
+    }
+
+
+    /* Le sélecteur de fond reprend la place laissée libre. */
+    #style-picker { right: var(--bo-4); }
+
+    /* Les puces se centrent sur le même axe que la recherche. */
+    .category-filters {
+        left: 50%;
+        right: auto;
+        transform: translateX(-50%);
+        width: min(1180px, 100vw);
+        padding-left: var(--bo-4);
+        padding-right: var(--bo-4);
+        justify-content: center;
+    }
+}
+
+/* Tablette : la recherche s'étale, le menu n'est pas encore là. */
+@media (min-width: 641px) and (max-width: 1023px) {
+    .header-search { max-width: 480px; }
+}
+
+/* Connecté : le bouton compte prend l'état actif du composant. */
+/* Connecté : lavis sauge et initiales, comme la maquette. */
+.account-btn.logged-in {
+    background: var(--bo-sage-wash);
+    border-color: var(--bo-sage-mid);
+    color: var(--bo-sage);
+}
+
+
+/* Sous 480 px, même la marque doit s'effacer devant la recherche. */
+@media (max-width: 479px) {
+    .header-logo { display: none; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   BULLE DU REPÈRE « VOUS »
+   ───────────────────────────────────────────────────────────────────────
+   N'apparaît qu'au second clic, quand la carte est déjà cadrée dessus :
+   à ce moment-là, recentrer n'apporterait plus rien, et la seule action
+   qui reste utile est de retrouver sa vraie position.
+   ═══════════════════════════════════════════════════════════════════════ */
+.user-popup-wrapper .leaflet-popup-content-wrapper {
+    background: var(--bo-surface);
+    border: 1px solid var(--bo-line);
+    border-radius: var(--bo-radius);
+    box-shadow: var(--bo-shadow-float);
+    padding: 0;
+}
+
+.user-popup-wrapper .leaflet-popup-content {
+    margin: 0;
+    width: auto !important;
+}
+
+.user-popup-wrapper .leaflet-popup-tip {
+    background: var(--bo-surface);
+    border: 1px solid var(--bo-line);
+}
+
+.user-popup {
+    display: flex;
+    flex-direction: column;
+    gap: var(--bo-2);
+    padding: var(--bo-3);
+    min-width: 190px;
+}
+
+.user-popup-state {
+    font: 500 12.5px/1.3 "Outfit", sans-serif;
+    color: var(--bo-ink-3);
+    text-align: center;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   VOTRE NOTE — repère en haut à gauche de la fiche
+   ───────────────────────────────────────────────────────────────────────
+   Masqué tant qu'on n'a pas noté. Il ne réapparaît qu'après le passage
+   par « réalisée » : c'est la mémoire de ce qu'on en a pensé.
+   ═══════════════════════════════════════════════════════════════════════ */
+.popup-my-rating {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 3;
+
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: var(--bo-surface);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, .18);
+    color: var(--bo-ink-2);
+}
+
+.popup-my-rating.hidden { display: none; }
+
+.popup-my-rating.verdict-1 { color: #C22F2A; }
+.popup-my-rating.verdict-2 { color: #D98136; }
+.popup-my-rating.verdict-3 { color: #8E8E93; }
+.popup-my-rating.verdict-4 { color: #4E9C42; }
+.popup-my-rating.verdict-5 { color: #35785A; }

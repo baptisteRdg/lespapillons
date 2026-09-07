@@ -59,6 +59,10 @@ async function initAuth() {
     // Restaurer la session depuis localStorage
     await _restoreSession();
     _updateAccountButton();
+
+    // Les marqueurs ont besoin de connaître "à faire" / "réalisées"
+    // pour choisir leur couleur d'état.
+    if (typeof loadUserActivityState === 'function') loadUserActivityState();
 }
 
 /**
@@ -123,6 +127,7 @@ function logout() {
     }
     _updateAccountButton();
     if (typeof loadFavorites === 'function') loadFavorites();
+    if (typeof loadUserActivityState === 'function') loadUserActivityState();
     document.getElementById('account-panel')?.classList.remove('open');
     showToast(T.TOASTS.LOGGED_OUT, 'info');
 }
@@ -226,6 +231,7 @@ async function verifyOtp(code) {
 
     // Charger les favoris du compte
     if (typeof loadFavorites === 'function') loadFavorites();
+    if (typeof loadUserActivityState === 'function') loadUserActivityState();
 
     // Relancer l'action en attente
     if (_pendingAuthCallback) {
